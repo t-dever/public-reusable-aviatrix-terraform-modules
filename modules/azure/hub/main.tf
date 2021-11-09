@@ -139,13 +139,13 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
     aviatrix_firewall_instance.palo_firewall_instance,
     aviatrix_transit_gateway.azure_transit_gateway
   ]
-  vpc_id               = aviatrix_firewall_instance.palo_firewall_instance.vpc_id
+  vpc_id               = aviatrix_firewall_instance.palo_firewall_instance[count.index].vpc_id
   firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
-  instance_id          = aviatrix_firewall_instance.palo_firewall_instance.instance_id
-  firewall_name        = aviatrix_firewall_instance.palo_firewall_instance.firewall_name
-  lan_interface        = aviatrix_firewall_instance.palo_firewall_instance.lan_interface
-  management_interface = aviatrix_firewall_instance.palo_firewall_instance.management_interface
-  egress_interface     = aviatrix_firewall_instance.palo_firewall_instance.egress_interface
+  instance_id          = aviatrix_firewall_instance.palo_firewall_instance[count.index].instance_id
+  firewall_name        = aviatrix_firewall_instance.palo_firewall_instance[count.index].firewall_name
+  lan_interface        = aviatrix_firewall_instance.palo_firewall_instance[count.index].lan_interface
+  management_interface = aviatrix_firewall_instance.palo_firewall_instance[count.index].management_interface
+  egress_interface     = aviatrix_firewall_instance.palo_firewall_instance[count.index].egress_interface
   attached             = true
 }
 
@@ -222,12 +222,12 @@ resource "azurerm_network_security_rule" "palo_deny_mgmt_nsg_inbound" {
 
 data "aviatrix_firenet_vendor_integration" "vendor_integration" {
   count = var.firenet_enabled ? 1: 0
-  vpc_id        = aviatrix_firewall_instance.palo_firewall_instance.vpc_id
-  instance_id   = aviatrix_firewall_instance.palo_firewall_instance.instance_id
+  vpc_id        = aviatrix_firewall_instance.palo_firewall_instance[count.index].vpc_id
+  instance_id   = aviatrix_firewall_instance.palo_firewall_instance[count.index].instance_id
   vendor_type   = "Palo Alto Networks VM-Series"
-  public_ip     = aviatrix_firewall_instance.palo_firewall_instance.public_ip
+  public_ip     = aviatrix_firewall_instance.palo_firewall_instance[count.index].public_ip
   username      = "paloAdmin"
-  password      = random_password.generate_firewall_secret.result
+  password      = random_password.generate_firewall_secret[count.index].result
   firewall_name = local.firewall_name
   save          = true
 }
