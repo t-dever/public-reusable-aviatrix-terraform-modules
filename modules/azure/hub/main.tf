@@ -3,6 +3,8 @@ locals {
   firewall_name = "${var.resource_prefix}-fw-vm"
 }
 
+data "azurerm_client_config" "current" {}
+
 resource "azurerm_resource_group" "azure_hub_resource_group" {
   name     = "${var.resource_prefix}-rg"
   location = var.location
@@ -82,6 +84,21 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   enable_segmentation           = true
   enable_transit_firenet        = var.firenet_enabled ? true : null
   enable_vpc_dns_server         = false
+}
+
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
+  depends_on = [
+    aviatrix_transit_gateway.azure_transit_gateway
+  ]
+  virtual_machine_id = "/subscriptions/${azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_hub_resource_group.name}/providers/Microsoft.Compute/virtualMachines/${local.gateway_name}"
+  location           = azurerm_resource_group.azure_hub_resource_group.location
+  enabled            = true
+
+  daily_recurrence_time = "1800"
+  timezone              = "Central Standard Time"
+  notification_settings {
+    enabled = false
+  }
 }
 
 resource "random_password" "generate_firewall_secret" {
@@ -215,54 +232,7 @@ data "aviatrix_firenet_vendor_integration" "vendor_integration" {
   save          = true
 }
 
-# data "azurerm_resources" "nsgs" {
-#   depends_on = [
-#     aviatrix_transit_gateway.azure_transit_gateway,
-#     aviatrix_firewall_instance.palo_firewall_instance
-#   ]
-#   resource_group_name = azurerm_resource_group.azure_hub_resource_group.name
-#   type = "Microsoft.Network/networkSecurityGroups"
-# }
 
-# resource "azurerm_network_watcher_flow_log" "nsg_flow_logs" {
-#   depends_on = [
-#     data.azurerm_resources.nsgs,
-#   ]
-#   lifecycle {
-#     ignore_changes = [tags]
-#   }
-#   for_each = { for index, id in data.azurerm_resources.nsgs.resources : index => id }
-
-#   network_watcher_name      = var.network_watcher_name
-#   resource_group_name       = "NetworkWatcherRG"
-#   network_security_group_id = each.value.id
-#   # network_security_group_id = data.azurerm_network_security_group.gateway_security_group.id
-#   storage_account_id = azurerm_storage_account.storage_account.id
-#   enabled            = true
-#   version            = 2
-
-#   retention_policy {
-#     enabled = true
-#     days    = 7
-#   }
-
-#   traffic_analytics {
-#     enabled               = true
-#     workspace_id          = var.log_analytics_workspace_id
-#     workspace_region      = var.log_analytics_location
-#     workspace_resource_id = var.log_analytics_id
-#     interval_in_minutes   = 10
-#   }
-# }
-
-# data "azurerm_resources" "virtual_machines" {
-#   depends_on = [
-#     aviatrix_transit_gateway.azure_transit_gateway,
-#     aviatrix_firewall_instance.palo_firewall_instance
-#   ]
-#   resource_group_name = azurerm_resource_group.azure_hub_resource_group.name
-#   type = "Microsoft.Compute/virtualMachines"
-# }
 
 # Creates scheduled shutdown of VM for 6 p.m. CST
 # resource "azurerm_dev_test_global_vm_shutdown_schedule" "vm_shutdown_schedule" {
