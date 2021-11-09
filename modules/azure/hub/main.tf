@@ -154,7 +154,7 @@ resource "aviatrix_firenet" "firenet" {
   depends_on = [
     aviatrix_firewall_instance_association.firewall_instance_association_1
   ]
-  vpc_id                               = aviatrix_firewall_instance.palo_firewall_instance.vpc_id
+  vpc_id                               = aviatrix_firewall_instance.palo_firewall_instance[count.index].vpc_id
   inspection_enabled                   = true
   egress_enabled                       = false
   keep_alive_via_lan_interface_enabled = false
