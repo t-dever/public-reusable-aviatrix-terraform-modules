@@ -38,7 +38,7 @@ resource "azurerm_subnet" "azure_hub_gateway_subnet" {
 }
 
 resource "azurerm_subnet" "azure_hub_firewall_subnet" {
-  count = var.firenet_enabled ? 1: 0
+  count = var.firenet_enabled ? 1 : 0
   depends_on = [
     azurerm_virtual_network.azure_hub_vnet
   ]
@@ -83,6 +83,7 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   enable_segmentation           = true
   enable_transit_firenet        = var.firenet_enabled ? true : null
   enable_vpc_dns_server         = false
+  enable_active_mesh            = true
 }
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
@@ -101,14 +102,14 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
 }
 
 resource "random_password" "generate_firewall_secret" {
-  count = var.firenet_enabled ? 1: 0
+  count            = var.firenet_enabled ? 1 : 0
   length           = 16
   special          = true
   override_special = "_%@"
 }
 
 resource "azurerm_key_vault_secret" "firewall_secret" {
-  count = var.firenet_enabled ? 1: 0
+  count        = var.firenet_enabled ? 1 : 0
   name         = "${local.firewall_name}-secret"
   value        = random_password.generate_firewall_secret[count.index].result
   key_vault_id = var.key_vault_id
@@ -116,7 +117,7 @@ resource "azurerm_key_vault_secret" "firewall_secret" {
 
 # Create Palo Alto Firewall instance 
 resource "aviatrix_firewall_instance" "palo_firewall_instance" {
-  count = var.firenet_enabled ? 1: 0
+  count = var.firenet_enabled ? 1 : 0
   depends_on = [
     aviatrix_transit_gateway.azure_transit_gateway
   ]
@@ -133,7 +134,7 @@ resource "aviatrix_firewall_instance" "palo_firewall_instance" {
 }
 
 resource "aviatrix_firewall_instance_association" "firewall_instance_association_1" {
-  count = var.firenet_enabled ? 1: 0
+  count = var.firenet_enabled ? 1 : 0
   depends_on = [
     aviatrix_firewall_instance.palo_firewall_instance,
     aviatrix_transit_gateway.azure_transit_gateway
@@ -149,7 +150,7 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
 }
 
 resource "aviatrix_firenet" "firenet" {
-  count = var.firenet_enabled ? 1: 0
+  count = var.firenet_enabled ? 1 : 0
   depends_on = [
     aviatrix_firewall_instance_association.firewall_instance_association_1
   ]
@@ -164,7 +165,7 @@ resource "aviatrix_firenet" "firenet" {
 
 # # Modifies the existing mgmt NSG to only allow your user inbound to manage
 resource "azurerm_network_security_rule" "palo_allow_user_mgmt_nsg_inbound" {
-  count = var.firenet_enabled ? 1: 0
+  count = var.firenet_enabled ? 1 : 0
   depends_on = [
     aviatrix_firewall_instance.palo_firewall_instance
   ]
@@ -183,7 +184,7 @@ resource "azurerm_network_security_rule" "palo_allow_user_mgmt_nsg_inbound" {
 
 # # Allows Controller to access firewall mgmt
 resource "azurerm_network_security_rule" "palo_allow_controller_mgmt_nsg_inbound" {
-  count = var.firenet_enabled ? 1: 0
+  count = var.firenet_enabled ? 1 : 0
   depends_on = [
     aviatrix_firewall_instance.palo_firewall_instance
   ]
@@ -202,7 +203,7 @@ resource "azurerm_network_security_rule" "palo_allow_controller_mgmt_nsg_inbound
 
 # # Modifies the existing mgmt NSG to only allow your user inbound to manage
 resource "azurerm_network_security_rule" "palo_deny_mgmt_nsg_inbound" {
-  count = var.firenet_enabled ? 1: 0
+  count = var.firenet_enabled ? 1 : 0
   depends_on = [
     aviatrix_firewall_instance.palo_firewall_instance
   ]
@@ -220,7 +221,7 @@ resource "azurerm_network_security_rule" "palo_deny_mgmt_nsg_inbound" {
 }
 
 data "aviatrix_firenet_vendor_integration" "vendor_integration" {
-  count = var.firenet_enabled ? 1: 0
+  count         = var.firenet_enabled ? 1 : 0
   vpc_id        = aviatrix_firewall_instance.palo_firewall_instance[count.index].vpc_id
   instance_id   = aviatrix_firewall_instance.palo_firewall_instance[count.index].instance_id
   vendor_type   = "Palo Alto Networks VM-Series"
