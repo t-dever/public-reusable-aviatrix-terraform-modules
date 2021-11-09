@@ -21,4 +21,5 @@ output "controller_resource_group_name" {
 output "user_public_ip_address" {
   value       = var.controller_user_public_ip_address
   description = "The public IP address of the User; used for NSG rules"
+  sensitive   = true
 }
