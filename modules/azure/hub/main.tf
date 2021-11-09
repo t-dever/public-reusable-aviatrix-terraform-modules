@@ -90,7 +90,7 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
   depends_on = [
     aviatrix_transit_gateway.azure_transit_gateway
   ]
-  virtual_machine_id = "/subscriptions/${azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_hub_resource_group.name}/providers/Microsoft.Compute/virtualMachines/${local.gateway_name}"
+  virtual_machine_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_hub_resource_group.name}/providers/Microsoft.Compute/virtualMachines/${local.gateway_name}"
   location           = azurerm_resource_group.azure_hub_resource_group.location
   enabled            = true
 
@@ -111,7 +111,7 @@ resource "random_password" "generate_firewall_secret" {
 resource "azurerm_key_vault_secret" "firewall_secret" {
   count = var.firenet_enabled ? 1: 0
   name         = "${local.firewall_name}-secret"
-  value        = random_password.generate_firewall_secret.result
+  value        = random_password.generate_firewall_secret[count.index].result
   key_vault_id = var.key_vault_id
 }
 
@@ -128,9 +128,9 @@ resource "aviatrix_firewall_instance" "palo_firewall_instance" {
   firewall_image_version = "9.1.0"
   firewall_size          = "Standard_D3_v2"
   username               = "paloAdmin"
-  password               = random_password.generate_firewall_secret.result
+  password               = random_password.generate_firewall_secret[count.index].result
   management_subnet      = azurerm_subnet.azure_hub_gateway_subnet.address_prefix
-  egress_subnet          = azurerm_subnet.azure_hub_firewall_subnet.address_prefix
+  egress_subnet          = azurerm_subnet.azure_hub_firewall_subnet[count.index].address_prefix
 }
 
 resource "aviatrix_firewall_instance_association" "firewall_instance_association_1" {
