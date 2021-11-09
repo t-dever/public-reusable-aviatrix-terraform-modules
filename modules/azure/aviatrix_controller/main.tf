@@ -208,7 +208,7 @@ resource "azurerm_network_security_group" "controller_security_group" {
   resource_group_name = azurerm_resource_group.resource_group.name
 }
 
-resource "azurerm_network_security_rule" "controller_nsg" {
+resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
   name                        = "AllowUserHttpsInboundToController"
   priority                    = 100
   direction                   = "Inbound"
@@ -217,6 +217,20 @@ resource "azurerm_network_security_rule" "controller_nsg" {
   source_port_range           = "*"
   destination_port_range      = "*"
   source_address_prefix       = var.controller_user_public_ip_address
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.resource_group.name
+  network_security_group_name = azurerm_network_security_group.controller_security_group.name
+}
+
+resource "azurerm_network_security_rule" "allow_build_agent_to_controller_nsg" {
+  name                        = "AllowBuildAgentHttpsInboundToController"
+  priority                    = 101
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = var.build_agent_ip_address
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.resource_group.name
   network_security_group_name = azurerm_network_security_group.controller_security_group.name

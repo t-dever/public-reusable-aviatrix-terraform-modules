@@ -9,37 +9,42 @@ variable "vnet_address_prefix" {
 }
 variable "admin_email" {
   description = "The email address used for the aviatrix controller registration."
-  sensitive = true
+  sensitive   = true
 }
 variable "controller_customer_id" {
   description = "The customer id for the aviatrix controller"
-  sensitive = true
+  sensitive   = true
 }
 variable "controller_admin_password" {
   description = "The password used for the admin account on the aviatrix controller."
-  sensitive = true
+  sensitive   = true
 }
 variable "controller_subnet_address_prefix" {
   description = "The subnet address prefix that's used for the controller and copilot VMs. e.g. 10.0.0.0/24"
 }
 variable "controller_user_public_ip_address" {
   description = "The public IP address of the user that is logging into the controller"
-  sensitive = true
+  sensitive   = true
+}
+variable "build_agent_ip_address" {
+  description = "The Public IP Address of the build agent to add to the NSG allow rule"
+  sensitive   = true
+  default     = "1.1.1.1"
 }
 variable "network_watcher_name" {
   description = "The name of the network watcher instance for nsg flow logs."
 }
 variable "aviatrix_azure_access_account_name" {
   description = "The account used to manage the aviatrix controller in azure"
-  sensitive = true
+  sensitive   = true
 }
 variable "azure_application_key" {
   description = "The application/client secret/key to perform a backup restore"
-  sensitive = true
+  sensitive   = true
 }
 variable "log_analytics_workspace_id" {
   description = "The log analytics workspace id."
-  sensitive = true
+  sensitive   = true
 }
 variable "log_analytics_location" {
   description = "The log analytics location."
