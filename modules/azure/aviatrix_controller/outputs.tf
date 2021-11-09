@@ -23,3 +23,8 @@ output "user_public_ip_address" {
   description = "The public IP address of the User; used for NSG rules"
   sensitive   = true
 }
+output "aviatrix_azure_account" {
+  value       = var.aviatrix_azure_access_account_name
+  description = "The Azure account provisioned in the aviatrix controller used for accessing subscriptions"
+  sensitive   = true
+}
