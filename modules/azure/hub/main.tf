@@ -90,7 +90,7 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
   depends_on = [
     aviatrix_transit_gateway.azure_transit_gateway
   ]
-  virtual_machine_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_hub_resource_group.name}/providers/Microsoft.Compute/virtualMachines/${local.gateway_name}"
+  virtual_machine_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_hub_resource_group.name}/providers/Microsoft.Compute/virtualMachines/av-gw-${local.gateway_name}"
   location           = azurerm_resource_group.azure_hub_resource_group.location
   enabled            = true
 
