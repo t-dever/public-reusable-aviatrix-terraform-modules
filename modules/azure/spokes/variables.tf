@@ -8,7 +8,7 @@ variable "virtual_machines_subnet_address_prefix" {
   description = "The address prefix for virtual machines subnet in vnet"
 }
 variable "aviatrix_azure_account" {}
-variable "transit_gateway_name" {}
+# variable "transit_gateway_name" {}
 variable "key_vault_id" {
   type = string
 }
