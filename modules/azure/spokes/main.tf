@@ -90,13 +90,14 @@ resource "aviatrix_spoke_gateway" "azure_spoke_gateway" {
 #   resource_group_name = azurerm_resource_group.azure_spoke_resource_group.name
 # }
 
-# resource "aviatrix_spoke_transit_attachment" "attach_spoke" {
-#   depends_on = [
-#     aviatrix_spoke_gateway.azure_spoke_gateway
-#   ]
-#   spoke_gw_name   = aviatrix_spoke_gateway.azure_spoke_gateway.gw_name
-#   transit_gw_name = var.transit_gateway_name
-# }
+resource "aviatrix_spoke_transit_attachment" "attach_spoke" {
+  depends_on = [
+    aviatrix_spoke_gateway.azure_spoke_gateway
+  ]
+  spoke_gw_name   = aviatrix_spoke_gateway.azure_spoke_gateway.gw_name
+  transit_gw_name = var.transit_gateway_name
+}
+
 # resource "aviatrix_transit_firenet_policy" "spoke_transit_firenet_policy" {
 #   depends_on = [
 #     aviatrix_spoke_gateway.azure_spoke_gateway,

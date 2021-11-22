@@ -21,7 +21,7 @@ variable "aviatrix_azure_account" {
   description = "The name of the account configured in the Aviatrix Controller."
   type = string
 }
-# variable "transit_gateway_name" {}
+variable "transit_gateway_name" {}
 variable "controller_username" {
   description = "The name for the Aviatrix Controller login."
   type = string
