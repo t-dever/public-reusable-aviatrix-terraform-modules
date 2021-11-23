@@ -15,6 +15,24 @@ resource "azurerm_resource_group" "resource_group" {
   location = var.location
 }
 
+# resource "random_password" "generate_controller_secret" {
+#   length           = 24
+#   min_upper        = 2
+#   min_numeric      = 2
+#   min_special      = 2
+#   special          = true
+#   override_special = "_%@"
+# }
+
+# resource "azurerm_key_vault_secret" "aviatrix_admin_secret" {
+#   depends_on = [
+#     time_sleep.wait_1_minute
+#   ]
+#   name         = "controller-admin-pw"
+#   value        = random_password.generate_controller_secret.result
+#   key_vault_id = azurerm_key_vault.key_vault.id
+# }
+
 resource "azurerm_storage_account" "storage_account" {
   name                     = replace("${var.resource_prefix}sa", "-", "")
   resource_group_name      = azurerm_resource_group.resource_group.name

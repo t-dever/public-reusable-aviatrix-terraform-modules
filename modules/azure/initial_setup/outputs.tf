@@ -48,11 +48,11 @@ output "controller_admin_password" {
   sensitive = true
 }
 
-output "azure_application_key" {
-  value       = var.azure_application_key
-  description = "The Application key for the service principal"
-  sensitive   = true
-}
+# output "azure_application_key" {
+#   value       = var.azure_application_key
+#   description = "The Application key for the service principal"
+#   sensitive   = true
+# }
 
 output "aviatrix_customer_id" {
   value       = var.aviatrix_customer_id
