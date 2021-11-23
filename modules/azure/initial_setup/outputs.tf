@@ -54,8 +54,8 @@ output "log_analytics_region" {
 #   sensitive   = true
 # }
 
-output "aviatrix_customer_id" {
-  value       = var.aviatrix_customer_id
-  description = "The customer id used for the azure controller"
-  sensitive   = true
-}
+# output "aviatrix_customer_id" {
+#   value       = var.aviatrix_customer_id
+#   description = "The customer id used for the azure controller"
+#   sensitive   = true
+# }

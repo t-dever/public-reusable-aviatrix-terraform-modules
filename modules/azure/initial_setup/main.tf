@@ -32,7 +32,7 @@ data "azurerm_resource_group" "resource_group" {
 
 resource "azurerm_log_analytics_workspace" "log_analytics" {
   name                = "${var.resource_prefix}-la"
-  location            = var.location
+  location            = data.azurerm_resource_group.resource_group.location
   resource_group_name = data.azurerm_resource_group.resource_group.name
   sku                 = "PerGB2018"
   retention_in_days   = 30
@@ -69,7 +69,7 @@ resource "azurerm_role_assignment" "storage_account_user_contributor" {
 
 resource "azurerm_key_vault" "key_vault" {
   name                        = "${var.resource_prefix}-kv"
-  location                    = var.location
+  location                    = data.azurerm_resource_group.resource_group.location
   resource_group_name         = data.azurerm_resource_group.resource_group.name
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
