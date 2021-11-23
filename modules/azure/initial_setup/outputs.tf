@@ -42,20 +42,3 @@ output "log_analytics_name" {
 output "log_analytics_region" {
   value = data.azurerm_resource_group.resource_group.location
 }
-# output "controller_admin_password" {
-#   value       = random_password.generate_controller_secret.result
-#   description = "The controller admin password"
-#   sensitive = true
-# }
-
-# output "azure_application_key" {
-#   value       = var.azure_application_key
-#   description = "The Application key for the service principal"
-#   sensitive   = true
-# }
-
-# output "aviatrix_customer_id" {
-#   value       = var.aviatrix_customer_id
-#   description = "The customer id used for the azure controller"
-#   sensitive   = true
-# }
