@@ -7,9 +7,9 @@ variable "resource_prefix" {
 variable "user_principal_id" {
   description = "The ID of the user that needs to access the key vault via Azure Portal GUI. This is used to give key vault secrets officer role"
 }
-variable "aviatrix_customer_id" {
-  description = "The ID used for the aviatrix controller"
-}
+# variable "aviatrix_customer_id" {
+#   description = "The ID used for the aviatrix controller"
+# }
 # variable "azure_subscription_id" {
 #   description = "Azure Subscription ID"
 # }
