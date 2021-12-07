@@ -116,7 +116,7 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   resource_group_name             = azurerm_resource_group.resource_group.name
   network_interface_ids           = ["${azurerm_network_interface.azure_controller_nic.id}"]
   computer_name                   = "avx-controller"
-  size                            = "Standard_D1_v2"
+  size                            = var.controller_vm_size
   priority                        = "Spot"
   eviction_policy                 = "Deallocate"
   admin_username                  = "adminUser"
@@ -172,7 +172,7 @@ resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
   resource_group_name             = azurerm_resource_group.resource_group.name
   network_interface_ids           = ["${azurerm_network_interface.azure_copilot_nic.id}"]
   computer_name                   = "avx-copilot"
-  size                            = "Standard_D1_v2"
+  size                            = var.copilot_vm_size
   priority                        = "Spot"
   eviction_policy                 = "Deallocate"
   admin_username                  = "adminUser"

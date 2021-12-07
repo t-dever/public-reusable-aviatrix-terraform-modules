@@ -15,6 +15,14 @@ variable "controller_customer_id" {
   description = "The customer id for the aviatrix controller"
   sensitive   = true
 }
+variable "controller_vm_size" {
+  description = "The size for the controller VM."
+  default = "Standard_A4_v2"
+}
+variable "copilot_vm_size" {
+  description = "The size for the Co-Pilot VM."
+  default = "Standard_D8as_v4"
+}
 variable "controller_admin_password" {
   description = "The password used for the admin account on the aviatrix controller."
   sensitive   = true
