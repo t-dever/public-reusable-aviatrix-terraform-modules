@@ -23,10 +23,6 @@ variable "copilot_vm_size" {
   description = "The size for the Co-Pilot VM."
   default = "Standard_D8as_v4"
 }
-variable "controller_admin_password" {
-  description = "The password used for the admin account on the aviatrix controller."
-  sensitive   = true
-}
 variable "controller_subnet_address_prefix" {
   description = "The subnet address prefix that's used for the controller and copilot VMs. e.g. 10.0.0.0/24"
 }
