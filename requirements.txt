@@ -1,1 +1,2 @@
 pre-commit==2.16.0
+checkov==2.0.639

@@ -5,3 +5,9 @@ repos:
       - id: terraform_fmt
         files: '.*/modules/($|/.*)'
         always_run: true
+      - id: terraform_tflint
+        files: '.*/modules/($|/.*)'
+        always_run: true
+      # - id: checkov
+      #   files: '.*/modules/($|/.*)'
+      #   always_run: true
