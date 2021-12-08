@@ -8,8 +8,8 @@ repos:
         always_run: true
         files: .*
         args:
-          - args=--enable-rule=terraform_comment_syntax
-          - args=--enable-rule=terraform_typed_variables
+          - /enable-rule:terraform_comment_syntax
+          - /enable-rule:terraform_typed_variables
       # - id: checkov
       #   files: '.*/modules/($|/.*)'
       #   always_run: true
