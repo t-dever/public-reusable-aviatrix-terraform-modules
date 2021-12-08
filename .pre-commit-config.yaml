@@ -7,7 +7,7 @@ repos:
       - id: terraform_tflint
         always_run: true
         args: 
-          - --args=--enable-rule=terraform_documented_variables
+          - --args=--enable-rule=terraform_comment_syntax
       # - id: checkov
       #   files: '.*/modules/($|/.*)'
       #   always_run: true
