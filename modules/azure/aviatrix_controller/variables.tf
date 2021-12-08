@@ -15,10 +15,6 @@ variable "controller_customer_id" {
   description = "The customer id for the aviatrix controller"
   sensitive   = true
 }
-variable "controller_admin_password" {
-  description = "The password used for the admin account on the aviatrix controller."
-  sensitive   = true
-}
 variable "controller_subnet_address_prefix" {
   description = "The subnet address prefix that's used for the controller and copilot VMs. e.g. 10.0.0.0/24"
 }
@@ -54,4 +50,9 @@ variable "log_analytics_id" {
 }
 variable "controller_version" {
   default = "UserConnect-6.5.2613"
+}
+
+variable "key_vault_id" {
+  description = "The key vault ID where to store the admin credentials"
+  sensitive   = true
 }
