@@ -28,3 +28,9 @@ output "aviatrix_azure_account" {
   description = "The Azure account provisioned in the aviatrix controller used for accessing subscriptions"
   sensitive   = true
 }
+
+output "controller_admin_password" {
+  value       = random_password.generate_controller_secret.result
+  description = "The controller admin password"
+  sensitive = true
+}

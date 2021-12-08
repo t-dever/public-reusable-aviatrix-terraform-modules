@@ -63,3 +63,8 @@ variable "log_analytics_id" {
 variable "controller_version" {
   default = "UserConnect-6.5.2613"
 }
+
+variable "key_vault_id" {
+  description = "The key vault ID where to store the admin credentials"
+  sensitive   = true
+}
