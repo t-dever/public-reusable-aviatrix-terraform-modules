@@ -6,6 +6,8 @@ repos:
         always_run: true
       - id: terraform_tflint
         always_run: true
+        args: 
+          - --args=--enable-rule=terraform_documented_variables
       # - id: checkov
       #   files: '.*/modules/($|/.*)'
       #   always_run: true
