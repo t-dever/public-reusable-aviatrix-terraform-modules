@@ -1,0 +1,13 @@
+trigger: none
+pool: ubuntu-latest
+
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
+
+  - script: |
+      pip install -U -r $(System.DefaultWorkingDirectory)/requirements.txt
+      pre-commit run --all-files

@@ -2,11 +2,14 @@ repos:
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: "v1.59.0"
     hooks:
-      # Ensures terraform formatting is correct
-      - id: terraform_fmt
+      - id: terraform_fmt # Ensures terraform formatting is correct
         always_run: true
-      # Ensures terraform syntax is correct
-      - id: terraform_tflint
+        args:
+          - --args=-no-color
+          - --args=-diff
+          - --args=-write=false
+
+      - id: terraform_tflint # Ensures terraform syntax is correct
         always_run: true
         args:
           - --args=--enable-rule=terraform_comment_syntax # Ensures comments are '#' instead of '//'
