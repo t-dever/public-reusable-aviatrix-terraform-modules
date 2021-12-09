@@ -32,5 +32,5 @@ output "aviatrix_azure_account" {
 output "controller_admin_password" {
   value       = random_password.generate_controller_secret.result
   description = "The controller admin password"
-  sensitive = true
+  sensitive   = true
 }

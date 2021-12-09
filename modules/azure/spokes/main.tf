@@ -1,10 +1,7 @@
 locals {
-  gateway_name   = "${var.resource_prefix}-az-spoke-gw"
-  key_vault_name = "${var.resource_prefix}-kv"
-  vm1_name       = "${var.resource_prefix}-vm1"
+  gateway_name = "${var.resource_prefix}-az-spoke-gw"
+  vm1_name     = "${var.resource_prefix}-vm1"
 }
-
-data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "azure_spoke_resource_group" {
   name     = "${var.resource_prefix}-rg"
@@ -71,7 +68,7 @@ resource "aviatrix_spoke_gateway" "azure_spoke_gateway" {
   }
   cloud_type                        = 8
   account_name                      = var.aviatrix_azure_account
-  gw_name                           = "${local.gateway_name}"
+  gw_name                           = local.gateway_name
   vpc_id                            = "${azurerm_virtual_network.azure_spoke_vnet.name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}"
   vpc_reg                           = var.location
   gw_size                           = "Standard_B1ms"
@@ -132,6 +129,10 @@ resource "random_password" "generate_vm1_secret" {
   length           = 16
   special          = true
   override_special = "_%@"
+  min_upper        = 1
+  min_lower        = 1
+  min_numeric      = 1
+  min_special      = 1
 }
 resource "azurerm_key_vault_secret" "vm1_secret" {
   name         = local.vm1_name
@@ -150,7 +151,7 @@ resource "azurerm_network_interface" "virtual_machine1_nic1" {
   }
 }
 resource "azurerm_linux_virtual_machine" "virtual_machine1" {
-  name                            = "${local.vm1_name}"
+  name                            = local.vm1_name
   resource_group_name             = azurerm_resource_group.azure_spoke_resource_group.name
   location                        = var.location
   size                            = "Standard_DS1_v2"

@@ -40,5 +40,6 @@ output "log_analytics_name" {
   description = "The log analytics name"
 }
 output "log_analytics_region" {
-  value = data.azurerm_resource_group.resource_group.location
+  value       = data.azurerm_resource_group.resource_group.location
+  description = "The log analytics regions/location"
 }

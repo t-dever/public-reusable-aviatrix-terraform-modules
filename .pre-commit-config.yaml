@@ -2,14 +2,17 @@ repos:
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: "v1.59.0"
     hooks:
+      # Ensures terraform formatting is correct
       - id: terraform_fmt
         always_run: true
+      # Ensures terraform syntax is correct
       - id: terraform_tflint
         always_run: true
-        files: .*
         args:
-          - /enable-rule:terraform_comment_syntax
-          - /enable-rule:terraform_typed_variables
+          - --args=--enable-rule=terraform_comment_syntax # Ensures comments are '#' instead of '//'
+          - --args=--enable-rule=terraform_typed_variables # Ensures 'type' is specified for variables
+          - --args=--enable-rule=terraform_documented_outputs # Ensures 'description' is applied for all outputs
+          - --args=--enable-rule=terraform_documented_variables # Ensures 'description' is applied for variables
+          - --args=--enable-rule=terraform_unused_declarations # Ensures unused variables are not applied
       # - id: checkov
-      #   files: '.*/modules/($|/.*)'
       #   always_run: true

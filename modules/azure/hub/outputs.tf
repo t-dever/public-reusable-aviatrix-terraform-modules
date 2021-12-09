@@ -19,7 +19,8 @@ output "transit_gateway_name" {
 }
 
 output "firewall_mgmt_ip" {
-  value = ["${aviatrix_firewall_instance.palo_firewall_instance.*.public_ip}"]
+  value       = ["${aviatrix_firewall_instance.palo_firewall_instance.*.public_ip}"]
+  description = "The public IP addresses for firewalls"
   # value = var.firenet_enabled ? aviatrix_firewall_instance.palo_firewall_instance[count.index].public_ip : null
   sensitive = true
 }

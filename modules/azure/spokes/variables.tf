@@ -1,44 +1,48 @@
 variable "resource_prefix" {
   description = "The resource prefix to use as the prefix for all resource names."
+  type        = string
 }
 variable "location" {
   description = "The location used for deployment of resources."
-  type = string
+  type        = string
 }
 variable "vnet_address_prefix" {
   description = "The address prefix used for the virtual network."
-  type = string
+  type        = string
 }
 variable "gateway_subnet_address_prefix" {
   description = "The address prefix for gateway subnet in vnet."
-  type = string
+  type        = string
 }
 variable "virtual_machines_subnet_address_prefix" {
   description = "The address prefix for virtual machines subnet in vnet."
-  type = string
+  type        = string
 }
 variable "aviatrix_azure_account" {
   description = "The name of the account configured in the Aviatrix Controller."
-  type = string
+  type        = string
 }
-variable "transit_gateway_name" {}
+variable "transit_gateway_name" {
+  description = "The transit gateway name the spoke will be peered with."
+  type        = string
+}
 variable "controller_username" {
   description = "The name for the Aviatrix Controller login."
-  type = string
-  default = "admin"
-  sensitive = true
+  type        = string
+  default     = "admin"
+  sensitive   = true
 }
 variable "key_vault_id" {
   description = "The key vault id where the virtual machine secret will be stored."
-  type = string
+  type        = string
 }
 variable "controller_public_ip" {
   description = "The Aviatrix Controller public IP Address."
-  type = string
-  sensitive = true
+  type        = string
+  sensitive   = true
 }
 variable "controller_password" {
   description = "The Aviatrix Controller admin credentials."
-  type = string
-  sensitive = true
+  type        = string
+  sensitive   = true
 }

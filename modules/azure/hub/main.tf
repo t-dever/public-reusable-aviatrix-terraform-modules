@@ -220,19 +220,17 @@ resource "azurerm_network_security_rule" "palo_deny_mgmt_nsg_inbound" {
   network_security_group_name = "${local.firewall_name}-management"
 }
 
-data "aviatrix_firenet_vendor_integration" "vendor_integration" {
-  count         = var.firenet_enabled ? 1 : 0
-  vpc_id        = aviatrix_firewall_instance.palo_firewall_instance[count.index].vpc_id
-  instance_id   = aviatrix_firewall_instance.palo_firewall_instance[count.index].instance_id
-  vendor_type   = "Palo Alto Networks VM-Series"
-  public_ip     = aviatrix_firewall_instance.palo_firewall_instance[count.index].public_ip
-  username      = "paloAdmin"
-  password      = random_password.generate_firewall_secret[count.index].result
-  firewall_name = local.firewall_name
-  save          = true
-}
-
-
+# data "aviatrix_firenet_vendor_integration" "vendor_integration" {
+#   count         = var.firenet_enabled ? 1 : 0
+#   vpc_id        = aviatrix_firewall_instance.palo_firewall_instance[count.index].vpc_id
+#   instance_id   = aviatrix_firewall_instance.palo_firewall_instance[count.index].instance_id
+#   vendor_type   = "Palo Alto Networks VM-Series"
+#   public_ip     = aviatrix_firewall_instance.palo_firewall_instance[count.index].public_ip
+#   username      = "paloAdmin"
+#   password      = random_password.generate_firewall_secret[count.index].result
+#   firewall_name = local.firewall_name
+#   save          = true
+# }
 
 # Creates scheduled shutdown of VM for 6 p.m. CST
 # resource "azurerm_dev_test_global_vm_shutdown_schedule" "vm_shutdown_schedule" {

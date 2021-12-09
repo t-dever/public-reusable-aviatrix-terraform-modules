@@ -216,7 +216,7 @@ resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
 
 resource "azurerm_network_security_group" "controller_security_group" {
   lifecycle {
-    ignore_changes = [ security_rule ]
+    ignore_changes = [security_rule]
   }
   name                = "Aviatrix-SG-${azurerm_public_ip.azure_controller_public_ip.ip_address}"
   location            = azurerm_resource_group.resource_group.location
@@ -266,8 +266,8 @@ resource "azurerm_subnet_network_security_group_association" "azure_controller_n
 }
 
 resource "azurerm_network_watcher_flow_log" "nsg_flow_logs" {
-  network_watcher_name = var.network_watcher_name
-  resource_group_name  = "NetworkWatcherRG"
+  network_watcher_name      = var.network_watcher_name
+  resource_group_name       = "NetworkWatcherRG"
   network_security_group_id = azurerm_network_security_group.controller_security_group.id
   storage_account_id        = azurerm_storage_account.storage_account.id
   enabled                   = true

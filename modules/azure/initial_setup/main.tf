@@ -14,7 +14,7 @@ terraform {
     }
   }
 }
-//tests
+
 provider "azurerm" {
   features {
     key_vault {
@@ -22,12 +22,12 @@ provider "azurerm" {
     }
   }
   skip_provider_registration = true
-  storage_use_azuread = true
+  storage_use_azuread        = true
 }
 
 data "azurerm_client_config" "current" {}
 data "azurerm_resource_group" "resource_group" {
-  name     = "${var.resource_prefix}-rg"
+  name = "${var.resource_prefix}-rg"
 }
 
 resource "azurerm_log_analytics_workspace" "log_analytics" {
@@ -39,8 +39,8 @@ resource "azurerm_log_analytics_workspace" "log_analytics" {
 }
 
 data "azurerm_storage_account" "storage_account" {
-  name                      = replace("${var.resource_prefix}sa", "-", "")
-  resource_group_name       = data.azurerm_resource_group.resource_group.name
+  name                = replace("${var.resource_prefix}sa", "-", "")
+  resource_group_name = data.azurerm_resource_group.resource_group.name
 }
 
 resource "azurerm_storage_container" "controller_backup_container" {
