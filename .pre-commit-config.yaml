@@ -12,7 +12,7 @@ repos:
         require_serial: true
         args: 
           - "--skip-check"
-          - " CKV_AZURE_119"
+          - "CKV_AZURE_119"
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
