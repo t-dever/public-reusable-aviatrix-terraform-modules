@@ -1,19 +1,15 @@
 repos:
-  # - repo: https://github.com/antonbabenko/pre-commit-terraform
-  #   rev: "v1.59.0"
-  #   hooks:
-  #     - id: terraform_fmt # Ensures terraform formatting is correct
-  #       always_run: true
-  #       verbose: true
-  #       args:
-  #         - --args=-no-color
-  #         - --args=-check
-  #         - --args=-diff
-  #         - --args=-write=false
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: "v1.59.0"
     hooks:
-    -   id: check-yaml
+      - id: terraform_fmt # Ensures terraform formatting is correct
+        always_run: true
+        verbose: true
+        args:
+          - --args=-no-color
+          - --args=-check
+          - --args=-diff
+          - --args=-write=false
 
       # - id: terraform_tflint # Ensures terraform syntax is correct
       #   always_run: true
