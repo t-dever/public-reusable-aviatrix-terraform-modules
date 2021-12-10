@@ -6,7 +6,7 @@ repos:
     hooks:
       - id: checkov
         always_run: true
-        # verbose: true
+        verbose: true
         entry: checkov -d .
         language: python
         require_serial: true
