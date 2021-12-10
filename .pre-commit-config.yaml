@@ -6,12 +6,13 @@ repos:
     hooks:
       - id: checkov
         always_run: true
-        verbose: true
+        # verbose: true
+        entry: checkov -d .
+        language: python
+        require_serial: true
         args: 
-          - "-d"
-          - "."
           - "--skip-check"
-          - "CKV_AZURE_119"
+          - " CKV_AZURE_119"
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
