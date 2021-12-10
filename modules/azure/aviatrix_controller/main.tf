@@ -28,16 +28,25 @@ resource "azurerm_key_vault_secret" "aviatrix_admin_secret" {
   name         = "controller-admin-pw"
   value        = random_password.generate_controller_secret.result
   key_vault_id = var.key_vault_id
+  content_type = "aviatrix controller admin password username admin"
 }
 
 resource "azurerm_storage_account" "storage_account" {
-  name                     = replace("${var.resource_prefix}sa", "-", "")
-  resource_group_name      = azurerm_resource_group.resource_group.name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  min_tls_version          = "TLS1_2"
-  allow_blob_public_access = false
+  name                      = replace("${var.resource_prefix}sa", "-", "")
+  resource_group_name       = azurerm_resource_group.resource_group.name
+  location                  = var.location
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  min_tls_version           = "TLS1_2"
+  allow_blob_public_access  = false
+  enable_https_traffic_only = true
+  network_rules {
+    default_action = "Deny"
+    bypass         = ["AzureServices"]
+    virtual_network_subnet_ids = [
+      azurerm_subnet.azure_controller_subnet.id
+    ]
+  }
 }
 
 resource "azurerm_virtual_network" "azure_controller_vnet" {
@@ -135,8 +144,9 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   priority                        = "Spot"
   eviction_policy                 = "Deallocate"
   admin_username                  = "adminUser"
-  admin_password                  = "Password1234"
+  admin_password                  = random_password.generate_controller_secret.result
   disable_password_authentication = false
+  allow_extension_operations      = false
 
   source_image_reference {
     publisher = "aviatrix-systems"
@@ -193,6 +203,7 @@ resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
   admin_username                  = "adminUser"
   admin_password                  = "Password123!"
   disable_password_authentication = false
+  allow_extension_operations      = false
 
   source_image_reference {
     publisher = "aviatrix-systems"

@@ -11,13 +11,21 @@ resource "azurerm_resource_group" "azure_hub_resource_group" {
 }
 
 resource "azurerm_storage_account" "storage_account" {
-  name                     = replace("${var.resource_prefix}sa", "-", "")
-  resource_group_name      = azurerm_resource_group.azure_hub_resource_group.name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  min_tls_version          = "TLS1_2"
-  allow_blob_public_access = false
+  name                      = replace("${var.resource_prefix}sa", "-", "")
+  resource_group_name       = azurerm_resource_group.azure_hub_resource_group.name
+  location                  = var.location
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  min_tls_version           = "TLS1_2"
+  allow_blob_public_access  = false
+  enable_https_traffic_only = true
+  network_rules {
+    default_action = "Deny"
+    bypass         = ["AzureServices"]
+    virtual_network_subnet_ids = [
+      azurerm_subnet.azure_hub_gateway_subnet.id
+    ]
+  }
 }
 
 resource "azurerm_virtual_network" "azure_hub_vnet" {

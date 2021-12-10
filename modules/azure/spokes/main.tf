@@ -1,6 +1,7 @@
 locals {
-  gateway_name = "${var.resource_prefix}-az-spoke-gw"
-  vm1_name     = "${var.resource_prefix}-vm1"
+  gateway_name         = "${var.resource_prefix}-az-spoke-gw"
+  vm1_name             = "${var.resource_prefix}-vm1"
+  storage_account_name = replace("${var.resource_prefix}sa", "-", "")
 }
 
 resource "azurerm_resource_group" "azure_spoke_resource_group" {
@@ -9,13 +10,22 @@ resource "azurerm_resource_group" "azure_spoke_resource_group" {
 }
 
 resource "azurerm_storage_account" "spoke_storage_account" {
-  name                     = replace("${var.resource_prefix}sa", "-", "")
-  resource_group_name      = azurerm_resource_group.azure_spoke_resource_group.name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  min_tls_version          = "TLS1_2"
-  allow_blob_public_access = false
+  name                      = local.storage_account_name
+  resource_group_name       = azurerm_resource_group.azure_spoke_resource_group.name
+  location                  = var.location
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  min_tls_version           = "TLS1_2"
+  allow_blob_public_access  = false
+  enable_https_traffic_only = true
+  network_rules {
+    default_action = "Deny"
+    bypass         = ["AzureServices"]
+    virtual_network_subnet_ids = [
+      azurerm_subnet.azure_spoke_gateway_subnet.id,
+      azurerm_subnet.azure_virtual_machines_subnet.id
+    ]
+  }
 }
 
 ############### START - VIRTUAL NETWORK ###############
@@ -138,6 +148,7 @@ resource "azurerm_key_vault_secret" "vm1_secret" {
   name         = local.vm1_name
   value        = random_password.generate_vm1_secret.result
   key_vault_id = var.key_vault_id
+  content_type = "${local.vm1_name}:${adminuser}"
 }
 resource "azurerm_network_interface" "virtual_machine1_nic1" {
   name                = "${local.vm1_name}-nic"
@@ -158,6 +169,7 @@ resource "azurerm_linux_virtual_machine" "virtual_machine1" {
   admin_username                  = "adminuser"
   admin_password                  = azurerm_key_vault_secret.vm1_secret.value
   disable_password_authentication = false
+  allow_extension_operations      = false
   network_interface_ids = [
     azurerm_network_interface.virtual_machine1_nic1.id
   ]

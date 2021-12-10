@@ -25,6 +25,10 @@ provider "azurerm" {
   storage_use_azuread        = true
 }
 
+locals {
+  storage_account_name = replace("${var.resource_prefix}sa", "-", "")
+}
+
 data "azurerm_client_config" "current" {}
 data "azurerm_resource_group" "resource_group" {
   name = "${var.resource_prefix}-rg"
@@ -39,8 +43,15 @@ resource "azurerm_log_analytics_workspace" "log_analytics" {
 }
 
 data "azurerm_storage_account" "storage_account" {
-  name                = replace("${var.resource_prefix}sa", "-", "")
+  name                = local.storage_account_name
   resource_group_name = data.azurerm_resource_group.resource_group.name
+}
+
+resource "azurerm_storage_account_network_rules" "storage_account_access_rules" {
+  storage_account_id = data.azurerm_storage_account.storage_account.id
+  default_action     = "Deny"
+  ip_rules           = [var.build_agent_ip_address, var.controller_user_public_ip_address]
+  bypass             = ["AzureServices"]
 }
 
 resource "azurerm_storage_container" "controller_backup_container" {
@@ -77,6 +88,12 @@ resource "azurerm_key_vault" "key_vault" {
   purge_protection_enabled    = false
   enable_rbac_authorization   = true
   sku_name                    = "standard"
+  soft_delete_enabled         = true
+  network_acls {
+    default_action = "Deny"
+    bypass         = "AzureServices"
+    ip_rules       = [var.build_agent_ip_address, var.controller_user_public_ip_address]
+  }
 }
 
 resource "azurerm_role_assignment" "key_vault_pipeline_service_principal" {
