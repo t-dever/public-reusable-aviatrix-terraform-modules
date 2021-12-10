@@ -1,6 +1,11 @@
 default_language_version:
     python: python3.10
 repos:
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: "2.0.648"
+    hooks:
+      - id: checkov
+        args: ["--skip-check", "CKV_AZURE_119"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
@@ -26,23 +31,23 @@ repos:
           - --args=--enable-rule=terraform_documented_variables # Ensures 'description' is applied for variables
           - --args=--enable-rule=terraform_unused_declarations # Ensures unused variables are not applied
 
-      - id: checkov
-        always_run: true
-        args: [
-          "-d", ".",
-          # "--skip-check", "CKV_AZURE_119", # skip network interfaces do not use public IPs
-          # "--skip-check", "CKV2_AZURE_21", # skip storage blob logging
-          "--skip-check", "CKV2_AZURE_8", # skip "Ensure the storage container storing the activity logs is not publicly accessible"
-          "--skip-check", "CKV2_AZURE_1", # skip "Ensure storage for critical data are encrypted with Customer Managed Key"
-          "--skip-check", "CKV2_AZURE_18", # skip "Ensure that Storage Accounts use customer-managed key for encryption"
-          "--skip-check", "CKV_AZURE_1", # skip "Ensure Azure Instance does not use basic authentication(Use SSH Key Instead)"
-          "--skip-check", "CKV_AZURE_41", # skip "Ensure that the expiration date is set on all secrets"
-          "--skip-check", "CKV_AZURE_43", # skip "Ensure Storage Accounts adhere to the naming rules"
-          "--skip-check", "CKV_AZURE_33", # skip "Ensure Storage logging is enabled for Queue service for read, write and delete requests"
-          "--skip-check", "CKV_AZURE_110", # skip "Ensure that key vault enables purge protection"
-          "--skip-check", "CKV_AZURE_42", # skip "Ensure the key vault is recoverable"
-          "--skip-check", "CKV_AZURE_12", # skip "Ensure that Network Security Group Flow Log retention period is 'greater than 90 days'"
-        ]
+      # - id: checkov
+      #   always_run: true
+        # args: [
+        #   "-d", ".",
+        #   # "--skip-check", "CKV_AZURE_119", # skip network interfaces do not use public IPs
+        #   # "--skip-check", "CKV2_AZURE_21", # skip storage blob logging
+        #   "--skip-check", "CKV2_AZURE_8", # skip "Ensure the storage container storing the activity logs is not publicly accessible"
+        #   "--skip-check", "CKV2_AZURE_1", # skip "Ensure storage for critical data are encrypted with Customer Managed Key"
+        #   "--skip-check", "CKV2_AZURE_18", # skip "Ensure that Storage Accounts use customer-managed key for encryption"
+        #   "--skip-check", "CKV_AZURE_1", # skip "Ensure Azure Instance does not use basic authentication(Use SSH Key Instead)"
+        #   "--skip-check", "CKV_AZURE_41", # skip "Ensure that the expiration date is set on all secrets"
+        #   "--skip-check", "CKV_AZURE_43", # skip "Ensure Storage Accounts adhere to the naming rules"
+        #   "--skip-check", "CKV_AZURE_33", # skip "Ensure Storage logging is enabled for Queue service for read, write and delete requests"
+        #   "--skip-check", "CKV_AZURE_110", # skip "Ensure that key vault enables purge protection"
+        #   "--skip-check", "CKV_AZURE_42", # skip "Ensure the key vault is recoverable"
+        #   "--skip-check", "CKV_AZURE_12", # skip "Ensure that Network Security Group Flow Log retention period is 'greater than 90 days'"
+        # ]
 
       # - id: terraform_docs
       #   args:
