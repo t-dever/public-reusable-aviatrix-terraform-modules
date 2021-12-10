@@ -6,6 +6,7 @@ repos:
     hooks:
       - id: checkov
         always_run: true
+        verbose: true
         args: ["--skip-check", "CKV_AZURE_119"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
