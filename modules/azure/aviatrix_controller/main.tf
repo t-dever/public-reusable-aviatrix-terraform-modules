@@ -201,7 +201,7 @@ resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
   priority                        = "Spot"
   eviction_policy                 = "Deallocate"
   admin_username                  = "adminUser"
-  admin_password                  = "Password123!"
+  admin_password                  = random_password.generate_controller_secret.result
   disable_password_authentication = false
   allow_extension_operations      = false
 

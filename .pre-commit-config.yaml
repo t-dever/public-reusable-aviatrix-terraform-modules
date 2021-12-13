@@ -2,7 +2,13 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
-    -   id: check-yaml
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-vcs-permalinks
+      - id: forbid-new-submodules
+      - id: no-commit-to-branch
+
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: "v1.59.0"
     hooks:
@@ -44,24 +50,5 @@ repos:
       - id: terraform_tfsec
         always_run: true
         args:
-        - >
-          -e azure-keyvault-ensure-secret-expiry
-          -e azure-network-retention-policy-set
-          -e azure-keyvault-no-purge
-          -e azure-compute-disable-password-authentication
-
-      # - id: terraform_docs
-      #   args:
-      #   - --hook-config=--path-to-file=README.md
-      #   - --hook-config=--add-to-existing-file=true
-      #   - --hook-config=--create-file-if-not-exist=true
-      #   - --hook-config=--output-check
-
-      # Can't use this until I figure out how to pass in env vars
-      # API key is C:\Users\Travis Dever\.config\infracost\credentials.yml
-      # - id: infracost_breakdown
-      #   args:
-      #     - --args=--path=./modules/azure/hub
-      #     - --args=--terraform-plan-flags="-var"
-      #   always_run: true
-      #   verbose: true
+          - >
+            --args= -e azure-keyvault-ensure-secret-expiry,azure-network-retention-policy-set,azure-keyvault-no-purge,azure-compute-disable-password-authentication
