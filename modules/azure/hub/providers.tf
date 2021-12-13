@@ -16,8 +16,4 @@ provider "azurerm" {
   skip_provider_registration = true
 }
 
-provider "aviatrix" {
-  controller_ip = var.controller_public_ip
-  password      = var.controller_admin_password
-  username      = "admin"
-}
+provider "aviatrix" {}

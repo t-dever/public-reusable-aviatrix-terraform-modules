@@ -89,6 +89,7 @@ resource "aviatrix_spoke_gateway" "azure_spoke_gateway" {
   manage_transit_gateway_attachment = false
   enable_active_mesh                = true
 }
+
 # data "azurerm_network_security_group" "gateway_security_group" {
 #   depends_on = [
 #     aviatrix_spoke_gateway.azure_spoke_gateway

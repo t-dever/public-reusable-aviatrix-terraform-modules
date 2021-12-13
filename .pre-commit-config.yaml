@@ -41,6 +41,15 @@ repos:
           "--skip-check", "CKV_AZURE_12", # skip "Ensure that Network Security Group Flow Log retention period is 'greater than 90 days'"
         ]
 
+      - id: terraform_tfsec
+        always_run: true
+        args:
+        - >
+          -e azure-keyvault-ensure-secret-expiry
+          -e azure-network-retention-policy-set
+          -e azure-keyvault-no-purge
+          -e azure-compute-disable-password-authentication
+
       # - id: terraform_docs
       #   args:
       #   - --hook-config=--path-to-file=README.md

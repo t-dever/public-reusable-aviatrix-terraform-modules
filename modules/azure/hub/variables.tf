@@ -14,12 +14,6 @@ variable "controller_public_ip" {
   type        = string
   sensitive   = true
 }
-variable "controller_admin_password" {
-  description = "The controllers admin password"
-  default     = "1.1.1.1"
-  type        = string
-  sensitive   = true
-}
 variable "aviatrix_azure_account" {
   description = "The account used to manage the transit gateway"
   type        = string
