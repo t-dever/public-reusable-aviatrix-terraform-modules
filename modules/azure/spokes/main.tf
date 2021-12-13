@@ -149,7 +149,7 @@ resource "azurerm_key_vault_secret" "vm1_secret" {
   name         = local.vm1_name
   value        = random_password.generate_vm1_secret.result
   key_vault_id = var.key_vault_id
-  content_type = "${local.vm1_name}:${adminuser}"
+  content_type = "${local.vm1_name}:adminuser"
 }
 resource "azurerm_network_interface" "virtual_machine1_nic1" {
   name                = "${local.vm1_name}-nic"
