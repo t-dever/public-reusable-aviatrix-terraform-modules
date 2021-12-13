@@ -9,5 +9,5 @@ steps:
       addToPath: true
 
   - script: |
-      pip install -U -r $(System.DefaultWorkingDirectory)/requirements.txt
-      pre-commit run --all-files
+      # pip install -U -r $(System.DefaultWorkingDirectory)/requirements.txt
+      docker run -v $(pwd):/lint -w /lint ghcr.io/antonbabenko/pre-commit-terraform:latest run -a
