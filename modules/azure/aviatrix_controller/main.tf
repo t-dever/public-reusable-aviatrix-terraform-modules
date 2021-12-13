@@ -143,6 +143,9 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
     local_file.controller_secret,
     local_file.controller_customer_id
   ]
+  lifecycle {
+    ignore_changes = [tags]
+  }
   name                            = local.controller_name
   location                        = azurerm_resource_group.resource_group.location
   resource_group_name             = azurerm_resource_group.resource_group.name
@@ -155,6 +158,9 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   admin_password                  = random_password.generate_controller_secret.result
   disable_password_authentication = false
   allow_extension_operations      = false
+  tags = {
+    "deploymentTime": timestamp()
+  }
 
   source_image_reference {
     publisher = "aviatrix-systems"
@@ -181,7 +187,7 @@ resource "null_resource" "initial_config" {
     azurerm_linux_virtual_machine.aviatrix_controller_vm
   ]
   triggers = {
-    "id" = azurerm_linux_virtual_machine.aviatrix_controller_vm.id
+    "timestamp" = azurerm_linux_virtual_machine.aviatrix_controller_vm.id
   }
   provisioner "local-exec" {
     command = "python3 ${path.module}/initial_controller_setup.py"
