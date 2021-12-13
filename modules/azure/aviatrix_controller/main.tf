@@ -180,6 +180,9 @@ resource "null_resource" "initial_config" {
   depends_on = [
     azurerm_linux_virtual_machine.aviatrix_controller_vm
   ]
+  triggers = {
+    "id" = azurerm_linux_virtual_machine.aviatrix_controller_vm.id
+  }
   provisioner "local-exec" {
     command = "python3 ${path.module}/initial_controller_setup.py"
     environment = {
