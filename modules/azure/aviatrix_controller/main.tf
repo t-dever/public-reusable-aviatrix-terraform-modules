@@ -64,6 +64,7 @@ resource "azurerm_subnet" "azure_controller_subnet" {
   virtual_network_name = "${var.resource_prefix}-vnet"
   resource_group_name  = azurerm_resource_group.resource_group.name
   address_prefixes     = [var.controller_subnet_address_prefix]
+  service_endpoints = ["Microsoft.Storage"]
 }
 
 resource "azurerm_public_ip" "azure_controller_public_ip" {
@@ -73,6 +74,13 @@ resource "azurerm_public_ip" "azure_controller_public_ip" {
   sku                     = "Basic"
   allocation_method       = "Static"
   idle_timeout_in_minutes = 30
+}
+
+resource "azurerm_key_vault_secret" "aviatrix_controller_public_ip_secret" {
+  name         = "controller-public-ip"
+  value        = azurerm_public_ip.azure_controller_public_ip.ip_address
+  key_vault_id = var.key_vault_id
+  content_type = "aviatrix controller public ip address"
 }
 
 resource "azurerm_public_ip" "azure_copilot_public_ip" {
