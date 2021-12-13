@@ -27,7 +27,7 @@ repos:
         always_run: true
         args: [
           "-d", ".",
-          "--skip-check", "CKV_AZURE_119", # skip network interfaces do not use public IPs
+          # "--skip-check", "CKV_AZURE_119", # skip network interfaces do not use public IPs
           "--skip-check", "CKV2_AZURE_21", # skip storage blob logging
           "--skip-check", "CKV2_AZURE_8", # skip "Ensure the storage container storing the activity logs is not publicly accessible"
           "--skip-check", "CKV2_AZURE_1", # skip "Ensure storage for critical data are encrypted with Customer Managed Key"
