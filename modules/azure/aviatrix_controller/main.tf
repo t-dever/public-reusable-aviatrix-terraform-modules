@@ -187,7 +187,7 @@ resource "null_resource" "initial_config" {
     azurerm_linux_virtual_machine.aviatrix_controller_vm
   ]
   triggers = {
-    "timestamp" = azurerm_linux_virtual_machine.aviatrix_controller_vm.id
+    "id" = azurerm_linux_virtual_machine.aviatrix_controller_vm.id
   }
   provisioner "local-exec" {
     command = "python3 ${path.module}/initial_controller_setup.py"
