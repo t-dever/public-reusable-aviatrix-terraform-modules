@@ -1,0 +1,26 @@
+name: Fix terraform file formatting
+
+on:
+  - pull_request
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    name: Check terraform file are formatted correctly
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: terraform fmt
+        uses: dflook/terraform-fmt@v1
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v2
+        with:
+          commit-message: terraform fmt
+          title: Reformat terraform files
+          body: Update terraform files to canonical format using `terraform fmt`
+          branch: automated-terraform-fmt
+          # ${{ secrets.GITHUB_TOKEN }}

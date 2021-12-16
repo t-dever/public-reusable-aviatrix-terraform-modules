@@ -16,9 +16,9 @@ repos:
         always_run: true
         args:
           - --args=-no-color
-          - --args=-check
           - --args=-diff
-          - --args=-write=false
+          - --args=-write=true
+# - --args=-check
 
       - id: terraform_tflint # Ensures terraform syntax is correct
         always_run: true
