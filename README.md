@@ -17,29 +17,3 @@ If checkov pre-check is NOT working with python pre-commit check then run from d
 cd public-aviatrix-multi-cloud-network
 docker run -v ${pwd}:/lint -w /lint ghcr.io/antonbabenko/pre-commit-terraform:latest run -a
 ```
-
-<!-- BEGIN_TF_DOCS -->
-## Requirements
-
-No requirements.
-
-## Providers
-
-No providers.
-
-## Modules
-
-No modules.
-
-## Resources
-
-No resources.
-
-## Inputs
-
-No inputs.
-
-## Outputs
-
-No outputs.
-<!-- END_TF_DOCS -->
