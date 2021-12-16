@@ -1,0 +1,10 @@
+trigger: none
+pr:
+  - main
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - script: |
+      docker run -v $(pwd):/lint -w /lint ghcr.io/antonbabenko/pre-commit-terraform:latest run -a
+    displayName: Perform Pre-Commit Checks

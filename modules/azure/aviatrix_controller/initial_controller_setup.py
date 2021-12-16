@@ -83,7 +83,8 @@ class ControllerSetup():
                 results = r.get('results')
                 print(f"Current Software Version: {results.get('current_version')}")
                 print(f"Expected Software Version: {self.controller_version}")
-                if results.get('current_version') == self.controller_version:
+                current_version_short = results.get('current_version').split('-')[1][0:3]
+                if current_version_short == self.controller_version_short:
                     print("Software is up-to-date")
                     return True
                 else:

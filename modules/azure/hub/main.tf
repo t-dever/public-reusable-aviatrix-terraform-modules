@@ -11,13 +11,21 @@ resource "azurerm_resource_group" "azure_hub_resource_group" {
 }
 
 resource "azurerm_storage_account" "storage_account" {
-  name                     = replace("${var.resource_prefix}sa", "-", "")
-  resource_group_name      = azurerm_resource_group.azure_hub_resource_group.name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  min_tls_version          = "TLS1_2"
-  allow_blob_public_access = false
+  name                      = replace("${var.resource_prefix}sa", "-", "")
+  resource_group_name       = azurerm_resource_group.azure_hub_resource_group.name
+  location                  = var.location
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  min_tls_version           = "TLS1_2"
+  allow_blob_public_access  = false
+  enable_https_traffic_only = true
+  network_rules {
+    default_action = "Deny"
+    bypass         = ["AzureServices"]
+    virtual_network_subnet_ids = [
+      azurerm_subnet.azure_hub_gateway_subnet.id
+    ]
+  }
 }
 
 resource "azurerm_virtual_network" "azure_hub_vnet" {
@@ -220,19 +228,17 @@ resource "azurerm_network_security_rule" "palo_deny_mgmt_nsg_inbound" {
   network_security_group_name = "${local.firewall_name}-management"
 }
 
-data "aviatrix_firenet_vendor_integration" "vendor_integration" {
-  count         = var.firenet_enabled ? 1 : 0
-  vpc_id        = aviatrix_firewall_instance.palo_firewall_instance[count.index].vpc_id
-  instance_id   = aviatrix_firewall_instance.palo_firewall_instance[count.index].instance_id
-  vendor_type   = "Palo Alto Networks VM-Series"
-  public_ip     = aviatrix_firewall_instance.palo_firewall_instance[count.index].public_ip
-  username      = "paloAdmin"
-  password      = random_password.generate_firewall_secret[count.index].result
-  firewall_name = local.firewall_name
-  save          = true
-}
-
-
+# data "aviatrix_firenet_vendor_integration" "vendor_integration" {
+#   count         = var.firenet_enabled ? 1 : 0
+#   vpc_id        = aviatrix_firewall_instance.palo_firewall_instance[count.index].vpc_id
+#   instance_id   = aviatrix_firewall_instance.palo_firewall_instance[count.index].instance_id
+#   vendor_type   = "Palo Alto Networks VM-Series"
+#   public_ip     = aviatrix_firewall_instance.palo_firewall_instance[count.index].public_ip
+#   username      = "paloAdmin"
+#   password      = random_password.generate_firewall_secret[count.index].result
+#   firewall_name = local.firewall_name
+#   save          = true
+# }
 
 # Creates scheduled shutdown of VM for 6 p.m. CST
 # resource "azurerm_dev_test_global_vm_shutdown_schedule" "vm_shutdown_schedule" {

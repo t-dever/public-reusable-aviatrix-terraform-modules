@@ -28,16 +28,25 @@ resource "azurerm_key_vault_secret" "aviatrix_admin_secret" {
   name         = "controller-admin-pw"
   value        = random_password.generate_controller_secret.result
   key_vault_id = var.key_vault_id
+  content_type = "aviatrix controller admin password username admin"
 }
 
 resource "azurerm_storage_account" "storage_account" {
-  name                     = replace("${var.resource_prefix}sa", "-", "")
-  resource_group_name      = azurerm_resource_group.resource_group.name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  min_tls_version          = "TLS1_2"
-  allow_blob_public_access = false
+  name                      = replace("${var.resource_prefix}sa", "-", "")
+  resource_group_name       = azurerm_resource_group.resource_group.name
+  location                  = var.location
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  min_tls_version           = "TLS1_2"
+  allow_blob_public_access  = false
+  enable_https_traffic_only = true
+  network_rules {
+    default_action = "Deny"
+    bypass         = ["AzureServices"]
+    virtual_network_subnet_ids = [
+      azurerm_subnet.azure_controller_subnet.id
+    ]
+  }
 }
 
 resource "azurerm_virtual_network" "azure_controller_vnet" {
@@ -55,6 +64,7 @@ resource "azurerm_subnet" "azure_controller_subnet" {
   virtual_network_name = "${var.resource_prefix}-vnet"
   resource_group_name  = azurerm_resource_group.resource_group.name
   address_prefixes     = [var.controller_subnet_address_prefix]
+  service_endpoints    = ["Microsoft.Storage"]
 }
 
 resource "azurerm_public_ip" "azure_controller_public_ip" {
@@ -64,6 +74,13 @@ resource "azurerm_public_ip" "azure_controller_public_ip" {
   sku                     = "Basic"
   allocation_method       = "Static"
   idle_timeout_in_minutes = 30
+}
+
+resource "azurerm_key_vault_secret" "aviatrix_controller_public_ip_secret" {
+  name         = "controller-public-ip"
+  value        = azurerm_public_ip.azure_controller_public_ip.ip_address
+  key_vault_id = var.key_vault_id
+  content_type = "aviatrix controller public ip address"
 }
 
 resource "azurerm_public_ip" "azure_copilot_public_ip" {
@@ -126,17 +143,24 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
     local_file.controller_secret,
     local_file.controller_customer_id
   ]
+  lifecycle {
+    ignore_changes = [tags]
+  }
   name                            = local.controller_name
   location                        = azurerm_resource_group.resource_group.location
   resource_group_name             = azurerm_resource_group.resource_group.name
   network_interface_ids           = ["${azurerm_network_interface.azure_controller_nic.id}"]
   computer_name                   = "avx-controller"
-  size                            = "Standard_D1_v2"
+  size                            = var.controller_vm_size
   priority                        = "Spot"
   eviction_policy                 = "Deallocate"
   admin_username                  = "adminUser"
-  admin_password                  = "Password1234"
+  admin_password                  = random_password.generate_controller_secret.result
   disable_password_authentication = false
+  allow_extension_operations      = false
+  tags = {
+    "deploymentTime" : timestamp()
+  }
 
   source_image_reference {
     publisher = "aviatrix-systems"
@@ -162,6 +186,9 @@ resource "null_resource" "initial_config" {
   depends_on = [
     azurerm_linux_virtual_machine.aviatrix_controller_vm
   ]
+  triggers = {
+    "id" = azurerm_linux_virtual_machine.aviatrix_controller_vm.id
+  }
   provisioner "local-exec" {
     command = "python3 ${path.module}/initial_controller_setup.py"
     environment = {
@@ -187,12 +214,13 @@ resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
   resource_group_name             = azurerm_resource_group.resource_group.name
   network_interface_ids           = ["${azurerm_network_interface.azure_copilot_nic.id}"]
   computer_name                   = "avx-copilot"
-  size                            = "Standard_D1_v2"
+  size                            = var.copilot_vm_size
   priority                        = "Spot"
   eviction_policy                 = "Deallocate"
   admin_username                  = "adminUser"
-  admin_password                  = "Password123!"
+  admin_password                  = random_password.generate_controller_secret.result
   disable_password_authentication = false
+  allow_extension_operations      = false
 
   source_image_reference {
     publisher = "aviatrix-systems"
@@ -216,7 +244,7 @@ resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
 
 resource "azurerm_network_security_group" "controller_security_group" {
   lifecycle {
-    ignore_changes = [ security_rule ]
+    ignore_changes = [security_rule]
   }
   name                = "Aviatrix-SG-${azurerm_public_ip.azure_controller_public_ip.ip_address}"
   location            = azurerm_resource_group.resource_group.location
@@ -266,8 +294,8 @@ resource "azurerm_subnet_network_security_group_association" "azure_controller_n
 }
 
 resource "azurerm_network_watcher_flow_log" "nsg_flow_logs" {
-  network_watcher_name = var.network_watcher_name
-  resource_group_name  = "NetworkWatcherRG"
+  network_watcher_name      = var.network_watcher_name
+  resource_group_name       = "NetworkWatcherRG"
   network_security_group_id = azurerm_network_security_group.controller_security_group.id
   storage_account_id        = azurerm_storage_account.storage_account.id
   enabled                   = true
