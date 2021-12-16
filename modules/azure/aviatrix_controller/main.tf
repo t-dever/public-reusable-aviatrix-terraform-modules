@@ -64,7 +64,7 @@ resource "azurerm_subnet" "azure_controller_subnet" {
   virtual_network_name = "${var.resource_prefix}-vnet"
   resource_group_name  = azurerm_resource_group.resource_group.name
   address_prefixes     = [var.controller_subnet_address_prefix]
-  service_endpoints = ["Microsoft.Storage"]
+  service_endpoints    = ["Microsoft.Storage"]
 }
 
 resource "azurerm_public_ip" "azure_controller_public_ip" {
@@ -159,7 +159,7 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   disable_password_authentication = false
   allow_extension_operations      = false
   tags = {
-    "deploymentTime": timestamp()
+    "deploymentTime" : timestamp()
   }
 
   source_image_reference {

@@ -43,7 +43,7 @@ resource "azurerm_subnet" "azure_spoke_gateway_subnet" {
   virtual_network_name = "${var.resource_prefix}-vnet"
   resource_group_name  = azurerm_resource_group.azure_spoke_resource_group.name
   address_prefixes     = [var.gateway_subnet_address_prefix]
-  service_endpoints = ["Microsoft.Storage"]
+  service_endpoints    = ["Microsoft.Storage"]
 }
 resource "azurerm_subnet" "azure_virtual_machines_subnet" {
   depends_on = [
@@ -53,7 +53,7 @@ resource "azurerm_subnet" "azure_virtual_machines_subnet" {
   virtual_network_name = "${var.resource_prefix}-vnet"
   resource_group_name  = azurerm_resource_group.azure_spoke_resource_group.name
   address_prefixes     = [var.virtual_machines_subnet_address_prefix]
-  service_endpoints = ["Microsoft.Storage"]
+  service_endpoints    = ["Microsoft.Storage"]
 }
 
 ############### STOP - VIRTUAL NETWORK ###############
