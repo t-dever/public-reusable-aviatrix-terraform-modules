@@ -19,13 +19,15 @@ resource "azurerm_storage_account" "storage_account" {
   min_tls_version           = "TLS1_2"
   allow_blob_public_access  = false
   enable_https_traffic_only = true
-  network_rules {
-    default_action = "Deny"
-    bypass         = ["AzureServices"]
-    virtual_network_subnet_ids = [
-      azurerm_subnet.azure_hub_gateway_subnet.id
-    ]
-  }
+}
+
+resource "azurerm_storage_account_network_rules" "storage_account_access_rules" {
+  storage_account_id = azurerm_storage_account.storage_account.id
+  default_action     = "Deny"
+  bypass             = ["AzureServices"]
+  virtual_network_subnet_ids = [
+    azurerm_subnet.azure_hub_gateway_subnet.id
+  ]
 }
 
 resource "azurerm_virtual_network" "azure_hub_vnet" {
