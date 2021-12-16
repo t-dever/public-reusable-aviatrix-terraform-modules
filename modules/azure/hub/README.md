@@ -75,14 +75,14 @@ No modules.
 | Name | Version |
 |------|---------|
 | <a name="requirement_aviatrix"></a> [aviatrix](#requirement\_aviatrix) | 2.20.1 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 2.80.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 2.89.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aviatrix"></a> [aviatrix](#provider\_aviatrix) | 2.20.1 |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 2.80.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 2.89.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
@@ -97,19 +97,20 @@ No modules.
 | [aviatrix_firewall_instance.palo_firewall_instance](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.20.1/docs/resources/firewall_instance) | resource |
 | [aviatrix_firewall_instance_association.firewall_instance_association_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.20.1/docs/resources/firewall_instance_association) | resource |
 | [aviatrix_transit_gateway.azure_transit_gateway](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.20.1/docs/resources/transit_gateway) | resource |
-| [azurerm_dev_test_global_vm_shutdown_schedule.transit_shutdown](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
-| [azurerm_key_vault_secret.firewall_secret](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/key_vault_secret) | resource |
-| [azurerm_network_security_rule.palo_allow_controller_mgmt_nsg_inbound](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/network_security_rule) | resource |
-| [azurerm_network_security_rule.palo_allow_user_mgmt_nsg_inbound](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/network_security_rule) | resource |
-| [azurerm_network_security_rule.palo_deny_mgmt_nsg_inbound](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/network_security_rule) | resource |
-| [azurerm_public_ip.azure_gateway_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/public_ip) | resource |
-| [azurerm_resource_group.azure_hub_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/resource_group) | resource |
-| [azurerm_storage_account.storage_account](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/storage_account) | resource |
-| [azurerm_subnet.azure_hub_firewall_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/subnet) | resource |
-| [azurerm_subnet.azure_hub_gateway_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/subnet) | resource |
-| [azurerm_virtual_network.azure_hub_vnet](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/virtual_network) | resource |
+| [azurerm_dev_test_global_vm_shutdown_schedule.transit_shutdown](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
+| [azurerm_key_vault_secret.firewall_secret](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/key_vault_secret) | resource |
+| [azurerm_network_security_rule.palo_allow_controller_mgmt_nsg_inbound](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/network_security_rule) | resource |
+| [azurerm_network_security_rule.palo_allow_user_mgmt_nsg_inbound](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/network_security_rule) | resource |
+| [azurerm_network_security_rule.palo_deny_mgmt_nsg_inbound](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/network_security_rule) | resource |
+| [azurerm_public_ip.azure_gateway_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/public_ip) | resource |
+| [azurerm_resource_group.azure_hub_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/resource_group) | resource |
+| [azurerm_storage_account.storage_account](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/storage_account) | resource |
+| [azurerm_storage_account_network_rules.storage_account_access_rules](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/storage_account_network_rules) | resource |
+| [azurerm_subnet.azure_hub_firewall_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/subnet) | resource |
+| [azurerm_subnet.azure_hub_gateway_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/subnet) | resource |
+| [azurerm_virtual_network.azure_hub_vnet](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/virtual_network) | resource |
 | [random_password.generate_firewall_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
-| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/data-sources/client_config) | data source |
+| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/data-sources/client_config) | data source |
 
 ## Inputs
 
