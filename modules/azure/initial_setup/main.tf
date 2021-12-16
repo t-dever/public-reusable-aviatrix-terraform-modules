@@ -56,12 +56,6 @@ data "azurerm_storage_account" "storage_account" {
 #   bypass             = ["AzureServices"]
 # }
 
-# resource "azurerm_storage_container" "controller_tfstate_container" {
-#   name                  = "tfstate"
-#   storage_account_name  = data.azurerm_storage_account.storage_account.name
-#   container_access_type = "private"
-# }
-
 resource "azurerm_storage_container" "controller_backup_container" {
   name                  = "controller-backup"
   storage_account_name  = data.azurerm_storage_account.storage_account.name
