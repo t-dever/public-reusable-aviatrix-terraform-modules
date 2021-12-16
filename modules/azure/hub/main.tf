@@ -11,6 +11,7 @@ resource "azurerm_resource_group" "azure_hub_resource_group" {
 }
 
 resource "azurerm_storage_account" "storage_account" {
+  #checkov:skip=CKV_AZURE_35:The network rules are configured in a separate resource below
   name                      = replace("${var.resource_prefix}sa", "-", "")
   resource_group_name       = azurerm_resource_group.azure_hub_resource_group.name
   location                  = var.location
