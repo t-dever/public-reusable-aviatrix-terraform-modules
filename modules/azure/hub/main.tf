@@ -45,6 +45,7 @@ resource "azurerm_subnet" "azure_hub_gateway_subnet" {
   virtual_network_name = "${var.resource_prefix}-vnet"
   resource_group_name  = azurerm_resource_group.azure_hub_resource_group.name
   address_prefixes     = [var.gateway_mgmt_subnet_address_prefix]
+  service_endpoints    = ["Microsoft.Storage"]
 }
 
 resource "azurerm_subnet" "azure_hub_firewall_subnet" {
