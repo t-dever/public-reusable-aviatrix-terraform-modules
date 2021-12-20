@@ -47,12 +47,14 @@ data "azurerm_storage_account" "storage_account" {
   resource_group_name = data.azurerm_resource_group.resource_group.name
 }
 
-resource "azurerm_storage_account_network_rules" "storage_account_access_rules" {
-  storage_account_id = data.azurerm_storage_account.storage_account.id
-  default_action     = "Deny"
-  ip_rules           = [var.build_agent_ip_address, var.controller_user_public_ip_address]
-  bypass             = ["AzureServices"]
-}
+# TODO: Figure out how to get this working with build agent in same region,
+# TODO: network firewall rules don't apply to public IP's in the same region
+# resource "azurerm_storage_account_network_rules" "storage_account_access_rules" {
+#   storage_account_id = data.azurerm_storage_account.storage_account.id
+#   default_action     = "Deny"
+#   ip_rules           = [var.build_agent_ip_address, var.controller_user_public_ip_address]
+#   bypass             = ["AzureServices"]
+# }
 
 resource "azurerm_storage_container" "controller_backup_container" {
   name                  = "controller-backup"

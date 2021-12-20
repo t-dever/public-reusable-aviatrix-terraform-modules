@@ -93,7 +93,6 @@ No modules.
 | [azurerm_role_assignment.storage_account_pipeline_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.storage_account_user_blob_owner](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.storage_account_user_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/role_assignment) | resource |
-| [azurerm_storage_account_network_rules.storage_account_access_rules](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/storage_account_network_rules) | resource |
 | [azurerm_storage_container.controller_backup_container](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/storage_container) | resource |
 | [time_sleep.wait_1_minute](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/data-sources/client_config) | data source |

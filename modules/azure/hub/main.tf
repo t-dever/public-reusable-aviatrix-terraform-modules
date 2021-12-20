@@ -11,6 +11,7 @@ resource "azurerm_resource_group" "azure_hub_resource_group" {
 }
 
 resource "azurerm_storage_account" "storage_account" {
+  #checkov:skip=CKV_AZURE_35:The network rules are configured in a separate resource below
   name                      = replace("${var.resource_prefix}sa", "-", "")
   resource_group_name       = azurerm_resource_group.azure_hub_resource_group.name
   location                  = var.location
@@ -19,13 +20,15 @@ resource "azurerm_storage_account" "storage_account" {
   min_tls_version           = "TLS1_2"
   allow_blob_public_access  = false
   enable_https_traffic_only = true
-  network_rules {
-    default_action = "Deny"
-    bypass         = ["AzureServices"]
-    virtual_network_subnet_ids = [
-      azurerm_subnet.azure_hub_gateway_subnet.id
-    ]
-  }
+}
+
+resource "azurerm_storage_account_network_rules" "storage_account_access_rules" {
+  storage_account_id = azurerm_storage_account.storage_account.id
+  default_action     = "Deny"
+  bypass             = ["AzureServices"]
+  virtual_network_subnet_ids = [
+    azurerm_subnet.azure_hub_gateway_subnet.id
+  ]
 }
 
 resource "azurerm_virtual_network" "azure_hub_vnet" {
@@ -43,6 +46,7 @@ resource "azurerm_subnet" "azure_hub_gateway_subnet" {
   virtual_network_name = "${var.resource_prefix}-vnet"
   resource_group_name  = azurerm_resource_group.azure_hub_resource_group.name
   address_prefixes     = [var.gateway_mgmt_subnet_address_prefix]
+  service_endpoints    = ["Microsoft.Storage"]
 }
 
 resource "azurerm_subnet" "azure_hub_firewall_subnet" {
