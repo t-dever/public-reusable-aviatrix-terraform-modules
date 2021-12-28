@@ -11,7 +11,7 @@ class ControllerSetup():
         self.url = f"https://{os.getenv('AVIATRIX_CONTROLLER_PUBLIC_IP')}/v1/api"
         self.access_account = os.getenv('ACCESS_ACCOUNT')
         self.admin_email = os.getenv('ADMIN_EMAIL')
-        self.customer_id = open(os.getenv('CUSTOMER_ID_FILE_PATH'), "r").read()
+        self.customer_id = os.getenv('CUSTOMER_ID')
         self.subscription_id = os.getenv('SUBSCRIPTION_ID')
         self.directory_id = os.getenv('DIRECTORY_ID')
         self.client_id = os.getenv('CLIENT_ID')
@@ -20,7 +20,7 @@ class ControllerSetup():
         self.controller_version_short = os.getenv('CONTROLLER_VERSION').split('-')[1][0:3]
         self.controller_username = "admin"
         self.controller_initial_password = os.getenv('AVIATRIX_CONTROLLER_PRIVATE_IP')
-        self.controller_new_password = open(os.getenv('SECRET_CREDENTIAL_FILE_PATH'), "r").read()
+        self.controller_new_password = os.getenv('AVIATRIX_CONTROLLER_PASSWORD')
 
 
     def _get_cid(self):

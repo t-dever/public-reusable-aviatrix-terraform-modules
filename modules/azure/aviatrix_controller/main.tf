@@ -119,25 +119,6 @@ resource "azurerm_network_interface" "azure_copilot_nic" {
   }
 }
 
-# # This has to be done in order to see the outputs from the initial_controller_config.py script,
-# # otherwise it will block all outputs and you won't know the status of the script.
-resource "local_file" "controller_secret" {
-  lifecycle {
-    ignore_changes = all
-  }
-  sensitive_content = random_password.generate_controller_secret.result
-  filename          = "./controller_secret.txt"
-}
-# # This has to be done in order to see the outputs from the initial_controller_config.py script,
-# # otherwise it will block all outputs and you won't know the status of the script.
-resource "local_file" "controller_customer_id" {
-  lifecycle {
-    ignore_changes = all
-  }
-  sensitive_content = var.controller_customer_id
-  filename          = "./customer_id.txt"
-}
-
 resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   depends_on = [
     local_file.controller_secret,
@@ -197,8 +178,7 @@ resource "null_resource" "initial_config" {
       AVIATRIX_CONTROLLER_PASSWORD   = random_password.generate_controller_secret.result
       ADMIN_EMAIL                    = var.admin_email
       ACCESS_ACCOUNT                 = var.aviatrix_azure_access_account_name
-      SECRET_CREDENTIAL_FILE_PATH    = "./controller_secret.txt"
-      CUSTOMER_ID_FILE_PATH          = "./customer_id.txt"
+      CUSTOMER_ID                    = var.controller_customer_id
       SUBSCRIPTION_ID                = data.azurerm_client_config.current.subscription_id
       DIRECTORY_ID                   = data.azurerm_client_config.current.tenant_id
       CLIENT_ID                      = data.azurerm_client_config.current.client_id
@@ -291,27 +271,6 @@ resource "azurerm_subnet_network_security_group_association" "azure_controller_n
   ]
   subnet_id                 = azurerm_subnet.azure_controller_subnet.id
   network_security_group_id = azurerm_network_security_group.controller_security_group.id
-}
-
-resource "azurerm_network_watcher_flow_log" "nsg_flow_logs" {
-  network_watcher_name      = var.network_watcher_name
-  resource_group_name       = "NetworkWatcherRG"
-  network_security_group_id = azurerm_network_security_group.controller_security_group.id
-  storage_account_id        = azurerm_storage_account.storage_account.id
-  enabled                   = true
-  version                   = 2
-  retention_policy {
-    enabled = true
-    days    = 7
-  }
-
-  traffic_analytics {
-    enabled               = true
-    workspace_id          = var.log_analytics_workspace_id
-    workspace_region      = var.log_analytics_location
-    workspace_resource_id = var.log_analytics_id
-    interval_in_minutes   = 10
-  }
 }
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "copilot_shutdown" {
