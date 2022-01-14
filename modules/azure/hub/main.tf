@@ -127,7 +127,6 @@ resource "azurerm_key_vault_secret" "firewall_secret" {
   key_vault_id = var.key_vault_id
 }
 
-# Create Palo Alto Firewall instance 
 resource "aviatrix_firewall_instance" "firewall_instance" {
   count = var.firenet_enabled ? 1 : 0
   depends_on = [
@@ -141,7 +140,7 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   firewall_size          = var.firewall_image["firewall_size"]
   username               = var.firewall_image["firewall_username"]
   password               = random_password.generate_firewall_secret[count.index].result
-  management_subnet      = azurerm_subnet.azure_hub_gateway_subnet.address_prefix
+  management_subnet      = contains(split(var.firewall_image["firewall_image"], " ")[0], "Fortinet") ? null : azurerm_subnet.azure_hub_gateway_subnet.address_prefix
   egress_subnet          = azurerm_subnet.azure_hub_firewall_subnet[count.index].address_prefix
 }
 
