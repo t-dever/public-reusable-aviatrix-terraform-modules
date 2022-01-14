@@ -73,81 +73,81 @@ resource "azurerm_public_ip" "azure_gateway_public_ip" {
 }
 
 # Create an Aviatrix Azure Transit Network Gateway
-# resource "aviatrix_transit_gateway" "azure_transit_gateway" {
-#   depends_on = [
-#     azurerm_public_ip.azure_gateway_public_ip
-#   ]
-#   lifecycle {
-#     ignore_changes = [tags]
-#   }
-#   cloud_type                    = 8
-#   account_name                  = var.aviatrix_azure_account
-#   gw_name                       = local.gateway_name
-#   vpc_id                        = "${azurerm_virtual_network.azure_hub_vnet.name}:${azurerm_virtual_network.azure_hub_vnet.resource_group_name}"
-#   vpc_reg                       = var.location
-#   gw_size                       = "Standard_B2ms"
-#   subnet                        = azurerm_subnet.azure_hub_gateway_subnet.address_prefix
-#   connected_transit             = true
-#   allocate_new_eip              = false
-#   eip                           = azurerm_public_ip.azure_gateway_public_ip.ip_address
-#   azure_eip_name_resource_group = "${azurerm_public_ip.azure_gateway_public_ip.name}:${azurerm_virtual_network.azure_hub_vnet.resource_group_name}"
-#   enable_advertise_transit_cidr = true
-#   enable_segmentation           = true
-#   enable_transit_firenet        = var.firenet_enabled ? true : false
-#   enable_vpc_dns_server         = false
-#   enable_active_mesh            = true
-# }
+resource "aviatrix_transit_gateway" "azure_transit_gateway" {
+  depends_on = [
+    azurerm_public_ip.azure_gateway_public_ip
+  ]
+  lifecycle {
+    ignore_changes = [tags]
+  }
+  cloud_type                    = 8
+  account_name                  = var.aviatrix_azure_account
+  gw_name                       = local.gateway_name
+  vpc_id                        = "${azurerm_virtual_network.azure_hub_vnet.name}:${azurerm_virtual_network.azure_hub_vnet.resource_group_name}"
+  vpc_reg                       = var.location
+  gw_size                       = "Standard_B2ms"
+  subnet                        = azurerm_subnet.azure_hub_gateway_subnet.address_prefix
+  connected_transit             = true
+  allocate_new_eip              = false
+  eip                           = azurerm_public_ip.azure_gateway_public_ip.ip_address
+  azure_eip_name_resource_group = "${azurerm_public_ip.azure_gateway_public_ip.name}:${azurerm_virtual_network.azure_hub_vnet.resource_group_name}"
+  enable_advertise_transit_cidr = true
+  enable_segmentation           = true
+  enable_transit_firenet        = var.firenet_enabled ? true : false
+  enable_vpc_dns_server         = false
+  enable_active_mesh            = true
+}
 
-# resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
-#   depends_on = [
-#     aviatrix_transit_gateway.azure_transit_gateway
-#   ]
-#   virtual_machine_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_hub_resource_group.name}/providers/Microsoft.Compute/virtualMachines/av-gw-${local.gateway_name}"
-#   location           = azurerm_resource_group.azure_hub_resource_group.location
-#   enabled            = true
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
+  depends_on = [
+    aviatrix_transit_gateway.azure_transit_gateway
+  ]
+  virtual_machine_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_hub_resource_group.name}/providers/Microsoft.Compute/virtualMachines/av-gw-${local.gateway_name}"
+  location           = azurerm_resource_group.azure_hub_resource_group.location
+  enabled            = true
 
-#   daily_recurrence_time = "1800"
-#   timezone              = "Central Standard Time"
-#   notification_settings {
-#     enabled = false
-#   }
-# }
+  daily_recurrence_time = "1800"
+  timezone              = "Central Standard Time"
+  notification_settings {
+    enabled = false
+  }
+}
 
-# resource "random_password" "generate_firewall_secret" {
-#   count            = var.firenet_enabled ? 1 : 0
-#   length           = 16
-#   special          = true
-#   override_special = "_%@"
-# }
+resource "random_password" "generate_firewall_secret" {
+  count            = var.firenet_enabled ? 1 : 0
+  length           = 16
+  special          = true
+  override_special = "_%@"
+}
 
-# resource "azurerm_key_vault_secret" "firewall_secret" {
-#   count        = var.firenet_enabled ? 1 : 0
-#   name         = "${local.firewall_name}-secret"
-#   value        = random_password.generate_firewall_secret[count.index].result
-#   key_vault_id = var.key_vault_id
-# }
+resource "azurerm_key_vault_secret" "firewall_secret" {
+  count        = var.firenet_enabled ? 1 : 0
+  name         = "${local.firewall_name}-secret"
+  value        = random_password.generate_firewall_secret[count.index].result
+  key_vault_id = var.key_vault_id
+}
 
 # Create Palo Alto Firewall instance 
-# resource "aviatrix_firewall_instance" "firewall_instance" {
-#   count = var.firenet_enabled ? 1 : 0
-#   depends_on = [
-#     aviatrix_transit_gateway.azure_transit_gateway
-#   ]
-#   vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
-#   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
-#   firewall_name          = local.firewall_name
-#   # firewall_image         = var.firewall_image.firewall_image
-#   # firewall_image_version = var.firewall_image.firewall_image_version
-#   # firewall_size          = var.firewall_image.firewall_size
-#   # username               = var.firewall_image.firewall_username
-#   firewall_image         = var.firewall_image["firewall_image"]
-#   firewall_image_version = var.firewall_image["firewall_image_version"]
-#   firewall_size          = var.firewall_image["firewall_size"]
-#   username               = var.firewall_image["firewall_username"]
-#   password               = random_password.generate_firewall_secret[count.index].result
-#   management_subnet      = azurerm_subnet.azure_hub_gateway_subnet.address_prefix
-#   egress_subnet          = azurerm_subnet.azure_hub_firewall_subnet[count.index].address_prefix
-# }
+resource "aviatrix_firewall_instance" "firewall_instance" {
+  count = var.firenet_enabled ? 1 : 0
+  depends_on = [
+    aviatrix_transit_gateway.azure_transit_gateway
+  ]
+  vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
+  firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
+  firewall_name          = local.firewall_name
+  # firewall_image         = var.firewall_image.firewall_image
+  # firewall_image_version = var.firewall_image.firewall_image_version
+  # firewall_size          = var.firewall_image.firewall_size
+  # username               = var.firewall_image.firewall_username
+  firewall_image         = var.firewall_image["firewall_image"]
+  firewall_image_version = var.firewall_image["firewall_image_version"]
+  firewall_size          = var.firewall_image["firewall_size"]
+  username               = var.firewall_image["firewall_username"]
+  password               = random_password.generate_firewall_secret[count.index].result
+  management_subnet      = azurerm_subnet.azure_hub_gateway_subnet.address_prefix
+  egress_subnet          = azurerm_subnet.azure_hub_firewall_subnet[count.index].address_prefix
+}
 
 # resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
 #   count = var.firenet_enabled ? 1 : 0
