@@ -52,3 +52,28 @@ variable "firenet_enabled" {
   type        = bool
   default     = false
 }
+
+# variable "firewall_vendor" {
+#   type = string
+#   description = "The firewall vendor to deploy"
+
+#   validation {
+#     condition     = contains(["None", "PaloAlto", "Fortinet"], var.firewall_vendor)
+#     error_message = "Valid values for var: firewall_vendor are ('None', 'PaloAlto', 'Fortinet'])"
+#   } 
+# }
+
+variable "firewall_image" {
+  type = object({
+    firewall_image = string
+    firewall_image_version = string
+    firewall_size = string
+    firewall_username = string
+  })
+  default = {
+    firewall_image = "Palo Alto Networks VM-Series Next-Generation Firewall Bundle 1"
+    firewall_image_version = "9.1.0"
+    firewall_size          = "Standard_D3_v2"
+    username               = "paloAdmin"
+  }
+}

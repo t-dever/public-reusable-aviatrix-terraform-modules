@@ -128,7 +128,7 @@ resource "azurerm_key_vault_secret" "firewall_secret" {
 }
 
 # Create Palo Alto Firewall instance 
-resource "aviatrix_firewall_instance" "palo_firewall_instance" {
+resource "aviatrix_firewall_instance" "firewall_instance" {
   count = var.firenet_enabled ? 1 : 0
   depends_on = [
     aviatrix_transit_gateway.azure_transit_gateway
@@ -136,37 +136,37 @@ resource "aviatrix_firewall_instance" "palo_firewall_instance" {
   vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   firewall_name          = local.firewall_name
-  firewall_image         = "Palo Alto Networks VM-Series Next-Generation Firewall Bundle 1"
-  firewall_image_version = "9.1.0"
-  firewall_size          = "Standard_D3_v2"
-  username               = "paloAdmin"
+  firewall_image         = var.firewall_image.firewall_image
+  firewall_image_version = var.firewall_image.firewall_image_version
+  firewall_size          = var.firewall_image.firewall_size
+  username               = var.firewall_image.firewall_username
   password               = random_password.generate_firewall_secret[count.index].result
   management_subnet      = azurerm_subnet.azure_hub_gateway_subnet.address_prefix
   egress_subnet          = azurerm_subnet.azure_hub_firewall_subnet[count.index].address_prefix
 }
 
-resource "aviatrix_firewall_instance_association" "firewall_instance_association_1" {
+resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
   count = var.firenet_enabled ? 1 : 0
   depends_on = [
     aviatrix_firewall_instance.palo_firewall_instance,
     aviatrix_transit_gateway.azure_transit_gateway
   ]
-  vpc_id               = aviatrix_firewall_instance.palo_firewall_instance[count.index].vpc_id
+  vpc_id               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
   firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
-  instance_id          = aviatrix_firewall_instance.palo_firewall_instance[count.index].instance_id
-  firewall_name        = aviatrix_firewall_instance.palo_firewall_instance[count.index].firewall_name
-  lan_interface        = aviatrix_firewall_instance.palo_firewall_instance[count.index].lan_interface
-  management_interface = aviatrix_firewall_instance.palo_firewall_instance[count.index].management_interface
-  egress_interface     = aviatrix_firewall_instance.palo_firewall_instance[count.index].egress_interface
+  instance_id          = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
+  firewall_name        = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
+  lan_interface        = aviatrix_firewall_instance.firewall_instance[count.index].lan_interface
+  management_interface = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
+  egress_interface     = aviatrix_firewall_instance.firewall_instance[count.index].egress_interface
   attached             = true
 }
 
 resource "aviatrix_firenet" "firenet" {
   count = var.firenet_enabled ? 1 : 0
   depends_on = [
-    aviatrix_firewall_instance_association.firewall_instance_association_1
+    aviatrix_firewall_instance_association.firewall_instance_association
   ]
-  vpc_id                               = aviatrix_firewall_instance.palo_firewall_instance[count.index].vpc_id
+  vpc_id                               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
   inspection_enabled                   = true
   egress_enabled                       = false
   keep_alive_via_lan_interface_enabled = false
@@ -176,61 +176,61 @@ resource "aviatrix_firenet" "firenet" {
 }
 
 # # Modifies the existing mgmt NSG to only allow your user inbound to manage
-resource "azurerm_network_security_rule" "palo_allow_user_mgmt_nsg_inbound" {
-  count = var.firenet_enabled ? 1 : 0
-  depends_on = [
-    aviatrix_firewall_instance.palo_firewall_instance
-  ]
-  name                        = "AllowHttpsUserMgmtInbound"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "443"
-  source_address_prefix       = var.user_public_for_mgmt
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.azure_hub_resource_group.name
-  network_security_group_name = "${local.firewall_name}-management"
-}
+# resource "azurerm_network_security_rule" "palo_allow_user_mgmt_nsg_inbound" {
+#   count = var.firenet_enabled ? 1 : 0
+#   depends_on = [
+#     aviatrix_firewall_instance.palo_firewall_instance
+#   ]
+#   name                        = "AllowHttpsUserMgmtInbound"
+#   priority                    = 100
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "Tcp"
+#   source_port_range           = "*"
+#   destination_port_range      = "443"
+#   source_address_prefix       = var.user_public_for_mgmt
+#   destination_address_prefix  = "*"
+#   resource_group_name         = azurerm_resource_group.azure_hub_resource_group.name
+#   network_security_group_name = "${local.firewall_name}-management"
+# }
 
-# # Allows Controller to access firewall mgmt
-resource "azurerm_network_security_rule" "palo_allow_controller_mgmt_nsg_inbound" {
-  count = var.firenet_enabled ? 1 : 0
-  depends_on = [
-    aviatrix_firewall_instance.palo_firewall_instance
-  ]
-  name                        = "AllowHttpsControllerMgmtInbound"
-  priority                    = 101
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = var.controller_public_ip
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.azure_hub_resource_group.name
-  network_security_group_name = "${local.firewall_name}-management"
-}
+# # # Allows Controller to access firewall mgmt
+# resource "azurerm_network_security_rule" "palo_allow_controller_mgmt_nsg_inbound" {
+#   count = var.firenet_enabled ? 1 : 0
+#   depends_on = [
+#     aviatrix_firewall_instance.palo_firewall_instance
+#   ]
+#   name                        = "AllowHttpsControllerMgmtInbound"
+#   priority                    = 101
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "*"
+#   source_port_range           = "*"
+#   destination_port_range      = "*"
+#   source_address_prefix       = var.controller_public_ip
+#   destination_address_prefix  = "*"
+#   resource_group_name         = azurerm_resource_group.azure_hub_resource_group.name
+#   network_security_group_name = "${local.firewall_name}-management"
+# }
 
-# # Modifies the existing mgmt NSG to only allow your user inbound to manage
-resource "azurerm_network_security_rule" "palo_deny_mgmt_nsg_inbound" {
-  count = var.firenet_enabled ? 1 : 0
-  depends_on = [
-    aviatrix_firewall_instance.palo_firewall_instance
-  ]
-  name                        = "DenyAllInbound"
-  priority                    = 110
-  direction                   = "Inbound"
-  access                      = "Deny"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = "*"
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.azure_hub_resource_group.name
-  network_security_group_name = "${local.firewall_name}-management"
-}
+# # # Modifies the existing mgmt NSG to only allow your user inbound to manage
+# resource "azurerm_network_security_rule" "palo_deny_mgmt_nsg_inbound" {
+#   count = var.firenet_enabled ? 1 : 0
+#   depends_on = [
+#     aviatrix_firewall_instance.palo_firewall_instance
+#   ]
+#   name                        = "DenyAllInbound"
+#   priority                    = 110
+#   direction                   = "Inbound"
+#   access                      = "Deny"
+#   protocol                    = "*"
+#   source_port_range           = "*"
+#   destination_port_range      = "*"
+#   source_address_prefix       = "*"
+#   destination_address_prefix  = "*"
+#   resource_group_name         = azurerm_resource_group.azure_hub_resource_group.name
+#   network_security_group_name = "${local.firewall_name}-management"
+# }
 
 # data "aviatrix_firenet_vendor_integration" "vendor_integration" {
 #   count         = var.firenet_enabled ? 1 : 0
