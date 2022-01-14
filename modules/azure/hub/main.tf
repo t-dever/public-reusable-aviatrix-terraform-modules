@@ -113,19 +113,19 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
   }
 }
 
-resource "random_password" "generate_firewall_secret" {
-  count            = var.firenet_enabled ? 1 : 0
-  length           = 16
-  special          = true
-  override_special = "_%@"
-}
+# resource "random_password" "generate_firewall_secret" {
+#   count            = var.firenet_enabled ? 1 : 0
+#   length           = 16
+#   special          = true
+#   override_special = "_%@"
+# }
 
-resource "azurerm_key_vault_secret" "firewall_secret" {
-  count        = var.firenet_enabled ? 1 : 0
-  name         = "${local.firewall_name}-secret"
-  value        = random_password.generate_firewall_secret[count.index].result
-  key_vault_id = var.key_vault_id
-}
+# resource "azurerm_key_vault_secret" "firewall_secret" {
+#   count        = var.firenet_enabled ? 1 : 0
+#   name         = "${local.firewall_name}-secret"
+#   value        = random_password.generate_firewall_secret[count.index].result
+#   key_vault_id = var.key_vault_id
+# }
 
 # Create Palo Alto Firewall instance 
 # resource "aviatrix_firewall_instance" "firewall_instance" {
