@@ -148,7 +148,7 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
 resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
   count = var.firenet_enabled ? 1 : 0
   depends_on = [
-    aviatrix_firewall_instance.palo_firewall_instance,
+    aviatrix_firewall_instance.firewall_instance,
     aviatrix_transit_gateway.azure_transit_gateway
   ]
   vpc_id               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
