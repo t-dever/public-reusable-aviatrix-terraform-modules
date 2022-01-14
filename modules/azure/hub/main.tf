@@ -136,10 +136,6 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   firewall_name          = local.firewall_name
-  # firewall_image         = var.firewall_image.firewall_image
-  # firewall_image_version = var.firewall_image.firewall_image_version
-  # firewall_size          = var.firewall_image.firewall_size
-  # username               = var.firewall_image.firewall_username
   firewall_image         = var.firewall_image["firewall_image"]
   firewall_image_version = var.firewall_image["firewall_image_version"]
   firewall_size          = var.firewall_image["firewall_size"]
