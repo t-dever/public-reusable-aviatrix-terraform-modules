@@ -65,15 +65,15 @@ variable "firenet_enabled" {
 
 variable "firewall_image" {
   type = object({
-    firewall_image = string
+    firewall_image         = string
     firewall_image_version = string
-    firewall_size = string
-    firewall_username = string
+    firewall_size          = string
+    firewall_username      = string
   })
   default = {
-    firewall_image = "Palo Alto Networks VM-Series Next-Generation Firewall Bundle 1"
+    firewall_image         = "Palo Alto Networks VM-Series Next-Generation Firewall Bundle 1"
     firewall_image_version = "9.1.0"
     firewall_size          = "Standard_D3_v2"
-    username               = "paloAdmin"
+    firewall_username      = "testAdmin"
   }
 }
