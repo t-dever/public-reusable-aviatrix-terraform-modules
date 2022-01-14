@@ -145,35 +145,35 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   egress_subnet          = azurerm_subnet.azure_hub_firewall_subnet[count.index].address_prefix
 }
 
-resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
-  count = var.firenet_enabled ? 1 : 0
-  depends_on = [
-    aviatrix_firewall_instance.firewall_instance,
-    aviatrix_transit_gateway.azure_transit_gateway
-  ]
-  vpc_id               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
-  firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
-  instance_id          = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
-  firewall_name        = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
-  lan_interface        = aviatrix_firewall_instance.firewall_instance[count.index].lan_interface
-  management_interface = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
-  egress_interface     = aviatrix_firewall_instance.firewall_instance[count.index].egress_interface
-  attached             = true
-}
+# resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
+#   count = var.firenet_enabled ? 1 : 0
+#   depends_on = [
+#     aviatrix_firewall_instance.firewall_instance,
+#     aviatrix_transit_gateway.azure_transit_gateway
+#   ]
+#   vpc_id               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
+#   firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
+#   instance_id          = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
+#   firewall_name        = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
+#   lan_interface        = aviatrix_firewall_instance.firewall_instance[count.index].lan_interface
+#   management_interface = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
+#   egress_interface     = aviatrix_firewall_instance.firewall_instance[count.index].egress_interface
+#   attached             = true
+# }
 
-resource "aviatrix_firenet" "firenet" {
-  count = var.firenet_enabled ? 1 : 0
-  depends_on = [
-    aviatrix_firewall_instance_association.firewall_instance_association
-  ]
-  vpc_id                               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
-  inspection_enabled                   = true
-  egress_enabled                       = false
-  keep_alive_via_lan_interface_enabled = false
-  manage_firewall_instance_association = false
-  east_west_inspection_excluded_cidrs  = []
-  egress_static_cidrs                  = []
-}
+# resource "aviatrix_firenet" "firenet" {
+#   count = var.firenet_enabled ? 1 : 0
+#   depends_on = [
+#     aviatrix_firewall_instance_association.firewall_instance_association
+#   ]
+#   vpc_id                               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
+#   inspection_enabled                   = true
+#   egress_enabled                       = false
+#   keep_alive_via_lan_interface_enabled = false
+#   manage_firewall_instance_association = false
+#   east_west_inspection_excluded_cidrs  = []
+#   egress_static_cidrs                  = []
+# }
 
 # # Modifies the existing mgmt NSG to only allow your user inbound to manage
 # resource "azurerm_network_security_rule" "palo_allow_user_mgmt_nsg_inbound" {
