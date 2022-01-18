@@ -181,7 +181,7 @@ resource "null_resource" "test_null_resource" {
   connection {
     type     = "ssh"
     user     = var.firewall_username
-    password = azurerm_key_vault_secret.firewall_secret[0].result
+    password = random_password.generate_firewall_secret[0].result
     host     = aviatrix_firewall_instance.firewall_instance[0].public_ip
   }
 
