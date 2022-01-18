@@ -142,6 +142,7 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   password               = random_password.generate_firewall_secret[count.index].result
   management_subnet      = local.is_palo ? azurerm_subnet.azure_hub_gateway_subnet.address_prefix : null
   egress_subnet          = azurerm_subnet.azure_hub_firewall_subnet[count.index].address_prefix
+  user_data = file("fortinet_init.conf")
 }
 
 resource "aviatrix_firenet" "firenet" {
