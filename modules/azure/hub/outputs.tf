@@ -26,7 +26,7 @@ output "firewall_mgmt_ip" {
 }
 
 output "firewall_password" {
-  value = random_password.generate_firewall_secret.result
+  value = random_password.generate_firewall_secret[0].result
   description = "The generated firewall password."
   sensitive = true
 }
