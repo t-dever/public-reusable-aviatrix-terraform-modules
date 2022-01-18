@@ -138,10 +138,24 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   firewall_image         = var.firewall_image["firewall_image"]
   firewall_image_version = var.firewall_image["firewall_image_version"]
   firewall_size          = var.firewall_image["firewall_size"]
-  username               = var.firewall_image["firewall_username"]
+  username               = local.is_checkpoint ? "admin" : var.firewall_username
   password               = random_password.generate_firewall_secret[count.index].result
-  management_subnet      = replace(var.firewall_image["firewall_image"], "Fortinet","") == var.firewall_image["firewall_image"] ? azurerm_subnet.azure_hub_gateway_subnet.address_prefix : null
+  management_subnet      = local.is_palo ? azurerm_subnet.azure_hub_gateway_subnet.address_prefix : null
   egress_subnet          = azurerm_subnet.azure_hub_firewall_subnet[count.index].address_prefix
+}
+
+resource "aviatrix_firenet" "firenet" {
+  count = var.firenet_enabled ? 1 : 0
+  depends_on = [
+    aviatrix_firewall_instance.firewall_instance
+  ]
+  vpc_id                               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
+  inspection_enabled                   = true
+  egress_enabled                       = var.egress_enabled
+  keep_alive_via_lan_interface_enabled = false
+  manage_firewall_instance_association = false
+  east_west_inspection_excluded_cidrs  = []
+  egress_static_cidrs                  = []
 }
 
 # resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
@@ -160,19 +174,7 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
 #   attached             = true
 # }
 
-# resource "aviatrix_firenet" "firenet" {
-#   count = var.firenet_enabled ? 1 : 0
-#   depends_on = [
-#     aviatrix_firewall_instance_association.firewall_instance_association
-#   ]
-#   vpc_id                               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
-#   inspection_enabled                   = true
-#   egress_enabled                       = false
-#   keep_alive_via_lan_interface_enabled = false
-#   manage_firewall_instance_association = false
-#   east_west_inspection_excluded_cidrs  = []
-#   egress_static_cidrs                  = []
-# }
+
 
 # # Modifies the existing mgmt NSG to only allow your user inbound to manage
 # resource "azurerm_network_security_rule" "palo_allow_user_mgmt_nsg_inbound" {

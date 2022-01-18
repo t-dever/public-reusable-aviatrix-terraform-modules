@@ -77,3 +77,21 @@ variable "firewall_image" {
     firewall_username      = "testAdmin"
   }
 }
+
+variable "firewall_username" {
+  type = string
+  description = "The username used for the firewall configurations"
+  default = "fwadmin"
+}
+
+variable "egress_enabled" {
+  type = bool
+  default = false
+  description = "Allow traffic to the internet through firewall"
+}
+
+locals {
+  is_checkpoint  = length(regexall("check", lower(var.firewall_image))) > 0    #Check if fw image contains checkpoint. Needs special handling for the username/password
+  is_palo        = length(regexall("palo", lower(var.firewall_image))) > 0     #Check if fw image contains palo. Needs special handling for management_subnet (CP & Fortigate null)
+  is_aviatrix    = length(regexall("aviatrix", lower(var.firewall_image))) > 0
+}
