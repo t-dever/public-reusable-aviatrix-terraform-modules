@@ -158,21 +158,21 @@ resource "aviatrix_firenet" "firenet" {
   egress_static_cidrs                  = []
 }
 
-# resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
-#   count = var.firenet_enabled ? 1 : 0
-#   depends_on = [
-#     aviatrix_firewall_instance.firewall_instance,
-#     aviatrix_transit_gateway.azure_transit_gateway
-#   ]
-#   vpc_id               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
-#   firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
-#   instance_id          = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
-#   firewall_name        = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
-#   lan_interface        = aviatrix_firewall_instance.firewall_instance[count.index].lan_interface
-#   management_interface = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
-#   egress_interface     = aviatrix_firewall_instance.firewall_instance[count.index].egress_interface
-#   attached             = true
-# }
+resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
+  count = var.firenet_enabled ? 1 : 0
+  depends_on = [
+    aviatrix_firewall_instance.firewall_instance,
+    aviatrix_transit_gateway.azure_transit_gateway
+  ]
+  vpc_id               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
+  firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
+  instance_id          = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
+  firewall_name        = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
+  lan_interface        = aviatrix_firewall_instance.firewall_instance[count.index].lan_interface
+  management_interface = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
+  egress_interface     = aviatrix_firewall_instance.firewall_instance[count.index].egress_interface
+  attached             = true
+}
 
 
 

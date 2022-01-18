@@ -24,3 +24,9 @@ output "firewall_mgmt_ip" {
   # value = var.firenet_enabled ? aviatrix_firewall_instance.palo_firewall_instance[count.index].public_ip : null
   sensitive = true
 }
+
+output "firewall_password" {
+  value = random_password.generate_firewall_secret.result
+  description = "The generated firewall password."
+  sensitive = true
+}
