@@ -30,3 +30,7 @@ output "firewall_password" {
   description = "The generated firewall password."
   sensitive = true
 }
+
+output "testing" {
+  value = null_resource.test_null_resource
+}

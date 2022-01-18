@@ -175,6 +175,28 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
   attached             = true
 }
 
+resource "null_resource" "test_null_resource" {
+  # Bootstrap script can run on any instance of the cluster
+  # So we just choose the first in this case
+  connection {
+    type     = "ssh"
+    user     = var.firewall_username
+    password = azurerm_key_vault_secret.firewall_secret[0].result
+    host     = aviatrix_firewall_instance.firewall_instance[0].public_ip
+  }
+
+  provisioner "remote-exec" {
+    # Bootstrap script called with private_ip of each node in the clutser
+    inline = [
+      "config system api-user",
+      "edit test1",
+      "set accprofile \"admin_no_access\"",
+      "end",
+      "execute api-user generate-key test1"
+    ]
+  }
+}
+
 
 
 # # Modifies the existing mgmt NSG to only allow your user inbound to manage
