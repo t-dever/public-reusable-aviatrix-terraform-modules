@@ -135,9 +135,9 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   firewall_name          = local.firewall_name
-  firewall_image         = var.firewall_image["firewall_image"]
-  firewall_image_version = var.firewall_image["firewall_image_version"]
-  firewall_size          = var.firewall_image["firewall_size"]
+  firewall_image         = var.firewall_image
+  firewall_image_version = var.firewall_image_version
+  firewall_size          = var.fw_instance_size
   username               = local.is_checkpoint ? "admin" : var.firewall_username
   password               = random_password.generate_firewall_secret[count.index].result
   management_subnet      = local.is_palo ? azurerm_subnet.azure_hub_gateway_subnet.address_prefix : null
