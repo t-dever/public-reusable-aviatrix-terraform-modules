@@ -176,7 +176,7 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
 }
 
 data "external" "example" {
-  program = ["python", "../../firewalls/fortinet/generate_api_token.py"]
+  program = ["python", "${path.root}/firewalls/fortinet/generate_api_token.py"]
 
   # query = {
   #   # arbitrary map from strings to strings, passed
