@@ -53,6 +53,11 @@ variable "firenet_enabled" {
   default     = false
 }
 
+variable "enable_firenet_egress" {
+  description = "Enables egress traffic through firenet"
+  type        = bool
+  default     = false
+}
 # variable "firewall_vendor" {
 #   type = string
 #   description = "The firewall vendor to deploy"
