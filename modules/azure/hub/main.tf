@@ -185,9 +185,9 @@ data "external" "example" {
   query = {
     # arbitrary map from strings to strings, passed
     # to the external program as the data query.
-    -fortigate_hostname = local.aviatrix_firewall_instance.firewall_instance[0].public_ip
-    -fortigate_username = local.var.firewall_username
-    -fortigate_password = local.random_password.generate_firewall_secret[0].result
+    -fortigate_hostname = aviatrix_firewall_instance.firewall_instance[0].public_ip
+    -fortigate_username = var.firewall_username
+    -fortigate_password = random_password.generate_firewall_secret[0].result
   }
 }
 
