@@ -16,7 +16,7 @@ receiveTime = 100000
 
 def generateApiToken(remote_conn):
     try:
-        remote_conn.send("execute api-user generate-key test1"+ "\n")
+        remote_conn.send("execute api-user generate-key aviatrix_controller"+ "\n")
         time.sleep(sleepyTime)
         output = remote_conn.recv(receiveTime)
         if output:
