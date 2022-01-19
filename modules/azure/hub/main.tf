@@ -92,6 +92,7 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   eip                           = azurerm_public_ip.azure_gateway_public_ip.ip_address
   azure_eip_name_resource_group = "${azurerm_public_ip.azure_gateway_public_ip.name}:${azurerm_virtual_network.azure_hub_vnet.resource_group_name}"
   enable_advertise_transit_cidr = true
+  enable_egress_transit_firenet    = var.firenet_enabled ? true : false
   enable_segmentation           = true
   enable_transit_firenet        = var.firenet_enabled ? true : false
   enable_vpc_dns_server         = false
@@ -255,33 +256,4 @@ data "aviatrix_firenet_vendor_integration" "vendor_integration" {
 #   destination_address_prefix  = "*"
 #   resource_group_name         = azurerm_resource_group.azure_hub_resource_group.name
 #   network_security_group_name = "${local.firewall_name}-management"
-# }
-
-# data "aviatrix_firenet_vendor_integration" "vendor_integration" {
-#   count         = var.firenet_enabled ? 1 : 0
-#   vpc_id        = aviatrix_firewall_instance.palo_firewall_instance[count.index].vpc_id
-#   instance_id   = aviatrix_firewall_instance.palo_firewall_instance[count.index].instance_id
-#   vendor_type   = "Palo Alto Networks VM-Series"
-#   public_ip     = aviatrix_firewall_instance.palo_firewall_instance[count.index].public_ip
-#   username      = "paloAdmin"
-#   password      = random_password.generate_firewall_secret[count.index].result
-#   firewall_name = local.firewall_name
-#   save          = true
-# }
-
-# Creates scheduled shutdown of VM for 6 p.m. CST
-# resource "azurerm_dev_test_global_vm_shutdown_schedule" "vm_shutdown_schedule" {
-#   lifecycle {
-#     ignore_changes = [tags]
-#   }
-#   for_each           = { for index, id in data.azurerm_resources.virtual_machines.resources : index => id }
-#   virtual_machine_id = each.value.id
-#   location           = var.location
-#   enabled            = true
-
-#   daily_recurrence_time = "1800"
-#   timezone              = "Central Standard Time"
-#   notification_settings {
-#     enabled = false
-#   }
 # }
