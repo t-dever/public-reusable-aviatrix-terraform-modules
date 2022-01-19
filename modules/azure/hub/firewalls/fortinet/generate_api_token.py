@@ -40,16 +40,21 @@ def disconnectFromFG(remote_conn):
         print(json.dumps(error, indent=4))
 
 # Connect to the Fortigate using using the paramiko and SSH
-try:
-    remote_init_conn = paramiko.SSHClient()
-    remote_init_conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    remote_init_conn.connect(fortigate_hostname, username=fortigate_username, password=fortigate_password, look_for_keys=False, allow_agent=False)
-except (paramiko.ssh_exception.AuthenticationException, paramiko.ssh_exception.SSHException) as ex:
-        error = {"error": str(ex)}
-        print(json.dumps(error, indent=4))
-except paramiko.ssh_exception.NoValidConnectionsError:
-        error = {"error": str(ex)}
-        print(json.dumps(error, indent=4))
+
+attempts = 5
+while attempts != 0:
+    attempts -= 1
+    try:
+        remote_init_conn = paramiko.SSHClient()
+        remote_init_conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        remote_init_conn.connect(fortigate_hostname, username=fortigate_username, password=fortigate_password, look_for_keys=False, allow_agent=False)
+    except (paramiko.ssh_exception.AuthenticationException, paramiko.ssh_exception.SSHException) as ex:
+        if attempts == 0:
+            error = {"error": str(ex)}
+            print(json.dumps(error, indent=4))
+        else:
+            time.sleep(30)
+            continue
 
 remote_conn = remote_init_conn.invoke_shell()
 
