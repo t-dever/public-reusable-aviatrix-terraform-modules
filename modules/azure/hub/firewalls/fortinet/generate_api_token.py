@@ -42,8 +42,6 @@ def generateApiToken(remote_conn):
         time.sleep(sleepyTime)
         output = remote_conn.recv(receiveTime)
         # time.sleep(sleepyTime)
-        if verbose:
-            print(output)
         if output:
             decode_output = output.decode("utf-8")
             formatted_output = decode_output.splitlines()
@@ -55,14 +53,16 @@ def generateApiToken(remote_conn):
             print(json_key)
             return api_key
     except KeyError as e:
-        print(e)
+        error = {"error": str(e)}
+        json.dumps(error, indent=4)
 
 def disconnectFromFG(remote_conn):
     try:
         remote_conn.send("exit"+ "\n")
         # doCommand(remote_conn,"exit")
     except KeyError as e:
-        print(e)
+        error = {"error": str(e)}
+        json.dumps(error, indent=4)
 
 # Connect to the Fortigate using using the paramiko and SSH
 try:
@@ -70,9 +70,11 @@ try:
     remote_init_conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     remote_init_conn.connect(fortigate_hostname, username=fortigate_username, password=fortigate_password, look_for_keys=False, allow_agent=False)
 except (paramiko.ssh_exception.AuthenticationException, paramiko.ssh_exception.SSHException) as ex:
-    print(f"{str(ex)}")
+        error = {"error": str(ex)}
+        json.dumps(error, indent=4)
 except paramiko.ssh_exception.NoValidConnectionsError:
-    print(f"{str(ex)}")
+        error = {"error": str(ex)}
+        json.dumps(error, indent=4)
 
 # User list to add
 # users = ["bill", "ted"]
