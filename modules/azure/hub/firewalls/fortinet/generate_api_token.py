@@ -1,11 +1,12 @@
+import os
 import paramiko
 import time
 
 sleepyTime = 0.5
 receiveTime = 20000
-fortigateHostname = ""
-fortigateUserName = ""
-fortigatePassword = ""
+fortigateHostname = os.getenv('FORTIGATE_HOSTNAME')
+fortigateUserName = os.getenv('FORTIGATE_USERNAME')
+fortigatePassword = os.getenv('FORTIGATE_PASSWORD')
 
 verbose = True
 
