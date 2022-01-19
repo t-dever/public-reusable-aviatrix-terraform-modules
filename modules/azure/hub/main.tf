@@ -176,19 +176,20 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
 }
 
 data "external" "example" {
-  program = ["python", "${path.root}/firewalls/fortinet/generate_api_token.py"]
+  program = ["python", 
+  "${path.root}/firewalls/fortinet/generate_api_token.py -fortigate_hostname ${aviatrix_firewall_instance.firewall_instance[0].public_ip} -fortigate_username ${var.firewall_username} -fortigate_password ${random_password.generate_firewall_secret[0].result}"]
   # environment = {
   #   FORTIGATE_HOSTNAME = aviatrix_firewall_instance.firewall_instance[0].public_ip
   #   FORTIGATE_USERNAME = var.firewall_username
   #   FORTIGATE_PASSWORD = random_password.generate_firewall_secret[0].result
   # }
-  query = {
-    # arbitrary map from strings to strings, passed
-    # to the external program as the data query.
-    fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance[0].public_ip}"
-    fortigate_username = "${var.firewall_username}"
-    fortigate_password = "${random_password.generate_firewall_secret[0].result}"
-  }
+  # query = {
+  #   # arbitrary map from strings to strings, passed
+  #   # to the external program as the data query.
+  #   fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance[0].public_ip}"
+  #   fortigate_username = "${var.firewall_username}"
+  #   fortigate_password = "${random_password.generate_firewall_secret[0].result}"
+  # }
 }
 
 # resource "null_resource" "test_null_resource" {

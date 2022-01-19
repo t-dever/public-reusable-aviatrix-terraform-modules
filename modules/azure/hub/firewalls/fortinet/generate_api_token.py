@@ -5,9 +5,9 @@ import time
 import argparse
 
 parser = argparse.ArgumentParser(description='A test program.')
-parser.add_argument("fortigate_hostname", help="The fortigate ip address or hostname")
-parser.add_argument("fortigate_username", help="The fortigate username")
-parser.add_argument("fortigate_password", help="The fortigate password")
+parser.add_argument("-fortigate_hostname", help="The fortigate ip address or hostname")
+parser.add_argument("-fortigate_username", help="The fortigate username")
+parser.add_argument("-fortigate_password", help="The fortigate password")
 args = parser.parse_args()
 
 print(args.fortigate_hostname)
