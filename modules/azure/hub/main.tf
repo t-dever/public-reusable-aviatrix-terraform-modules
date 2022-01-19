@@ -175,27 +175,31 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
   attached             = true
 }
 
-resource "null_resource" "test_null_resource" {
-  # Bootstrap script can run on any instance of the cluster
-  # So we just choose the first in this case
-  connection {
-    type     = "ssh"
-    user     = var.firewall_username
-    password = random_password.generate_firewall_secret[0].result
-    host     = aviatrix_firewall_instance.firewall_instance[0].public_ip
-  }
+# data "external" "example" {
+#   program = ["python", "${path.root}/example-data-source.py"]
 
-  provisioner "remote-exec" {
-    # Bootstrap script called with private_ip of each node in the clutser
-    inline = [
-      "config system api-user",
-      "edit test1",
-      "set accprofile \"admin_no_access\"",
-      "end",
-      "execute api-user generate-key test1"
-    ]
-  }
-}
+#   query = {
+#     # arbitrary map from strings to strings, passed
+#     # to the external program as the data query.
+#     id = "abc123"
+#   }
+# }
+
+# resource "null_resource" "test_null_resource" {
+#   # Bootstrap script can run on any instance of the cluster
+#   # So we just choose the first in this case
+#   connection {
+#     type     = "ssh"
+#     user     = var.firewall_username
+#     password = random_password.generate_firewall_secret[0].result
+#     host     = aviatrix_firewall_instance.firewall_instance[0].public_ip
+#   }
+
+#   provisioner "remote-exec" {
+#     # Bootstrap script called with private_ip of each node in the clutser
+#     command = "execute api-user generate-key test1"
+#   }
+# }
 
 
 

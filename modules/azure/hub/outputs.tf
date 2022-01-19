@@ -31,6 +31,10 @@ output "firewall_password" {
   sensitive = true
 }
 
+locals {
+  test = "${path.root}"
+}
+
 output "testing" {
-  value = null_resource.test_null_resource
+  value = local.test
 }
