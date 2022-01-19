@@ -117,7 +117,7 @@ locals {
   is_checkpoint  = length(regexall("check", lower(var.firewall_image))) > 0    #Check if fw image contains checkpoint. Needs special handling for the username/password
   is_palo        = length(regexall("palo", lower(var.firewall_image))) > 0     #Check if fw image contains palo. Needs special handling for management_subnet (CP & Fortigate null)
   is_aviatrix    = length(regexall("aviatrix", lower(var.firewall_image))) > 0
-  cidrbits = tonumber(split("/", var.vnet_address_space)[1])
+  cidrbits = tonumber(split("/", var.vnet_address_prefix)[1])
   firewall_lan_subnet = cidrhost(cidrsubnet(var.vnet_address_prefix, 28 - local.cidrbits, 3), 1)
 }
 
