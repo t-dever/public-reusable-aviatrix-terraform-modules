@@ -92,7 +92,7 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   eip                           = azurerm_public_ip.azure_gateway_public_ip.ip_address
   azure_eip_name_resource_group = "${azurerm_public_ip.azure_gateway_public_ip.name}:${azurerm_virtual_network.azure_hub_vnet.resource_group_name}"
   enable_advertise_transit_cidr = var.enable_firenet_egress ? false : true
-  enable_egress_transit_firenet = var.enable_firenet_egress ? true : false
+  enable_egress_transit_firenet = var.enable_firenet_egress ? false : true
   enable_segmentation           = true
   enable_transit_firenet        = var.firenet_enabled ? true : false
   enable_vpc_dns_server         = false
