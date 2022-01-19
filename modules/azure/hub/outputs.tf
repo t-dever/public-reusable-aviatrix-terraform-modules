@@ -33,8 +33,18 @@ output "firewall_password" {
 
 locals {
   test = "${path.root}"
+  test1 = "${path.module}"
+  test2 = "${path.cwd}"
 }
 
 output "testing" {
   value = local.test
+}
+
+output "testing1" {
+  value = local.test1
+}
+
+output "testing2" {
+  value = local.test2
 }
