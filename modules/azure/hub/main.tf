@@ -193,7 +193,7 @@ data "aviatrix_firenet_vendor_integration" "vendor_integration" {
   count         = var.firenet_enabled ? 1 : 0
   vpc_id        = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
   instance_id   = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
-  vendor_type   = "Fortinet Fortigate"
+  vendor_type   = "Fortinet FortiGate"
   public_ip     = aviatrix_firewall_instance.firewall_instance[count.index].public_ip
   firewall_name = local.firewall_name
   api_token = data.external.fortinet_bootstrap.result.api_key
