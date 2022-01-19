@@ -175,15 +175,15 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
   attached             = true
 }
 
-# data "external" "example" {
-#   program = ["python", "${path.root}/example-data-source.py"]
+data "external" "example" {
+  program = ["python", "${path.root}/modules/firewalls/fortinet/generate_api_token.py"]
 
-#   query = {
-#     # arbitrary map from strings to strings, passed
-#     # to the external program as the data query.
-#     id = "abc123"
-#   }
-# }
+  # query = {
+  #   # arbitrary map from strings to strings, passed
+  #   # to the external program as the data query.
+  #   id = "abc123"
+  # }
+}
 
 # resource "null_resource" "test_null_resource" {
 #   # Bootstrap script can run on any instance of the cluster
