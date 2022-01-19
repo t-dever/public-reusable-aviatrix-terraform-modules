@@ -1,18 +1,25 @@
+import sys
 import os
 import json
 import paramiko
 import time
 import argparse
 
-parser = argparse.ArgumentParser(description='A test program.')
-parser.add_argument("-fortigate_hostname", help="The fortigate ip address or hostname")
-parser.add_argument("-fortigate_username", help="The fortigate username")
-parser.add_argument("-fortigate_password", help="The fortigate password")
-args = parser.parse_args()
+# parser = argparse.ArgumentParser(description='A test program.')
+# parser.add_argument("-fortigate_hostname", help="The fortigate ip address or hostname")
+# parser.add_argument("-fortigate_username", help="The fortigate username")
+# parser.add_argument("-fortigate_password", help="The fortigate password")
+# args = parser.parse_args()
 
-print(args.fortigate_hostname)
-print(args.fortigate_username)
-print(args.fortigate_password)
+input = sys.stdin.read()
+input_json = json.loads(input)
+
+fortigate_hostname = input_json['fortigate_hostname']
+fortigate_username = input_json['fortigate_username']
+fortigate_password = input_json['fortigate_password']
+# print(args.fortigate_hostname)
+# print(args.fortigate_username)
+# print(args.fortigate_password)
 sleepyTime = 0.5
 receiveTime = 100000
 # fortigateHostname = os.getenv('FORTIGATE_HOSTNAME')
@@ -61,7 +68,7 @@ def disconnectFromFG(remote_conn):
 try:
     remote_init_conn = paramiko.SSHClient()
     remote_init_conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    remote_init_conn.connect(args.fortigate_hostname, username=args.fortigate_username, password=args.fortigate_password, look_for_keys=False, allow_agent=False)
+    remote_init_conn.connect(fortigate_hostname, username=fortigate_username, password=fortigate_password, look_for_keys=False, allow_agent=False)
 except (paramiko.ssh_exception.AuthenticationException, paramiko.ssh_exception.SSHException) as ex:
     print(f"{str(ex)}")
 except paramiko.ssh_exception.NoValidConnectionsError:
