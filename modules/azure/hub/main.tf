@@ -92,7 +92,7 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   eip                           = azurerm_public_ip.azure_gateway_public_ip.ip_address
   azure_eip_name_resource_group = "${azurerm_public_ip.azure_gateway_public_ip.name}:${azurerm_virtual_network.azure_hub_vnet.resource_group_name}"
   enable_advertise_transit_cidr = true
-  enable_egress_transit_firenet = var.enable_firenet_egress ? true : false
+  enable_egress_transit_firenet = var.enable_firenet_egress
   enable_segmentation           = true
   enable_transit_firenet        = var.firenet_enabled ? true : false
   enable_vpc_dns_server         = false
@@ -143,7 +143,7 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   password               = random_password.generate_firewall_secret[count.index].result
   management_subnet      = local.is_palo ? azurerm_subnet.azure_hub_gateway_subnet.address_prefix : null
   egress_subnet          = azurerm_subnet.azure_hub_firewall_subnet[count.index].address_prefix
-  user_data = templatefile("${path.module}/fortinet_init.tftpl", { gateway = local.firewall_lan_subnet })
+  user_data = templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { gateway = local.firewall_lan_subnet })
 }
 
 resource "aviatrix_firenet" "firenet" {

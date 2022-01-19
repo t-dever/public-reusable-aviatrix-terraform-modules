@@ -84,27 +84,27 @@ variable "enable_firenet_egress" {
 # }
 
 variable "firewall_username" {
-  type = string
+  type        = string
   description = "The username used for the firewall configurations"
-  default = "fwadmin"
+  default     = "fwadmin"
 }
 
 variable "egress_enabled" {
-  type = bool
-  default = false
+  type        = bool
+  default     = false
   description = "Allow traffic to the internet through firewall"
 }
 
 variable "firewall_image" {
-  type = string
+  type        = string
   description = "The firewall image to be used to deploy the NGFW's"
-  default = ""
+  default     = ""
 }
 
 variable "firewall_image_version" {
   description = "The firewall image version specific to the NGFW vendor image"
   type        = string
-  default = ""
+  default     = ""
 }
 
 variable "fw_instance_size" {
@@ -114,10 +114,10 @@ variable "fw_instance_size" {
 }
 
 locals {
-  is_checkpoint  = length(regexall("check", lower(var.firewall_image))) > 0    #Check if fw image contains checkpoint. Needs special handling for the username/password
-  is_palo        = length(regexall("palo", lower(var.firewall_image))) > 0     #Check if fw image contains palo. Needs special handling for management_subnet (CP & Fortigate null)
-  is_aviatrix    = length(regexall("aviatrix", lower(var.firewall_image))) > 0
-  cidrbits = tonumber(split("/", var.vnet_address_prefix)[1])
+  is_checkpoint       = length(regexall("check", lower(var.firewall_image))) > 0 #Check if fw image contains checkpoint. Needs special handling for the username/password
+  is_palo             = length(regexall("palo", lower(var.firewall_image))) > 0  #Check if fw image contains palo. Needs special handling for management_subnet (CP & Fortigate null)
+  is_aviatrix         = length(regexall("aviatrix", lower(var.firewall_image))) > 0
+  cidrbits            = tonumber(split("/", var.vnet_address_prefix)[1])
   firewall_lan_subnet = cidrhost(cidrsubnet(var.vnet_address_prefix, 28 - local.cidrbits, 3), 1)
 }
 
