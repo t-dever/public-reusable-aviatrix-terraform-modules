@@ -48,7 +48,7 @@ while attempts != 0:
         remote_init_conn = paramiko.SSHClient()
         remote_init_conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         remote_init_conn.connect(fortigate_hostname, username=fortigate_username, password=fortigate_password, look_for_keys=False, allow_agent=False)
-    except (paramiko.ssh_exception.AuthenticationException, paramiko.ssh_exception.SSHException) as ex:
+    except Exception as ex:
         if attempts == 0:
             error = {"error": str(ex)}
             print(json.dumps(error, indent=4))

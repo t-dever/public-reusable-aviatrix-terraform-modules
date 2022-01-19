@@ -33,5 +33,6 @@ output "firewall_password" {
 
 output "api_key" {
   value = data.external.fortinet_bootstrap.result.api_key
+  description = "The API Key for fortinet firewall."
   sensitive = true
 }
