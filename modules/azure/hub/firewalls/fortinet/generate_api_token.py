@@ -62,7 +62,7 @@ def disconnectFromFG(remote_conn):
         # doCommand(remote_conn,"exit")
     except KeyError as e:
         error = {"error": str(e)}
-        json.dumps(error, indent=4)
+        print(json.dumps(error, indent=4))
 
 # Connect to the Fortigate using using the paramiko and SSH
 try:
@@ -71,17 +71,14 @@ try:
     remote_init_conn.connect(fortigate_hostname, username=fortigate_username, password=fortigate_password, look_for_keys=False, allow_agent=False)
 except (paramiko.ssh_exception.AuthenticationException, paramiko.ssh_exception.SSHException) as ex:
         error = {"error": str(ex)}
-        json.dumps(error, indent=4)
+        print(json.dumps(error, indent=4))
 except paramiko.ssh_exception.NoValidConnectionsError:
         error = {"error": str(ex)}
-        json.dumps(error, indent=4)
+        print(json.dumps(error, indent=4))
 
-# User list to add
-# users = ["bill", "ted"]
-# Connect to the VDOM
 remote_conn = remote_init_conn.invoke_shell()
-# Add some local users
 
+# Generate API Token
 generateApiToken(remote_conn)
 
 # Logout
