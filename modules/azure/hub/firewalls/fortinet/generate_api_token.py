@@ -51,7 +51,7 @@ def generateApiToken(remote_conn):
             api_key = {
                 "api_key": formatted_output[3].split()[-1]
             }
-            json_key = json.dumps(api_key)
+            json_key = json.dumps(api_key, indent=4)
             print(json_key)
             return api_key
     except KeyError as e:
