@@ -35,9 +35,9 @@ try:
     remote_init_conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     remote_init_conn.connect(fortigateHostname, username=fortigateUserName, password=fortigatePassword, look_for_keys=False, allow_agent=False)
 except (paramiko.ssh_exception.AuthenticationException, paramiko.ssh_exception.SSHException) as ex:
-    print("[-] %s:%s - %s" % (fghost, fgport, ex))
+    print(f"{str(ex)}")
 except paramiko.ssh_exception.NoValidConnectionsError:
-    print("[-] %s:%s - %s" % (fghost, fgport, ex))
+    print(f"{str(ex)}")
 
 # User list to add
 # users = ["bill", "ted"]
