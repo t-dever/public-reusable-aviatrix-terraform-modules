@@ -175,40 +175,19 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
   attached             = true
 }
 
-data "external" "example" {
+data "external" "fortinet_bootstrap" {
+  depends_on = [
+    aviatrix_firewall_instance.firewall_instance,
+    aviatrix_firenet.firenet,
+    aviatrix_firewall_instance_association.firewall_instance_association
+  ]
   program = ["python", "${path.root}/firewalls/fortinet/generate_api_token.py"]
-  # "${path.root}/firewalls/fortinet/generate_api_token.py -fortigate_hostname ${aviatrix_firewall_instance.firewall_instance[0].public_ip} -fortigate_username ${var.firewall_username} -fortigate_password ${random_password.generate_firewall_secret[0].result}"]
-  # environment = {
-  #   FORTIGATE_HOSTNAME = aviatrix_firewall_instance.firewall_instance[0].public_ip
-  #   FORTIGATE_USERNAME = var.firewall_username
-  #   FORTIGATE_PASSWORD = random_password.generate_firewall_secret[0].result
-  # }
   query = {
-    # arbitrary map from strings to strings, passed
-    # to the external program as the data query.
     fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance[0].public_ip}"
     fortigate_username = "${var.firewall_username}"
     fortigate_password = "${random_password.generate_firewall_secret[0].result}"
   }
 }
-
-# resource "null_resource" "test_null_resource" {
-#   # Bootstrap script can run on any instance of the cluster
-#   # So we just choose the first in this case
-#   connection {
-#     type     = "ssh"
-#     user     = var.firewall_username
-#     password = random_password.generate_firewall_secret[0].result
-#     host     = aviatrix_firewall_instance.firewall_instance[0].public_ip
-#   }
-
-#   provisioner "remote-exec" {
-#     # Bootstrap script called with private_ip of each node in the clutser
-#     command = "execute api-user generate-key test1"
-#   }
-# }
-
-
 
 # # Modifies the existing mgmt NSG to only allow your user inbound to manage
 # resource "azurerm_network_security_rule" "palo_allow_user_mgmt_nsg_inbound" {

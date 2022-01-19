@@ -1,15 +1,7 @@
 import sys
-import os
 import json
 import paramiko
 import time
-import argparse
-
-# parser = argparse.ArgumentParser(description='A test program.')
-# parser.add_argument("-fortigate_hostname", help="The fortigate ip address or hostname")
-# parser.add_argument("-fortigate_username", help="The fortigate username")
-# parser.add_argument("-fortigate_password", help="The fortigate password")
-# args = parser.parse_args()
 
 input = sys.stdin.read()
 input_json = json.loads(input)
@@ -17,35 +9,19 @@ input_json = json.loads(input)
 fortigate_hostname = input_json['fortigate_hostname']
 fortigate_username = input_json['fortigate_username']
 fortigate_password = input_json['fortigate_password']
-# print(args.fortigate_hostname)
-# print(args.fortigate_username)
-# print(args.fortigate_password)
+
 sleepyTime = 0.5
 receiveTime = 100000
-# fortigateHostname = os.getenv('FORTIGATE_HOSTNAME')
-# fortigateUserName = os.getenv('FORTIGATE_USERNAME')
-# fortigatePassword = os.getenv('FORTIGATE_PASSWORD')
 
-verbose = True
-
-# def doCommand(remote_conn,command):
-#     remote_conn.send(command + "\n")
-#     output = remote_conn.recv(receiveTime)
-#     if verbose:
-#         print(output)
-    # time.sleep(sleepyTime)
 
 def generateApiToken(remote_conn):
     try:
         remote_conn.send("execute api-user generate-key test1"+ "\n")
-        # doCommand(remote_conn, "execute api-user generate-key test1")
         time.sleep(sleepyTime)
         output = remote_conn.recv(receiveTime)
-        # time.sleep(sleepyTime)
         if output:
             decode_output = output.decode("utf-8")
             formatted_output = decode_output.splitlines()
-            # api_key = formatted_output[3].split()[-1]
             api_key = {
                 "api_key": formatted_output[3].split()[-1]
             }
@@ -59,7 +35,6 @@ def generateApiToken(remote_conn):
 def disconnectFromFG(remote_conn):
     try:
         remote_conn.send("exit"+ "\n")
-        # doCommand(remote_conn,"exit")
     except KeyError as e:
         error = {"error": str(e)}
         print(json.dumps(error, indent=4))

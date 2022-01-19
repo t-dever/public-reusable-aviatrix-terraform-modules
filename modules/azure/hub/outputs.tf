@@ -32,5 +32,6 @@ output "firewall_password" {
 }
 
 output "api_key" {
-  value = data.external.example.result.api_key
+  value = data.external.fortinet_bootstrap.result.api_key
+  sensitive = true
 }
