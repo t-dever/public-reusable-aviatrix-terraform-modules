@@ -52,7 +52,7 @@ resource "azurerm_public_ip" "transit_public_ip" {
     ignore_changes = [tags]
   }
   name                = "${var.transit_gateway_name}-public-ip"
-  location            = azurerm_resource_group.azure_transit_vnet.location
+  location            = azurerm_resource_group.azure_transit_resource_group.location
   resource_group_name = azurerm_resource_group.azure_transit_resource_group.name
   sku                 = "Standard"
   allocation_method   = "Static"
@@ -64,7 +64,7 @@ resource "azurerm_public_ip" "transit_hagw_public_ip" {
   }
   count               = var.transit_gateway_ha ? 1 : 0
   name                = "${var.transit_gateway_name}-ha-public-ip"
-  location            = azurerm_resource_group.azure_transit_vnet.location
+  location            = azurerm_resource_group.azure_transit_resource_group.location
   resource_group_name = azurerm_resource_group.azure_transit_resource_group.name
   sku                 = "Standard"
   allocation_method   = "Static"
@@ -135,7 +135,7 @@ resource "random_password" "generate_firewall_secret" {
 
 resource "azurerm_key_vault_secret" "firewall_secret" {
   count        = var.firenet_enabled ? 1 : 0
-  name         = "${local.firewall_name}-secret"
+  name         = "${var.firewall_name}-secret"
   value        = random_password.generate_firewall_secret[count.index].result
   key_vault_id = var.key_vault_id
 }

@@ -1,16 +1,16 @@
-output "hub_resource_group_name" {
-  value       = azurerm_resource_group.azure_hub_resource_group.name
-  description = "The hub resource group name"
+output "transit_resource_group_name" {
+  value       = azurerm_resource_group.azure_transit_resource_group.name
+  description = "The transit resource group name"
 }
 
-output "hub_vnet_name" {
-  value       = azurerm_virtual_network.azure_hub_vnet.name
-  description = "The hub vnet name"
+output "transit_vnet_name" {
+  value       = azurerm_virtual_network.azure_transit_vnet.name
+  description = "The transit vnet name"
 }
 
-output "hub_address_prefix" {
-  value       = azurerm_virtual_network.azure_hub_vnet.address_space[0]
-  description = "The hub vnet address space"
+output "transit_address_prefix" {
+  value       = azurerm_virtual_network.azure_transit_vnet.address_space[0]
+  description = "The transit vnet address space"
 }
 
 output "transit_gateway_name" {
