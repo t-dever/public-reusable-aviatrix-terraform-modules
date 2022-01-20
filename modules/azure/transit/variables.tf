@@ -145,7 +145,7 @@ locals {
   firewall_lan_subnet        = cidrhost(cidrsubnet(var.vnet_address_prefix, 28 - local.cidrbits, 3), 1)
   transit_gateway_newbits    = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
   transit_gateway_ha_newbits = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
-  subnets                    = cidrsubnets(var.vnet_address_prefix, local.transit_gateway_newbits, local.transit_gateway_ha_newbits, 28, var.primary_subnet_size, var.secondary_ha_subnet_size)
+  subnets                    = cidrsubnets(var.vnet_address_prefix, local.transit_gateway_newbits, local.transit_gateway_ha_newbits, 28 - local.cidrbits, var.primary_subnet_size, var.secondary_ha_subnet_size)
   transit_gateway_subnet     = local.subnets[0]
   transit_gateway_ha_subnet  = local.subnets[1]
   firewall_subnet            = local.subnets[2]
