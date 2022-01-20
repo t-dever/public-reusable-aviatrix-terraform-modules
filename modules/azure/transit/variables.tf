@@ -9,10 +9,10 @@ variable "location" {
   default     = "South Central US"
 }
 
-variable "storage_account_name" {
-  description = "The name of the storage account."
-  type        = string
-}
+# variable "storage_account_name" {
+#   description = "The name of the storage account."
+#   type        = string
+# }
 
 variable "vnet_name" {
   type        = string

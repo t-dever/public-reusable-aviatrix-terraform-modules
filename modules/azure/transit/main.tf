@@ -5,17 +5,17 @@ resource "azurerm_resource_group" "azure_transit_resource_group" {
   location = var.location
 }
 
-resource "azurerm_storage_account" "storage_account" {
-  #checkov:skip=CKV_AZURE_35:The network rules are configured in a separate resource below
-  name                      = var.storage_account_name
-  resource_group_name       = azurerm_resource_group.azure_transit_resource_group.name
-  location                  = azurerm_resource_group.azure_transit_resource_group.location
-  account_tier              = "Standard"
-  account_replication_type  = "LRS"
-  min_tls_version           = "TLS1_2"
-  allow_blob_public_access  = false
-  enable_https_traffic_only = true
-}
+# resource "azurerm_storage_account" "storage_account" {
+#   #checkov:skip=CKV_AZURE_35:The network rules are configured in a separate resource below
+#   name                      = var.storage_account_name
+#   resource_group_name       = azurerm_resource_group.azure_transit_resource_group.name
+#   location                  = azurerm_resource_group.azure_transit_resource_group.location
+#   account_tier              = "Standard"
+#   account_replication_type  = "LRS"
+#   min_tls_version           = "TLS1_2"
+#   allow_blob_public_access  = false
+#   enable_https_traffic_only = true
+# }
 
 resource "azurerm_virtual_network" "azure_transit_vnet" {
   name                = var.vnet_name
