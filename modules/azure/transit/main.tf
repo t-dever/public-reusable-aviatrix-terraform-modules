@@ -74,7 +74,8 @@ resource "azurerm_public_ip" "transit_hagw_public_ip" {
 # Create an Aviatrix Azure Transit Network Gateway
 resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   depends_on = [
-    azurerm_public_ip.azure_gateway_public_ip
+    azurerm_public_ip.transit_public_ip,
+    azurerm_public_ip.transit_hagw_public_ip
   ]
   lifecycle {
     ignore_changes = [tags]
@@ -93,7 +94,7 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   ha_zone                          = var.transit_gateway_ha ? "az-2" : null
   ha_gw_size                       = var.transit_gateway_ha ? var.transit_gw_size : null
   ha_eip                           = var.transit_gateway_ha ? azurerm_public_ip.transit_hagw_public_ip[0].ip_address : null
-  ha_azure_eip_name_resource_group = var.transit_gateway_ha ? "${azurerm_public_ip.transit_hagw_public_ip[0].name}:${azurerm_virtual_network.transit_vnet.resource_group_name}" : null
+  ha_azure_eip_name_resource_group = var.transit_gateway_ha ? "${azurerm_public_ip.transit_hagw_public_ip[0].name}:${azurerm_virtual_network.azure_transit_vnet.resource_group_name}" : null
   connected_transit                = true
   allocate_new_eip                 = false
   enable_advertise_transit_cidr    = true
