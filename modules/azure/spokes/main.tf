@@ -56,6 +56,22 @@ resource "azurerm_subnet" "azure_virtual_machines_subnet" {
   service_endpoints    = ["Microsoft.Storage"]
 }
 
+resource "azurerm_route_table" "virtual_machine_route_table" {
+  name                          = "virtual-machine-private-rtb"
+  location                      = azurerm_resource_group.azure_spoke_resource_group.location
+  resource_group_name           = azurerm_resource_group.azure_spoke_resource_group.name
+  route {
+    name           = "default"
+    address_prefix = "0.0.0.0/0"
+    next_hop_type  = "None"
+  }
+}
+
+resource "azurerm_subnet_route_table_association" "virtual_machine_rtb_association" {
+  subnet_id      = azurerm_subnet.azure_virtual_machines_subnet.id
+  route_table_id = azurerm_route_table.virtual_machine_route_table.id
+}
+
 ############### STOP - VIRTUAL NETWORK ###############
 
 ############### START - SPOKE GATEWAY ###############

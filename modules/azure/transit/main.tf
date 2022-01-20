@@ -1,20 +1,15 @@
-locals {
-  gateway_name  = "${var.resource_prefix}-transit-gw-vm"
-  firewall_name = "${var.resource_prefix}-fw-vm"
-}
-
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_resource_group" "azure_hub_resource_group" {
-  name     = "${var.resource_prefix}-rg"
+resource "azurerm_resource_group" "azure_transit_resource_group" {
+  name     = var.resource_group_name
   location = var.location
 }
 
 resource "azurerm_storage_account" "storage_account" {
   #checkov:skip=CKV_AZURE_35:The network rules are configured in a separate resource below
-  name                      = replace("${var.resource_prefix}sa", "-", "")
-  resource_group_name       = azurerm_resource_group.azure_hub_resource_group.name
-  location                  = var.location
+  name                      = var.storage_account_name
+  resource_group_name       = azurerm_resource_group.azure_transit_resource_group.name
+  location                  = azurerm_resource_group.azure_transit_resource_group.location
   account_tier              = "Standard"
   account_replication_type  = "LRS"
   min_tls_version           = "TLS1_2"
@@ -22,55 +17,59 @@ resource "azurerm_storage_account" "storage_account" {
   enable_https_traffic_only = true
 }
 
-resource "azurerm_storage_account_network_rules" "storage_account_access_rules" {
-  storage_account_id = azurerm_storage_account.storage_account.id
-  default_action     = "Deny"
-  bypass             = ["AzureServices"]
-  virtual_network_subnet_ids = [
-    azurerm_subnet.azure_hub_gateway_subnet.id
-  ]
-}
-
-resource "azurerm_virtual_network" "azure_hub_vnet" {
-  name                = "${var.resource_prefix}-vnet"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.azure_hub_resource_group.name
+resource "azurerm_virtual_network" "azure_transit_vnet" {
+  name                = var.vnet_name
+  location            = azurerm_resource_group.azure_transit_resource_group.location
+  resource_group_name = azurerm_resource_group.azure_transit_resource_group.name
   address_space       = [var.vnet_address_prefix]
 }
 
-resource "azurerm_subnet" "azure_hub_gateway_subnet" {
-  depends_on = [
-    azurerm_virtual_network.azure_hub_vnet
-  ]
-  name                 = "gateway-subnet"
-  virtual_network_name = "${var.resource_prefix}-vnet"
-  resource_group_name  = azurerm_resource_group.azure_hub_resource_group.name
-  address_prefixes     = [var.gateway_mgmt_subnet_address_prefix]
-  service_endpoints    = ["Microsoft.Storage"]
+resource "azurerm_subnet" "transit_gw_subnet" {
+  name                 = "transit-gateway-mgmt-subnet"
+  virtual_network_name = azurerm_virtual_network.azure_transit_vnet.name
+  resource_group_name  = azurerm_resource_group.azure_transit_resource_group.name
+  address_prefixes     = [local.transit_gateway_subnet]
 }
 
-resource "azurerm_subnet" "azure_hub_firewall_subnet" {
-  count = var.firenet_enabled ? 1 : 0
-  depends_on = [
-    azurerm_virtual_network.azure_hub_vnet
-  ]
-  name                 = "firewall-ingress-egress"
-  virtual_network_name = "${var.resource_prefix}-vnet"
-  resource_group_name  = azurerm_resource_group.azure_hub_resource_group.name
-  address_prefixes     = [var.firewall_ingress_egress_prefix]
+resource "azurerm_subnet" "transit_gw_ha_subnet" {
+  count                = var.transit_gateway_ha ? 1 : 0
+  name                 = "transit-gateway-ha-mgmt-subnet"
+  virtual_network_name = azurerm_virtual_network.azure_transit_vnet.name
+  resource_group_name  = azurerm_resource_group.azure_transit_resource_group.name
+  address_prefixes     = [local.transit_gateway_ha_subnet]
 }
 
-resource "azurerm_public_ip" "azure_gateway_public_ip" {
+resource "azurerm_subnet" "azure_transit_firewall_subnet" {
+  count                = var.firenet_enabled ? 1 : 0
+  name                 = "firewall-subnet"
+  virtual_network_name = azurerm_virtual_network.azure_transit_vnet.name
+  resource_group_name  = azurerm_resource_group.azure_transit_resource_group.name
+  address_prefixes     = [local.firewall_subnet]
+}
+
+resource "azurerm_public_ip" "transit_public_ip" {
   lifecycle {
     ignore_changes = [tags]
   }
-  name                    = "${local.gateway_name}-public-ip"
-  location                = var.location
-  resource_group_name     = azurerm_resource_group.azure_hub_resource_group.name
-  sku                     = "Standard"
-  allocation_method       = "Static"
-  idle_timeout_in_minutes = 4
+  name                = "${var.transit_gateway_name}-public-ip"
+  location            = azurerm_resource_group.azure_transit_vnet.location
+  resource_group_name = azurerm_resource_group.azure_transit_resource_group.name
+  sku                 = "Standard"
+  allocation_method   = "Static"
 }
+
+resource "azurerm_public_ip" "transit_hagw_public_ip" {
+  lifecycle {
+    ignore_changes = [tags]
+  }
+  count               = var.transit_gateway_ha ? 1 : 0
+  name                = "${var.transit_gateway_name}-ha-public-ip"
+  location            = azurerm_resource_group.azure_transit_vnet.location
+  resource_group_name = azurerm_resource_group.azure_transit_resource_group.name
+  sku                 = "Standard"
+  allocation_method   = "Static"
+}
+
 
 # Create an Aviatrix Azure Transit Network Gateway
 resource "aviatrix_transit_gateway" "azure_transit_gateway" {
@@ -80,23 +79,28 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   lifecycle {
     ignore_changes = [tags]
   }
-  cloud_type                    = 8
-  account_name                  = var.aviatrix_azure_account
-  gw_name                       = local.gateway_name
-  vpc_id                        = "${azurerm_virtual_network.azure_hub_vnet.name}:${azurerm_virtual_network.azure_hub_vnet.resource_group_name}"
-  vpc_reg                       = var.location
-  gw_size                       = "Standard_B2ms"
-  subnet                        = azurerm_subnet.azure_hub_gateway_subnet.address_prefix
-  connected_transit             = true
-  allocate_new_eip              = false
-  eip                           = azurerm_public_ip.azure_gateway_public_ip.ip_address
-  azure_eip_name_resource_group = "${azurerm_public_ip.azure_gateway_public_ip.name}:${azurerm_virtual_network.azure_hub_vnet.resource_group_name}"
-  enable_advertise_transit_cidr = true
-  enable_egress_transit_firenet = var.enable_firenet_egress
-  enable_segmentation           = true
-  enable_transit_firenet        = var.firenet_enabled ? true : false
-  enable_vpc_dns_server         = false
-  enable_active_mesh            = true
+  cloud_type                       = 8
+  account_name                     = var.aviatrix_azure_account
+  gw_name                          = var.transit_gateway_name
+  vpc_id                           = "${azurerm_virtual_network.azure_transit_vnet.name}:${azurerm_virtual_network.azure_transit_vnet.resource_group_name}"
+  vpc_reg                          = azurerm_resource_group.azure_transit_resource_group.location
+  gw_size                          = var.transit_gw_size
+  subnet                           = azurerm_subnet.transit_gw_subnet.address_prefixes[0]
+  eip                              = azurerm_public_ip.transit_public_ip.ip_address
+  azure_eip_name_resource_group    = "${azurerm_public_ip.transit_public_ip.name}:${azurerm_virtual_network.azure_transit_vnet.resource_group_name}"
+  zone                             = "az-1"
+  ha_subnet                        = var.transit_gateway_ha ? azurerm_subnet.transit_gw_ha_subnet[0].address_prefixes[0] : null
+  ha_zone                          = var.transit_gateway_ha ? "az-2" : null
+  ha_gw_size                       = var.transit_gateway_ha ? var.transit_gw_size : null
+  ha_eip                           = var.transit_gateway_ha ? azurerm_public_ip.transit_hagw_public_ip[0].ip_address : null
+  ha_azure_eip_name_resource_group = var.transit_gateway_ha ? "${azurerm_public_ip.transit_hagw_public_ip[0].name}:${azurerm_virtual_network.transit_vnet.resource_group_name}" : null
+  connected_transit                = true
+  allocate_new_eip                 = false
+  enable_advertise_transit_cidr    = true
+  enable_segmentation              = true
+  enable_transit_firenet           = var.firenet_enabled ? true : false
+  enable_vpc_dns_server            = false
+  enable_active_mesh               = true
 }
 
 data "aviatrix_transit_gateway" "transit_gw_data" {
@@ -107,11 +111,12 @@ data "aviatrix_transit_gateway" "transit_gw_data" {
 }
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
+  count = var.enable_transit_gateway_scheduled_shutdown ? 1 : 0
   depends_on = [
     aviatrix_transit_gateway.azure_transit_gateway
   ]
-  virtual_machine_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_hub_resource_group.name}/providers/Microsoft.Compute/virtualMachines/av-gw-${local.gateway_name}"
-  location           = azurerm_resource_group.azure_hub_resource_group.location
+  virtual_machine_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_transit_resource_group.name}/providers/Microsoft.Compute/virtualMachines/av-gw-${var.transit_gateway_name}"
+  location           = azurerm_resource_group.azure_transit_resource_group.location
   enabled            = true
 
   daily_recurrence_time = "1800"
@@ -140,17 +145,17 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   depends_on = [
     aviatrix_transit_gateway.azure_transit_gateway
   ]
-  vpc_id                 = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
+  vpc_id = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
   # vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
-  firewall_name          = local.firewall_name
+  firewall_name          = var.firewall_name
   firewall_image         = var.firewall_image
   firewall_image_version = var.firewall_image_version
   firewall_size          = var.fw_instance_size
   username               = local.is_checkpoint ? "admin" : var.firewall_username
   password               = random_password.generate_firewall_secret[count.index].result
-  management_subnet      = local.is_palo ? azurerm_subnet.azure_hub_gateway_subnet.address_prefix : null
-  egress_subnet          = azurerm_subnet.azure_hub_firewall_subnet[count.index].address_prefix
+  management_subnet      = local.is_palo ? azurerm_subnet.transit_gw_subnet.address_prefix : null
+  egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[count.index].address_prefix
   user_data              = templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { gateway = local.firewall_lan_subnet })
 }
 
@@ -185,6 +190,7 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
 }
 
 data "external" "fortinet_bootstrap" {
+  count = local.is_fortinet ? 1 : 0
   depends_on = [
     aviatrix_firewall_instance.firewall_instance,
     aviatrix_firenet.firenet,
@@ -199,7 +205,7 @@ data "external" "fortinet_bootstrap" {
 }
 
 data "aviatrix_firenet_vendor_integration" "vendor_integration" {
-  count         = var.firenet_enabled ? 1 : 0
+  count         = var.firenet_enabled && local.is_fortinet ? 1 : 0 
   vpc_id        = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
   instance_id   = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
   vendor_type   = "Fortinet FortiGate"
