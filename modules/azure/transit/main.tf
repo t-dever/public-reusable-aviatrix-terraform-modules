@@ -84,7 +84,7 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   account_name                     = var.aviatrix_azure_account
   gw_name                          = var.transit_gateway_name
   vpc_id                           = "${azurerm_virtual_network.azure_transit_vnet.name}:${azurerm_virtual_network.azure_transit_vnet.resource_group_name}"
-  vpc_reg                          = azurerm_resource_group.azure_transit_resource_group.location
+  vpc_reg                          = var.location
   gw_size                          = var.transit_gw_size
   subnet                           = azurerm_subnet.transit_gw_subnet.address_prefixes[0]
   eip                              = azurerm_public_ip.transit_public_ip.ip_address
