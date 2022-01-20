@@ -212,7 +212,7 @@ data "aviatrix_firenet_vendor_integration" "vendor_integration" {
   vendor_type   = "Fortinet FortiGate"
   public_ip     = aviatrix_firewall_instance.firewall_instance[count.index].public_ip
   firewall_name = local.firewall_name
-  api_token     = sensitive(data.external.fortinet_bootstrap.result.api_key)
+  api_token     = sensitive(data.external.fortinet_bootstrap[count.index].result.api_key)
   save          = true
 }
 
