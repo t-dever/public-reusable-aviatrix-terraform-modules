@@ -79,12 +79,6 @@ variable "aviatrix_azure_account" {
   default     = "test-account"
 }
 
-variable "gateway_mgmt_subnet_address_prefix" {
-  description = "The subnet address prefix used for the gateway management ip"
-  type        = string
-  default     = "10.0.0.0/24"
-}
-
 variable "firewall_name" {
   description = "The name of the firewall to be deployed."
   type        = string
@@ -108,12 +102,6 @@ variable "key_vault_id" {
 }
 variable "firenet_enabled" {
   description = "Enables firenet on the aviatrix transit gateway"
-  type        = bool
-  default     = false
-}
-
-variable "enable_firenet_egress" {
-  description = "Enables egress traffic through firenet"
   type        = bool
   default     = false
 }
