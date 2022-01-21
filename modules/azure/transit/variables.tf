@@ -9,11 +9,6 @@ variable "location" {
   default     = "South Central US"
 }
 
-# variable "storage_account_name" {
-#   description = "The name of the storage account."
-#   type        = string
-# }
-
 variable "vnet_name" {
   type        = string
   description = "The name for the Virtual Network"
@@ -78,44 +73,24 @@ variable "aviatrix_azure_account" {
   sensitive   = true
   default     = "test-account"
 }
-
-variable "firewall_name" {
-  description = "The name of the firewall to be deployed."
-  type        = string
-}
-# variable "firewall_ingress_egress_prefix" {
-#   description = "The subnet address prefix used for the firewall ingress and egress"
-#   type        = string
-#   default     = "10.0.1.0/24"
-# }
-variable "user_public_for_mgmt" {
-  description = "The public IP address of the user that is logging into the controller"
-  type        = string
-  sensitive   = true
-  default     = "1.1.1.1"
-}
 variable "key_vault_id" {
   description = "The key vault id used to store the firewall password"
   type        = string
   sensitive   = true
   default     = "default"
 }
+
+variable "user_public_for_mgmt" {
+  description = "The public IP address of the user that is logging into the controller"
+  type        = string
+  sensitive   = true
+  default     = "1.1.1.1"
+}
+
 variable "firenet_enabled" {
   description = "Enables firenet on the aviatrix transit gateway"
   type        = bool
   default     = false
-}
-
-variable "firewall_username" {
-  type        = string
-  description = "The username used for the firewall configurations"
-  default     = "fwadmin"
-}
-
-variable "egress_enabled" {
-  type        = bool
-  default     = false
-  description = "Allow traffic to the internet through firewall"
 }
 
 variable "firewall_image" {
@@ -134,6 +109,29 @@ variable "fw_instance_size" {
   description = "Azure Instance size for the NGFW's"
   type        = string
   default     = "Standard_D3_v2"
+}
+
+variable "firewall_name" {
+  description = "The name of the firewall to be deployed."
+  type        = string
+}
+
+variable "firewall_count" {
+  description = "The number of firewalls to deploy."
+  type = number
+  default = 1
+}
+
+variable "firewall_username" {
+  type        = string
+  description = "The username used for the firewall configurations"
+  default     = "fwadmin"
+}
+
+variable "egress_enabled" {
+  type        = bool
+  default     = false
+  description = "Allow traffic to the internet through firewall"
 }
 
 locals {

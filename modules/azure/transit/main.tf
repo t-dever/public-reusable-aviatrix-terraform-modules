@@ -128,35 +128,35 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
 }
 
 resource "random_password" "generate_firewall_secret" {
-  count            = var.firenet_enabled ? 1 : 0
+  count            = var.firenet_enabled ? var.firewall_count : 0
   length           = 16
   special          = true
   override_special = "_%@"
 }
 
 resource "azurerm_key_vault_secret" "firewall_secret" {
-  count        = var.firenet_enabled ? 1 : 0
-  name         = "${var.firewall_name}-secret"
+  count        = var.firenet_enabled ? var.firewall_count : 0
+  name         = "${var.firewall_name}-${count.index}-secret"
   value        = random_password.generate_firewall_secret[count.index].result
   key_vault_id = var.key_vault_id
 }
 
 resource "aviatrix_firewall_instance" "firewall_instance" {
-  count = var.firenet_enabled ? 1 : 0
+  count = var.firenet_enabled ? var.firewall_count : 0
   depends_on = [
     aviatrix_transit_gateway.azure_transit_gateway
   ]
   vpc_id = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
   # vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
-  firewall_name          = var.firewall_name
+  firewall_name          = "${var.firewall_name}-${count.index}"
   firewall_image         = var.firewall_image
   firewall_image_version = var.firewall_image_version
   firewall_size          = var.fw_instance_size
   username               = local.is_checkpoint ? "admin" : var.firewall_username
   password               = random_password.generate_firewall_secret[count.index].result
   management_subnet      = local.is_palo ? azurerm_subnet.transit_gw_subnet.address_prefix : null
-  egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[count.index].address_prefix
+  egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[0].address_prefix
   user_data              = templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { gateway = local.firewall_lan_subnet })
 }
 
@@ -175,7 +175,7 @@ resource "aviatrix_firenet" "firenet" {
 }
 
 resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
-  count = var.firenet_enabled ? 1 : 0
+  count = var.firenet_enabled ? var.firewall_count : 0
   depends_on = [
     aviatrix_firewall_instance.firewall_instance,
     aviatrix_transit_gateway.azure_transit_gateway
@@ -191,7 +191,7 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
 }
 
 data "external" "fortinet_bootstrap" {
-  count = local.is_fortinet ? 1 : 0
+  count = local.is_fortinet ? var.firewall_count : 0
   depends_on = [
     aviatrix_firewall_instance.firewall_instance,
     aviatrix_firenet.firenet,
@@ -199,19 +199,19 @@ data "external" "fortinet_bootstrap" {
   ]
   program = ["python", "${path.root}/firewalls/fortinet/generate_api_token.py"]
   query = {
-    fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance[0].public_ip}"
+    fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance[count.index].public_ip}"
     fortigate_username = "${var.firewall_username}"
-    fortigate_password = "${random_password.generate_firewall_secret[0].result}"
+    fortigate_password = "${random_password.generate_firewall_secret[count.index].result}"
   }
 }
 
 data "aviatrix_firenet_vendor_integration" "vendor_integration" {
-  count         = var.firenet_enabled && local.is_fortinet ? 1 : 0 
+  count         = var.firenet_enabled && local.is_fortinet ? var.firewall_count : 0 
   vpc_id        = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
   instance_id   = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
   vendor_type   = "Fortinet FortiGate"
   public_ip     = aviatrix_firewall_instance.firewall_instance[count.index].public_ip
-  firewall_name = var.firewall_name
+  firewall_name = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
   api_token     = sensitive(data.external.fortinet_bootstrap[count.index].result.api_key)
   save          = true
 }
