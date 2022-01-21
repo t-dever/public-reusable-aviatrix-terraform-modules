@@ -127,6 +127,22 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
   }
 }
 
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
+  count = var.enable_transit_gateway_scheduled_shutdown && var.transit_gateway_ha ? 1 : 0
+  depends_on = [
+    aviatrix_transit_gateway.azure_transit_gateway
+  ]
+  virtual_machine_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_transit_resource_group.name}/providers/Microsoft.Compute/virtualMachines/av-gw-${var.transit_gateway_name}-hagw"
+  location           = azurerm_resource_group.azure_transit_resource_group.location
+  enabled            = true
+
+  daily_recurrence_time = "1800"
+  timezone              = "Central Standard Time"
+  notification_settings {
+    enabled = false
+  }
+}
+
 resource "random_password" "generate_firewall_secret" {
   count            = var.firenet_enabled ? var.firewall_count : 0
   length           = 16
@@ -157,7 +173,7 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   password               = random_password.generate_firewall_secret[count.index].result
   management_subnet      = local.is_palo ? azurerm_subnet.transit_gw_subnet.address_prefix : null
   egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[0].address_prefix
-  user_data              = templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { gateway = local.firewall_lan_subnet })
+  user_data              = local.is_fortinet ? local.fortinet_bootstrap : null
 }
 
 resource "aviatrix_firenet" "firenet" {
@@ -190,6 +206,7 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
   attached             = true
 }
 
+# Bootstrap configuration if firewall is fortinet
 data "external" "fortinet_bootstrap" {
   count = var.firenet_enabled && local.is_fortinet ? var.firewall_count : 0
   depends_on = [
@@ -205,6 +222,7 @@ data "external" "fortinet_bootstrap" {
   }
 }
 
+# Vendor Integration if firewall vendor is fortinet.
 data "aviatrix_firenet_vendor_integration" "vendor_integration" {
   count         = var.firenet_enabled && local.is_fortinet ? var.firewall_count : 0 
   vpc_id        = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id

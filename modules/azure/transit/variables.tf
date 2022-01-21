@@ -150,6 +150,7 @@ locals {
   transit_gateway_subnet     = local.subnets[0]
   transit_gateway_ha_subnet  = local.subnets[1]
   firewall_subnet            = local.subnets[2]
+  fortinet_bootstrap         = local.is_fortinet ? templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { gateway = local.firewall_lan_subnet }) : null
   # primary_subnet            = local.subnets[3]
   # secondary_subnet          = local.subnets[4]
   # transit_gateway_subnet    = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, 0)
