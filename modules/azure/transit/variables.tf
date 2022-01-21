@@ -149,9 +149,18 @@ locals {
   transit_gateway_subnet     = local.subnets[0]
   transit_gateway_ha_subnet  = local.subnets[1]
   firewall_subnet            = local.subnets[2]
-  fortinet_bootstrap         = local.is_fortinet ? templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { lan_gateway = local.firewall_lan_subnet, wan_gateway = local.firewall_wan_gateway }) : null
+  fortinet_bootstrap         = local.is_fortinet && var.egress_enabled ? templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { lan_gateway = local.firewall_lan_subnet, egress = local.firewall_wan_gateway }) : templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { lan_gateway = local.firewall_lan_subnet, egress = "" })
   firewall_lan_gateway        = cidrhost(local.subnets[4], 1)
   firewall_wan_gateway        = cidrhost(local.firewall_subnet, 1)
+  fortinet_egress            = <<-EOT
+    edit 5
+        set dst 0.0.0.0 0.0.0.0
+        set gateway ${local.firewall_wan_gateway}
+        set device "port1"
+        set comment "To WAN"
+    next
+  EOT
+
   # primary_subnet            = local.subnets[3]
   # secondary_subnet          = local.subnets[4]
 }
