@@ -154,10 +154,10 @@ locals {
   firewall_wan_gateway        = cidrhost(local.firewall_subnet, 1)
   fortinet_egress            = <<-EOT
     edit 5
-        set dst 0.0.0.0 0.0.0.0
-        set gateway ${local.firewall_wan_gateway}
-        set device "port1"
-        set comment "To WAN"
+      set dst 0.0.0.0 0.0.0.0
+      set gateway ${local.firewall_wan_gateway}
+      set device "port1"
+      set comment "To WAN"
     next
     EOT
 
