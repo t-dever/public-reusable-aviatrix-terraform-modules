@@ -146,11 +146,12 @@ locals {
   primary_newbits            = var.primary_subnet_size - local.cidrbits
   secondary_newbits          = var.secondary_ha_subnet_size - local.cidrbits
   subnets                    = cidrsubnets(var.vnet_address_prefix, local.transit_gateway_newbits, local.transit_gateway_ha_newbits, local.firewall_newbits, local.primary_newbits, local.secondary_newbits)
-  firewall_lan_subnet        = cidrhost(local.subnets[4], 1)
   transit_gateway_subnet     = local.subnets[0]
   transit_gateway_ha_subnet  = local.subnets[1]
   firewall_subnet            = local.subnets[2]
-  fortinet_bootstrap         = local.is_fortinet ? templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { gateway = local.firewall_lan_subnet }) : null
+  fortinet_bootstrap         = local.is_fortinet ? templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { lan_gateway = local.firewall_lan_subnet, wan_gateway = local.firewall_wan_gateway }) : null
+  firewall_lan_gateway        = cidrhost(local.subnets[4], 1)
+  firewall_wan_gateway        = cidrhost(local.firewall_subnet, 1)
   # primary_subnet            = local.subnets[3]
   # secondary_subnet          = local.subnets[4]
 }

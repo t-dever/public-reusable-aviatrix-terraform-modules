@@ -18,9 +18,15 @@ end
 config router static
     edit 4
         set dst 168.63.129.16 255.255.255.255
-        set gateway ${gateway}
+        set gateway ${lan_gateway}
         set device "port2"
         set comment "To Azure Load Balancer"
+    next
+    edit 5
+        set dst 0.0.0.0 0.0.0.0
+        set gateway ${wan_gateway}
+        set device "port1"
+        set comment "To WAN"
     next
 end
 config system api-user
@@ -38,4 +44,16 @@ config firewall policy
         set schedule always
         set service ALL
     next
+    edit 2
+        set name allow_WAN
+        set srcintf port2
+        set dstintf port1
+        set srcaddr all
+        set dstaddr all
+        set action accept
+        set schedule always
+        set service ALL
+        set nat enable
+    next
+end
 end
