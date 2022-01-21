@@ -159,7 +159,7 @@ locals {
         set device "port1"
         set comment "To WAN"
     next
-  EOT
+    EOT
 
   # primary_subnet            = local.subnets[3]
   # secondary_subnet          = local.subnets[4]
