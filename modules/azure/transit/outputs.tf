@@ -26,13 +26,13 @@ output "firewall_mgmt_ip" {
 }
 
 output "firewall_password" {
-  value = var.firenet_enabled ? random_password.generate_firewall_secret[0].result : null
+  value       = var.firenet_enabled ? random_password.generate_firewall_secret[0].result : null
   description = "The generated firewall password."
-  sensitive = true
+  sensitive   = true
 }
 
 output "api_key" {
-  value = var.firenet_enabled ? data.external.fortinet_bootstrap[*].result.api_key : null
+  value       = var.firenet_enabled ? data.external.fortinet_bootstrap[*].result.api_key : null
   description = "The API Key for fortinet firewall."
-  sensitive = true
+  sensitive   = true
 }
