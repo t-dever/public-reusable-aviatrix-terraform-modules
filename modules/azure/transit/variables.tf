@@ -151,7 +151,7 @@ locals {
   firewall_subnet            = local.subnets[2]
   firewall_lan_gateway        = cidrhost(local.subnets[4], 1)
   firewall_wan_gateway        = cidrhost(local.firewall_subnet, 1)
-  fortinet_bootstrap         = local.is_fortinet && var.egress_enabled ? templatefile("${path.module}/firewalls/fortinet/fortinet_egress_init.tftpl", { lan_gateway = local.firewall_lan_gateway, egress = local.firewall_wan_gateway}) : templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { lan_gateway = local.firewall_lan_gateway})
+  fortinet_bootstrap         = local.is_fortinet && var.egress_enabled ? templatefile("${path.module}/firewalls/fortinet/fortinet_egress_init.tftpl", { lan_gateway = local.firewall_lan_gateway, wan_gateway = local.firewall_wan_gateway}) : templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { lan_gateway = local.firewall_lan_gateway })
 
 
   # primary_subnet            = local.subnets[3]
