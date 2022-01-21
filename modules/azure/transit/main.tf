@@ -191,7 +191,7 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
 }
 
 data "external" "fortinet_bootstrap" {
-  count = local.is_fortinet ? var.firewall_count : 0
+  count = var.firenet_enabled && local.is_fortinet ? var.firewall_count : 0
   depends_on = [
     aviatrix_firewall_instance.firewall_instance,
     aviatrix_firenet.firenet,
