@@ -135,10 +135,10 @@ variable "egress_enabled" {
 }
 
 locals {
-  is_checkpoint              = length(regexall("check", lower(var.firewall_image))) > 0    #Check if fw image contains checkpoint. Needs special handling for the username/password
-  is_palo                    = length(regexall("palo", lower(var.firewall_image))) > 0     #Check if fw image contains palo. Needs special handling for management_subnet (CP & Fortigate null)
-  is_fortinet                = length(regexall("fortinet", lower(var.firewall_image))) > 0 #Check if fw image contains fortinet. Needs special handling for management_subnet (CP & Fortigate null)
-  is_aviatrix                = length(regexall("aviatrix", lower(var.firewall_image))) > 0
+  is_checkpoint              = length(regexall("check", lower(var.firewall_image))) > 0    # Check if fw image contains checkpoint.
+  is_palo                    = length(regexall("palo", lower(var.firewall_image))) > 0     # Check if fw image contains palo.
+  is_fortinet                = length(regexall("fortinet", lower(var.firewall_image))) > 0 # Check if fw image contains fortinet.
+  is_aviatrix                = length(regexall("aviatrix", lower(var.firewall_image))) > 0 # Check if fw image contains aviatrix.
   cidrbits                   = tonumber(split("/", var.vnet_address_prefix)[1])
   transit_gateway_newbits    = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
   transit_gateway_ha_newbits = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
@@ -153,13 +153,5 @@ locals {
   fortinet_bootstrap         = local.is_fortinet ? templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { gateway = local.firewall_lan_subnet }) : null
   # primary_subnet            = local.subnets[3]
   # secondary_subnet          = local.subnets[4]
-  # transit_gateway_subnet    = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, 0)
-  # transit_gateway_ha_subnet = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_ha_newbits, 1)
-  # firewall_subnet           = cidrsubnets(var.vnet_address_prefix, local.transit_gateway_newbits, local.transit_gateway_ha_newbits, 28)[2]
-  # primary_subnet            = cidrsubnets(var.vnet_address_prefix, local.transit_gateway_newbits, local.transit_gateway_ha_newbits, 28, var.primary_subnet_size)[3]
-  # transit_gateway_ha_subnet = var.insane_mode ? cidrsubnet(var.vnet_address_prefix, 26 - local.cidrbits, 1) : cidrsubnet(var.vnet_address_prefix, 28 - local.cidrbits, 1)
-  # firewall_subnet           = var.insane_mode ? cidrsubnets(var.vnet_address_prefix, 26 - local.cidrbits, 26 - local.cidrbits, 28 - local.cidrbits)[2] : cidrsubnets(var.vnet_address_prefix, 28 - local.cidrbits, 28 - local.cidrbits, 28 - local.cidrbits)[2]
-  # primary_subnet            = var.insane_mode ? cidrsubnets(var.vnet_address_prefix, 26 - local.cidrbits, 26 - local.cidrbits, 28 - local.cidrbits, 28 - local.cidrbits)[3] : cidrsubnets(var.vnet_address_prefix, 28 - local.cidrbits, 28 - local.cidrbits, 28 - local.cidrbits, 28 - local.cidrbits)[3]
-  # secondary_subnet            = var.insane_mode ? cidrsubnets(var.vnet_address_prefix, 26 - local.cidrbits, 26 - local.cidrbits, 28 - local.cidrbits, 28 - local.cidrbits, 28 - local.cidrbits)[3] : cidrsubnets(var.vnet_address_prefix, 28 - local.cidrbits, 28 - local.cidrbits, 28 - local.cidrbits, 28 - local.cidrbits)[3]
 }
 

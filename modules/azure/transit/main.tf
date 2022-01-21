@@ -127,7 +127,7 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
   }
 }
 
-resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown1" {
   count = var.enable_transit_gateway_scheduled_shutdown && var.transit_gateway_ha ? 1 : 0
   depends_on = [
     aviatrix_transit_gateway.azure_transit_gateway
