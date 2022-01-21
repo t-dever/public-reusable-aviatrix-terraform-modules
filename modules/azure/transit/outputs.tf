@@ -26,7 +26,7 @@ output "firewall_mgmt_ip" {
 }
 
 output "firewall_password" {
-  value       = var.firenet_enabled ? random_password.generate_firewall_secret[0].result : null
+  value       = var.firenet_enabled ? random_password.generate_firewall_secret[*].result : null
   description = "The generated firewall password."
   sensitive   = true
 }
