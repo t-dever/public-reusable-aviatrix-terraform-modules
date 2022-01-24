@@ -171,7 +171,7 @@ resource "azurerm_network_interface" "azure_copilot_nic" {
     subnet_id                     = azurerm_subnet.azure_controller_subnet.id
     private_ip_address_allocation = "Static"
     private_ip_address            = cidrhost(azurerm_subnet.azure_controller_subnet.address_prefix, 5)
-    public_ip_address_id          = azurerm_public_ip.azure_copilot_public_ip.id
+    public_ip_address_id          = azurerm_public_ip.azure_copilot_public_ip[0].id
   }
 }
 
