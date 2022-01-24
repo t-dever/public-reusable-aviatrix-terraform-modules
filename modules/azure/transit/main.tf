@@ -144,44 +144,22 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown1" {
 }
 
 resource "random_password" "generate_firewall_secret" {
-  count            = var.firenet_enabled ? var.firewall_count : 0
+  count            = var.firenet_enabled ? 1 : 0
   length           = 16
   special          = true
   override_special = "_%@"
 }
 
 resource "azurerm_key_vault_secret" "firewall_secret" {
-  count        = var.firenet_enabled ? var.firewall_count : 0
-  name         = "${var.firewall_name}-${count.index}-secret"
-  value        = random_password.generate_firewall_secret[count.index].result
+  count        = var.firenet_enabled ? 1 : 0
+  name         = "${var.firewall_name}-secret"
+  value        = random_password.generate_firewall_secret[0].result
   key_vault_id = var.key_vault_id
-}
-
-resource "aviatrix_firewall_instance" "firewall_instance" {
-  count = var.firenet_enabled ? var.firewall_count : 0
-  depends_on = [
-    aviatrix_transit_gateway.azure_transit_gateway
-  ]
-  # vpc_id = aviatrix_transit_gateway.transit_gw_data.vpc_id
-  vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
-  firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
-  firewall_name          = "${var.firewall_name}-${count.index}"
-  firewall_image         = var.firewall_image
-  firewall_image_version = var.firewall_image_version
-  firewall_size          = var.fw_instance_size
-  username               = local.is_checkpoint ? "admin" : var.firewall_username
-  password               = random_password.generate_firewall_secret[count.index].result
-  management_subnet      = local.is_palo ? azurerm_subnet.transit_gw_subnet.address_prefix : null
-  egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[0].address_prefix
-  user_data              = local.is_fortinet ? local.fortinet_bootstrap : null
 }
 
 resource "aviatrix_firenet" "firenet" {
   count = var.firenet_enabled ? 1 : 0
-  depends_on = [
-    aviatrix_firewall_instance.firewall_instance
-  ]
-  vpc_id                               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
+  vpc_id                               = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   inspection_enabled                   = true
   egress_enabled                       = var.egress_enabled
   keep_alive_via_lan_interface_enabled = false
@@ -190,47 +168,129 @@ resource "aviatrix_firenet" "firenet" {
   egress_static_cidrs                  = []
 }
 
-resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
-  count = var.firenet_enabled ? var.firewall_count : 0
+resource "aviatrix_firewall_instance" "firewall_instance_1" {
+  count = var.firenet_enabled ? 1 : 0
+  # depends_on = [
+  #   aviatrix_transit_gateway.azure_transit_gateway
+  # ]
+  # vpc_id = aviatrix_transit_gateway.transit_gw_data.vpc_id
+  vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
+  firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
+  firewall_name          = "${var.firewall_name}-1"
+  firewall_image         = var.firewall_image
+  firewall_image_version = var.firewall_image_version
+  firewall_size          = var.fw_instance_size
+  zone                   = "az-1"
+  username               = local.is_checkpoint ? "admin" : var.firewall_username
+  password               = random_password.generate_firewall_secret[0].result
+  management_subnet      = local.is_palo ? azurerm_subnet.transit_gw_subnet.address_prefix : null
+  egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[0].address_prefix
+  user_data              = local.is_fortinet ? local.fortinet_bootstrap : null
+}
+
+resource "aviatrix_firewall_instance" "firewall_instance_2" {
+  count = var.firenet_enabled && var.firewall_ha ? 1 : 0
   depends_on = [
-    aviatrix_firewall_instance.firewall_instance,
-    aviatrix_transit_gateway.azure_transit_gateway
+    aviatrix_firewall_instance.firewall_instance_1
   ]
-  vpc_id               = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
+  # vpc_id = aviatrix_transit_gateway.transit_gw_data.vpc_id
+  vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
+  firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
+  firewall_name          = "${var.firewall_name}-2"
+  firewall_image         = var.firewall_image
+  firewall_image_version = var.firewall_image_version
+  firewall_size          = var.fw_instance_size
+  zone                   = "az-2"
+  username               = local.is_checkpoint ? "admin" : var.firewall_username
+  password               = random_password.generate_firewall_secret[0].result
+  management_subnet      = local.is_palo ? azurerm_subnet.transit_gw_subnet.address_prefix : null
+  egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[0].address_prefix
+  user_data              = local.is_fortinet ? local.fortinet_bootstrap : null
+}
+
+resource "aviatrix_firewall_instance_association" "firewall_instance_association_1" {
+  count = var.firenet_enabled ? 1 : 0
+  # depends_on = [
+  #   aviatrix_firewall_instance.firewall_instance_1,
+  #   aviatrix_transit_gateway.azure_transit_gateway
+  # ]
+  vpc_id               = aviatrix_firewall_instance.firewall_instance_1[0].vpc_id
   firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
-  instance_id          = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
-  firewall_name        = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
-  lan_interface        = aviatrix_firewall_instance.firewall_instance[count.index].lan_interface
-  management_interface = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
-  egress_interface     = aviatrix_firewall_instance.firewall_instance[count.index].egress_interface
+  instance_id          = aviatrix_firewall_instance.firewall_instance_1[0].instance_id
+  firewall_name        = aviatrix_firewall_instance.firewall_instance_1[0].firewall_name
+  lan_interface        = aviatrix_firewall_instance.firewall_instance_1[0].lan_interface
+  management_interface = aviatrix_firewall_instance.firewall_instance_1[0].management_interface
+  egress_interface     = aviatrix_firewall_instance.firewall_instance_1[0].egress_interface
+  attached             = true
+}
+
+resource "aviatrix_firewall_instance_association" "firewall_instance_association_2" {
+  count = var.firenet_enabled && var.firewall_ha ? 1 : 0
+  # depends_on = [
+  #   aviatrix_firewall_instance.firewall_instance_1,
+  #   aviatrix_transit_gateway.azure_transit_gateway
+  # ]
+  vpc_id               = aviatrix_firewall_instance.firewall_instance_2[0].vpc_id
+  firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
+  instance_id          = aviatrix_firewall_instance.firewall_instance_2[0].instance_id
+  firewall_name        = aviatrix_firewall_instance.firewall_instance_2[0].firewall_name
+  lan_interface        = aviatrix_firewall_instance.firewall_instance_2[0].lan_interface
+  management_interface = aviatrix_firewall_instance.firewall_instance_2[0].management_interface
+  egress_interface     = aviatrix_firewall_instance.firewall_instance_2[0].egress_interface
   attached             = true
 }
 
 # Bootstrap configuration if firewall is fortinet
-data "external" "fortinet_bootstrap" {
-  count = var.firenet_enabled && local.is_fortinet ? var.firewall_count : 0
+data "external" "fortinet_bootstrap_1" {
+  count = var.firenet_enabled && local.is_fortinet ? 1 : 0
   depends_on = [
-    aviatrix_firewall_instance.firewall_instance,
+    aviatrix_firewall_instance.firewall_instance_1,
     aviatrix_firenet.firenet,
-    aviatrix_firewall_instance_association.firewall_instance_association
+    aviatrix_firewall_instance_association.firewall_instance_association_1
   ]
   program = ["python", "${path.root}/firewalls/fortinet/generate_api_token.py"]
   query = {
-    fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance[count.index].public_ip}"
+    fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance_1[0].public_ip}"
     fortigate_username = "${var.firewall_username}"
-    fortigate_password = "${random_password.generate_firewall_secret[count.index].result}"
+    fortigate_password = "${random_password.generate_firewall_secret[0].result}"
+  }
+}
+
+data "external" "fortinet_bootstrap_2" {
+  count = var.firenet_enabled && local.is_fortinet && var.firewall_ha ? 1 : 0
+  depends_on = [
+    aviatrix_firewall_instance.firewall_instance_2,
+    aviatrix_firenet.firenet,
+    aviatrix_firewall_instance_association.firewall_instance_association_2
+  ]
+  program = ["python", "${path.root}/firewalls/fortinet/generate_api_token.py"]
+  query = {
+    fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance_2[0].public_ip}"
+    fortigate_username = "${var.firewall_username}"
+    fortigate_password = "${random_password.generate_firewall_secret[0].result}"
   }
 }
 
 # Vendor Integration if firewall vendor is fortinet.
-data "aviatrix_firenet_vendor_integration" "vendor_integration" {
-  count         = var.firenet_enabled && local.is_fortinet ? var.firewall_count : 0 
-  vpc_id        = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
-  instance_id   = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
+data "aviatrix_firenet_vendor_integration" "vendor_integration_1" {
+  count         = var.firenet_enabled && local.is_fortinet ? 1 : 0 
+  vpc_id        = aviatrix_firewall_instance.firewall_instance_1[0].vpc_id
+  instance_id   = aviatrix_firewall_instance.firewall_instance_1[0].instance_id
   vendor_type   = "Fortinet FortiGate"
-  public_ip     = aviatrix_firewall_instance.firewall_instance[count.index].public_ip
-  firewall_name = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
-  api_token     = sensitive(data.external.fortinet_bootstrap[count.index].result.api_key)
+  public_ip     = aviatrix_firewall_instance.firewall_instance_1[0].public_ip
+  firewall_name = aviatrix_firewall_instance.firewall_instance_1[0].firewall_name
+  api_token     = sensitive(data.external.fortinet_bootstrap_1[0].result.api_key)
+  save          = true
+}
+
+data "aviatrix_firenet_vendor_integration" "vendor_integration_2" {
+  count         = var.firenet_enabled && local.is_fortinet && var.firewall_ha ? 1 : 0 
+  vpc_id        = aviatrix_firewall_instance.firewall_instance_2[0].vpc_id
+  instance_id   = aviatrix_firewall_instance.firewall_instance_2[0].instance_id
+  vendor_type   = "Fortinet FortiGate"
+  public_ip     = aviatrix_firewall_instance.firewall_instance_2[0].public_ip
+  firewall_name = aviatrix_firewall_instance.firewall_instance_2[0].firewall_name
+  api_token     = sensitive(data.external.fortinet_bootstrap_2[0].result.api_key)
   save          = true
 }
 

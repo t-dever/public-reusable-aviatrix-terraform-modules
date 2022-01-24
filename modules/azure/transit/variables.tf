@@ -116,11 +116,21 @@ variable "firewall_name" {
   type        = string
 }
 
-variable "firewall_count" {
-  description = "The number of firewalls to deploy."
-  type = number
-  default = 1
+variable "firewall_ha"{
+  description = "Enables firewall High Availability by creating two firewalls in separate availability zones"
+  type        = bool
+  default     = false
 }
+
+# variable "firewall_count" {
+#   description = "The number of firewalls to deploy."
+#   type = number
+#   default = 1
+#   validation {
+#     condition     = contains([1, 2], var.firewall_count)
+#     error_message = "Valid values for var: firewall_count are (1 or 2)"
+#   } 
+# }
 
 variable "firewall_username" {
   type        = string
