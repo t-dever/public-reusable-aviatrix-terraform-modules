@@ -1,18 +1,12 @@
-locals {
-  gateway_name         = "${var.resource_prefix}-az-spoke-gw"
-  vm1_name             = "${var.resource_prefix}-vm1"
-  storage_account_name = replace("${var.resource_prefix}sa", "-", "")
-}
-
 resource "azurerm_resource_group" "azure_spoke_resource_group" {
-  name     = "${var.resource_prefix}-rg"
+  name     = var.resource_group_name
   location = var.location
 }
 
 resource "azurerm_storage_account" "spoke_storage_account" {
-  name                      = local.storage_account_name
+  name                      = var.storage_account_name
   resource_group_name       = azurerm_resource_group.azure_spoke_resource_group.name
-  location                  = var.location
+  location                  = azurerm_resource_group.azure_spoke_resource_group.location
   account_tier              = "Standard"
   account_replication_type  = "LRS"
   min_tls_version           = "TLS1_2"
@@ -22,26 +16,28 @@ resource "azurerm_storage_account" "spoke_storage_account" {
 
 ############### START - VIRTUAL NETWORK ###############
 resource "azurerm_virtual_network" "azure_spoke_vnet" {
-  name                = "${var.resource_prefix}-vnet"
-  location            = var.location
+  name                = var.vnet_name
+  location            = azurerm_resource_group.azure_spoke_resource_group.location
   resource_group_name = azurerm_resource_group.azure_spoke_resource_group.name
   address_space       = [var.vnet_address_prefix]
 }
+
 resource "azurerm_subnet" "azure_spoke_gateway_subnet" {
   depends_on = [
     azurerm_virtual_network.azure_spoke_vnet
   ]
   name                 = "gateway-subnet"
-  virtual_network_name = "${var.resource_prefix}-vnet"
+  virtual_network_name = azurerm_virtual_network.azure_spoke_vnet.name
   resource_group_name  = azurerm_resource_group.azure_spoke_resource_group.name
   address_prefixes     = [var.gateway_subnet_address_prefix]
 }
+
 resource "azurerm_subnet" "azure_virtual_machines_subnet" {
   depends_on = [
     azurerm_virtual_network.azure_spoke_vnet
   ]
   name                 = "virtual-machines"
-  virtual_network_name = "${var.resource_prefix}-vnet"
+  virtual_network_name = azurerm_virtual_network.azure_spoke_vnet.name
   resource_group_name  = azurerm_resource_group.azure_spoke_resource_group.name
   address_prefixes     = [var.virtual_machines_subnet_address_prefix]
 }
@@ -72,8 +68,8 @@ resource "azurerm_public_ip" "azure_gateway_public_ip" {
   lifecycle {
     ignore_changes = [tags]
   }
-  name                    = "${local.gateway_name}-public-ip"
-  location                = var.location
+  name                    = "${var.spoke_gateway_name}-public-ip"
+  location                = azurerm_resource_group.azure_spoke_resource_group.location
   resource_group_name     = azurerm_resource_group.azure_spoke_resource_group.name
   allocation_method       = "Static"
   idle_timeout_in_minutes = 4
@@ -89,10 +85,10 @@ resource "aviatrix_spoke_gateway" "azure_spoke_gateway" {
   }
   cloud_type                        = 8
   account_name                      = var.aviatrix_azure_account
-  gw_name                           = local.gateway_name
+  gw_name                           = var.spoke_gateway_name
   vpc_id                            = "${azurerm_virtual_network.azure_spoke_vnet.name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}"
   vpc_reg                           = var.location
-  gw_size                           = "Standard_B1ms"
+  gw_size                           = var.spoke_gw_size
   subnet                            = azurerm_subnet.azure_spoke_gateway_subnet.address_prefix
   allocate_new_eip                  = false
   eip                               = azurerm_public_ip.azure_gateway_public_ip.ip_address
@@ -146,7 +142,7 @@ data "azurerm_virtual_machine" "gateway_vm_data" {
   depends_on = [
     aviatrix_spoke_gateway.azure_spoke_gateway
   ]
-  name                = "av-gw-${local.gateway_name}"
+  name                = "av-gw-${var.spoke_gateway_name}"
   resource_group_name = azurerm_resource_group.azure_spoke_resource_group.name
 }
 
@@ -175,14 +171,14 @@ resource "random_password" "generate_vm1_secret" {
 }
 
 resource "azurerm_key_vault_secret" "vm1_secret" {
-  name         = local.vm1_name
+  name         = var.test_vm_name
   value        = random_password.generate_vm1_secret.result
   key_vault_id = var.key_vault_id
-  content_type = "${local.vm1_name}:adminuser"
+  content_type = "${var.test_vm_name}:adminuser"
 }
 
 resource "azurerm_network_interface" "virtual_machine1_nic1" {
-  name                = "${local.vm1_name}-nic"
+  name                = "${var.test_vm_name}-nic"
   location            = var.location
   resource_group_name = azurerm_resource_group.azure_spoke_resource_group.name
 
@@ -194,9 +190,9 @@ resource "azurerm_network_interface" "virtual_machine1_nic1" {
 }
 
 resource "azurerm_linux_virtual_machine" "virtual_machine1" {
-  name                            = local.vm1_name
+  name                            = var.test_vm_name
   resource_group_name             = azurerm_resource_group.azure_spoke_resource_group.name
-  location                        = var.location
+  location                        = azurerm_resource_group.azure_spoke_resource_group.location
   size                            = "Standard_DS1_v2"
   admin_username                  = "adminuser"
   admin_password                  = azurerm_key_vault_secret.vm1_secret.value
@@ -209,7 +205,7 @@ resource "azurerm_linux_virtual_machine" "virtual_machine1" {
     storage_account_uri = azurerm_storage_account.spoke_storage_account.primary_blob_endpoint
   }
   os_disk {
-    name                 = "${var.resource_prefix}-osdisk"
+    name                 = "${var.test_vm_name}-osdisk"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
@@ -224,7 +220,7 @@ resource "azurerm_linux_virtual_machine" "virtual_machine1" {
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "vm_shutdown" {
   virtual_machine_id = azurerm_linux_virtual_machine.virtual_machine1.id
-  location           = var.location
+  location           = azurerm_resource_group.azure_spoke_resource_group.location
   enabled            = true
 
   daily_recurrence_time = "1800"
