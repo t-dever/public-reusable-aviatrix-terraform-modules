@@ -43,6 +43,7 @@ config firewall policy
         set action accept
         set schedule always
         set service ALL
+        set logtraffic all
     next
     edit 2
         set name allow_WAN
@@ -54,5 +55,6 @@ config firewall policy
         set schedule always
         set service ALL
         set nat enable
+        set logtraffic all
     next
 end
