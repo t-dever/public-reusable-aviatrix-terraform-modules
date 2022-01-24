@@ -1,8 +1,3 @@
-# variable "resource_prefix" {
-#   description = "The resource prefix to use as the prefix for all resource names."
-#   type        = string
-# }
-
 variable "resource_group_name" {
   description = "The resource group name to be created."
   type        = string

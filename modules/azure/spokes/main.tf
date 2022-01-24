@@ -111,6 +111,7 @@ resource "aviatrix_segmentation_security_domain" "spoke_segmentation_security_do
 
 resource "aviatrix_segmentation_security_domain_association" "segmentation_security_domain_association" {
   depends_on = [
+    aviatrix_spoke_transit_attachment.attach_spoke,
     aviatrix_segmentation_security_domain.spoke_segmentation_security_domain
   ]
   transit_gateway_name = var.transit_gateway_name

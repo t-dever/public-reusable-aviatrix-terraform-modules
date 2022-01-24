@@ -135,11 +135,6 @@ variable "egress_enabled" {
   description = "Allow traffic to the internet through firewall"
 }
 
-variable "firewall_count" {
-  type = number
-  default = 2
-}
-
 locals {
   is_checkpoint              = length(regexall("check", lower(var.firewall_image))) > 0    # Check if fw image contains checkpoint.
   is_palo                    = length(regexall("palo", lower(var.firewall_image))) > 0     # Check if fw image contains palo.
