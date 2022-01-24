@@ -30,3 +30,9 @@ variable "key_vault_id" {
   description = "The key vault id where the virtual machine secret will be stored."
   type        = string
 }
+
+variable "firenet_inspection" {
+  description = "Tells the subnet to be inspected by firewalls if configured"
+  type        = bool
+  default     = false
+}

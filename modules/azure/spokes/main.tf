@@ -18,14 +18,6 @@ resource "azurerm_storage_account" "spoke_storage_account" {
   min_tls_version           = "TLS1_2"
   allow_blob_public_access  = false
   enable_https_traffic_only = true
-  network_rules {
-    default_action = "Deny"
-    bypass         = ["AzureServices"]
-    virtual_network_subnet_ids = [
-      azurerm_subnet.azure_spoke_gateway_subnet.id,
-      azurerm_subnet.azure_virtual_machines_subnet.id
-    ]
-  }
 }
 
 ############### START - VIRTUAL NETWORK ###############
@@ -43,7 +35,6 @@ resource "azurerm_subnet" "azure_spoke_gateway_subnet" {
   virtual_network_name = "${var.resource_prefix}-vnet"
   resource_group_name  = azurerm_resource_group.azure_spoke_resource_group.name
   address_prefixes     = [var.gateway_subnet_address_prefix]
-  service_endpoints    = ["Microsoft.Storage"]
 }
 resource "azurerm_subnet" "azure_virtual_machines_subnet" {
   depends_on = [
@@ -53,7 +44,6 @@ resource "azurerm_subnet" "azure_virtual_machines_subnet" {
   virtual_network_name = "${var.resource_prefix}-vnet"
   resource_group_name  = azurerm_resource_group.azure_spoke_resource_group.name
   address_prefixes     = [var.virtual_machines_subnet_address_prefix]
-  service_endpoints    = ["Microsoft.Storage"]
 }
 
 resource "azurerm_route_table" "virtual_machine_route_table" {
@@ -119,23 +109,15 @@ resource "aviatrix_spoke_transit_attachment" "attach_spoke" {
   transit_gw_name = var.transit_gateway_name
 }
 
-
-# data "azurerm_network_security_group" "gateway_security_group" {
-#   depends_on = [
-#     aviatrix_spoke_gateway.azure_spoke_gateway
-#   ]
-#   name                = "av-sg-${local.gateway_name}"
-#   resource_group_name = azurerm_resource_group.azure_spoke_resource_group.name
-# }
-
-# resource "aviatrix_transit_firenet_policy" "spoke_transit_firenet_policy" {
-#   depends_on = [
-#     aviatrix_spoke_gateway.azure_spoke_gateway,
-#     aviatrix_spoke_transit_attachment.attach_spoke
-#   ]
-#   transit_firenet_gateway_name = var.transit_gateway_name
-#   inspected_resource_name      = "SPOKE:${aviatrix_spoke_gateway.azure_spoke_gateway.gw_name}"
-# }
+resource "aviatrix_transit_firenet_policy" "spoke_transit_firenet_policy" {
+  count = var.firenet_inspection ? 1 : 0
+  depends_on = [
+    aviatrix_spoke_gateway.azure_spoke_gateway,
+    aviatrix_spoke_transit_attachment.attach_spoke
+  ]
+  transit_firenet_gateway_name = var.transit_gateway_name
+  inspected_resource_name      = "SPOKE:${aviatrix_spoke_gateway.azure_spoke_gateway.gw_name}"
+}
 
 data "azurerm_virtual_machine" "gateway_vm_data" {
   depends_on = [
