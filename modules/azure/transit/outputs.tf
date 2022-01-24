@@ -57,3 +57,7 @@ output "firewall_username" {
   description = "The username for the firewalls"
   value = var.firenet_enabled ? var.firewall_username : null
 }
+
+output "combined_firewall" {
+  value = var.firenet_enabled && var.firewall_ha ? [ { "firewall_ip": output.firewall_1_mgmt_ip.value , "firewall_api_key": output.firewall_1_api_key.value } ]
+}

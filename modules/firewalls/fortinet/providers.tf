@@ -9,6 +9,6 @@ terraform {
 
 provider "fortios" {
   hostname = var.firewall_ip
-  token    = var.firewall_password
+  token    = var.firewall_api_key
   insecure = true
 }
