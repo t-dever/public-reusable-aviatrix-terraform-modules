@@ -160,7 +160,7 @@ resource "aviatrix_firewall_instance" "firewall_instance_1" {
   # depends_on = [
   #   aviatrix_transit_gateway.azure_transit_gateway
   # ]
-  vpc_id = aviatrix_transit_gateway.transit_gw_data.vpc_id
+  vpc_id = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
   # vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   firewall_name          = "${var.firewall_name}-1"
@@ -180,7 +180,7 @@ resource "aviatrix_firewall_instance" "firewall_instance_2" {
   depends_on = [
     aviatrix_firewall_instance.firewall_instance_1
   ]
-  vpc_id = aviatrix_transit_gateway.transit_gw_data.vpc_id
+  vpc_id = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
   # vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   firewall_name          = "${var.firewall_name}-2"
