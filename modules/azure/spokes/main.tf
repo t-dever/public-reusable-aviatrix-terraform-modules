@@ -143,6 +143,7 @@ data "azurerm_virtual_machine" "gateway_vm_data" {
   name                = "av-gw-${local.gateway_name}"
   resource_group_name = azurerm_resource_group.azure_spoke_resource_group.name
 }
+
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "gateway_shutdown" {
   virtual_machine_id = data.azurerm_virtual_machine.gateway_vm_data.id
   location           = var.location
@@ -166,12 +167,14 @@ resource "random_password" "generate_vm1_secret" {
   min_numeric      = 1
   min_special      = 1
 }
+
 resource "azurerm_key_vault_secret" "vm1_secret" {
   name         = local.vm1_name
   value        = random_password.generate_vm1_secret.result
   key_vault_id = var.key_vault_id
   content_type = "${local.vm1_name}:adminuser"
 }
+
 resource "azurerm_network_interface" "virtual_machine1_nic1" {
   name                = "${local.vm1_name}-nic"
   location            = var.location
@@ -183,6 +186,7 @@ resource "azurerm_network_interface" "virtual_machine1_nic1" {
     private_ip_address_allocation = "Dynamic"
   }
 }
+
 resource "azurerm_linux_virtual_machine" "virtual_machine1" {
   name                            = local.vm1_name
   resource_group_name             = azurerm_resource_group.azure_spoke_resource_group.name
@@ -211,6 +215,7 @@ resource "azurerm_linux_virtual_machine" "virtual_machine1" {
     version   = "latest"
   }
 }
+
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "vm_shutdown" {
   virtual_machine_id = azurerm_linux_virtual_machine.virtual_machine1.id
   location           = var.location
