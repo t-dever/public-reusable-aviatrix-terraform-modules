@@ -104,12 +104,12 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   enable_active_mesh               = true
 }
 
-data "aviatrix_transit_gateway" "transit_gw_data" {
-  depends_on = [
-    aviatrix_transit_gateway.azure_transit_gateway
-  ]
-  gw_name = aviatrix_transit_gateway.azure_transit_gateway.gw_name
-}
+# data "aviatrix_transit_gateway" "transit_gw_data" {
+#   depends_on = [
+#     aviatrix_transit_gateway.azure_transit_gateway
+#   ]
+#   gw_name = aviatrix_transit_gateway.azure_transit_gateway.gw_name
+# }
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
   count = var.enable_transit_gateway_scheduled_shutdown ? 1 : 0
@@ -162,8 +162,8 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   depends_on = [
     aviatrix_transit_gateway.azure_transit_gateway
   ]
-  vpc_id = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
-  # vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
+  # vpc_id = aviatrix_transit_gateway.transit_gw_data.vpc_id
+  vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   firewall_name          = "${var.firewall_name}-${count.index}"
   firewall_image         = var.firewall_image
