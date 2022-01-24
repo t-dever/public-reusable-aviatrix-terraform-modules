@@ -58,6 +58,6 @@ output "firewall_username" {
   value = var.firenet_enabled ? var.firewall_username : null
 }
 
-output "combined_firewall" {
-  value = var.firenet_enabled && var.firewall_ha ? [ { "firewall_ip": output.firewall_1_mgmt_ip.value , "firewall_api_key": output.firewall_1_api_key.value } ] : null
+output "fortinet_combined_firewall" {
+  value = var.firenet_enabled && var.firewall_ha && local.is_fortinet ? [ { "firewall_ip": aviatrix_firewall_instance.firewall_instance_1[0].public_ip , "firewall_api_key": data.external.fortinet_bootstrap_1[0].result.api_key }, { "firewall_ip": aviatrix_firewall_instance.firewall_instance_2[0].public_ip , "firewall_api_key": data.external.fortinet_bootstrap_2[0].result.api_key } ] : var.firenet_enabled && local.is_fortinet ? [{ "firewall_ip": aviatrix_firewall_instance.firewall_instance_1[0].public_ip , "firewall_api_key": data.external.fortinet_bootstrap_1[0].result.api_key }] : null
 }
