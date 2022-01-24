@@ -127,7 +127,7 @@ resource "aviatrix_segmentation_security_domain_connection_policy" "segmentation
     aviatrix_segmentation_security_domain.spoke_segmentation_security_domain,
     aviatrix_segmentation_security_domain_association.segmentation_security_domain_association
   ]
-  for_each = var.segmentation_domain_connection_policies
+  for_each = toset(var.segmentation_domain_connection_policies)
   domain_name_1 = var.segmentation_domain_name
   domain_name_2 = each.value
 }
