@@ -35,6 +35,34 @@ resource "azurerm_subnet" "azure_transit_firewall_subnet" {
   address_prefixes     = [local.firewall_subnet]
 }
 
+resource "azurerm_network_security_group" "firewall_mgmt_nsg" {
+  name                = "${azurerm_subnet.azure_transit_firewall_subnet[0].name}-nsg"
+  location            = azurerm_resource_group.azure_transit_resource_group.location
+  resource_group_name = azurerm_resource_group.azure_transit_resource_group.name
+}
+
+resource "azurerm_network_security_rule" "allow_user_and_controller_inbound_to_firewall_mgmt" {
+  name                   = "allowUserAndControllerInboundToFirewall"
+  priority               = 100
+  direction              = "Inbound"
+  access                 = "Allow"
+  protocol               = "*"
+  source_port_range      = "*"
+  destination_port_range = "*"
+  source_address_prefixes = [
+    var.user_public_for_mgmt,
+    var.controller_public_ip
+  ]
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.azure_transit_resource_group.name
+  network_security_group_name = azurerm_network_security_group.firewall_mgmt_nsg.name
+}
+
+resource "azurerm_subnet_network_security_group_association" "firewall_mgmt_nsg_association" {
+  subnet_id                 = azurerm_subnet.azure_transit_firewall_subnet.id
+  network_security_group_id = azurerm_network_security_group.allow_user_and_controller_inbound_to_firewall_mgmt.id
+}
+
 resource "azurerm_public_ip" "transit_public_ip" {
   lifecycle {
     ignore_changes = [tags]
@@ -138,7 +166,7 @@ resource "azurerm_key_vault_secret" "firewall_secret" {
 }
 
 resource "aviatrix_firenet" "firenet" {
-  count = var.firenet_enabled ? 1 : 0
+  count                                = var.firenet_enabled ? 1 : 0
   vpc_id                               = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   inspection_enabled                   = true
   egress_enabled                       = var.egress_enabled
@@ -260,7 +288,7 @@ data "external" "fortinet_bootstrap_2" {
 
 # Vendor Integration if firewall vendor is fortinet.
 data "aviatrix_firenet_vendor_integration" "vendor_integration_1" {
-  count         = var.firenet_enabled && local.is_fortinet ? 1 : 0 
+  count         = var.firenet_enabled && local.is_fortinet ? 1 : 0
   vpc_id        = aviatrix_firewall_instance.firewall_instance_1[0].vpc_id
   instance_id   = aviatrix_firewall_instance.firewall_instance_1[0].instance_id
   vendor_type   = "Fortinet FortiGate"
@@ -271,7 +299,7 @@ data "aviatrix_firenet_vendor_integration" "vendor_integration_1" {
 }
 
 data "aviatrix_firenet_vendor_integration" "vendor_integration_2" {
-  count         = var.firenet_enabled && local.is_fortinet && var.firewall_ha ? 1 : 0 
+  count         = var.firenet_enabled && local.is_fortinet && var.firewall_ha ? 1 : 0
   vpc_id        = aviatrix_firewall_instance.firewall_instance_2[0].vpc_id
   instance_id   = aviatrix_firewall_instance.firewall_instance_2[0].instance_id
   vendor_type   = "Fortinet FortiGate"

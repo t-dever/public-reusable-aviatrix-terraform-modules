@@ -122,16 +122,6 @@ variable "firewall_ha"{
   default     = false
 }
 
-# variable "firewall_count" {
-#   description = "The number of firewalls to deploy."
-#   type = number
-#   default = 1
-#   validation {
-#     condition     = contains([1, 2], var.firewall_count)
-#     error_message = "Valid values for var: firewall_count are (1 or 2)"
-#   } 
-# }
-
 variable "firewall_username" {
   type        = string
   description = "The username used for the firewall configurations"
