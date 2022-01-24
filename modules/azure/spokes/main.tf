@@ -114,12 +114,19 @@ resource "aviatrix_segmentation_security_domain" "spoke_segmentation_security_do
 }
 
 resource "aviatrix_segmentation_security_domain_association" "segmentation_security_domain_association" {
+  depends_on = [
+    aviatrix_segmentation_security_domain.spoke_segmentation_security_domain
+  ]
   transit_gateway_name = var.transit_gateway_name
   security_domain_name = var.segmentation_domain_name
   attachment_name      = aviatrix_spoke_gateway.azure_spoke_gateway.gw_name
 }
 
 resource "aviatrix_segmentation_security_domain_connection_policy" "segmentation_security_domain_connection_policy" {
+  depends_on = [
+    aviatrix_segmentation_security_domain.spoke_segmentation_security_domain
+    aviatrix_segmentation_security_domain_association.segmentation_security_domain_association
+  ]
   for_each = var.segmentation_domain_connection_policies
   domain_name_1 = var.segmentation_domain_name
   domain_name_2 = each.value
