@@ -63,7 +63,7 @@ resource "azurerm_network_security_rule" "allow_user_and_controller_inbound_to_f
 resource "azurerm_subnet_network_security_group_association" "firewall_mgmt_nsg_association" {
   count                = var.firenet_enabled ? 1 : 0
   subnet_id                 = azurerm_subnet.azure_transit_firewall_subnet[0].id
-  network_security_group_id = azurerm_network_security_group.allow_user_and_controller_inbound_to_firewall_mgmt[0].id
+  network_security_group_id = azurerm_network_security_group.firewall_mgmt_nsg[0].id
 }
 
 resource "azurerm_public_ip" "transit_public_ip" {
