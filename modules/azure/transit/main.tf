@@ -36,12 +36,14 @@ resource "azurerm_subnet" "azure_transit_firewall_subnet" {
 }
 
 resource "azurerm_network_security_group" "firewall_mgmt_nsg" {
+  count                = var.firenet_enabled ? 1 : 0
   name                = "${azurerm_subnet.azure_transit_firewall_subnet[0].name}-nsg"
   location            = azurerm_resource_group.azure_transit_resource_group.location
   resource_group_name = azurerm_resource_group.azure_transit_resource_group.name
 }
 
 resource "azurerm_network_security_rule" "allow_user_and_controller_inbound_to_firewall_mgmt" {
+  count                = var.firenet_enabled ? 1 : 0
   name                   = "allowUserAndControllerInboundToFirewall"
   priority               = 100
   direction              = "Inbound"
@@ -55,12 +57,13 @@ resource "azurerm_network_security_rule" "allow_user_and_controller_inbound_to_f
   ]
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.azure_transit_resource_group.name
-  network_security_group_name = azurerm_network_security_group.firewall_mgmt_nsg.name
+  network_security_group_name = azurerm_network_security_group.firewall_mgmt_nsg[0].name
 }
 
 resource "azurerm_subnet_network_security_group_association" "firewall_mgmt_nsg_association" {
-  subnet_id                 = azurerm_subnet.azure_transit_firewall_subnet.id
-  network_security_group_id = azurerm_network_security_group.allow_user_and_controller_inbound_to_firewall_mgmt.id
+  count                = var.firenet_enabled ? 1 : 0
+  subnet_id                 = azurerm_subnet.azure_transit_firewall_subnet[0].id
+  network_security_group_id = azurerm_network_security_group.allow_user_and_controller_inbound_to_firewall_mgmt[0].id
 }
 
 resource "azurerm_public_ip" "transit_public_ip" {
