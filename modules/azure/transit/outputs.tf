@@ -18,21 +18,32 @@ output "transit_gateway_name" {
   description = "The transit gateway name"
 }
 
-output "firewall_mgmt_ip" {
-  value       = var.firenet_enabled ? aviatrix_firewall_instance.firewall_instance[0].public_ip : null
-  description = "The public IP addresses for firewalls"
-  # value = var.firenet_enabled ? aviatrix_firewall_instance.palo_firewall_instance[count.index].public_ip : null
+output "firewall_1_mgmt_ip" {
+  value       = var.firenet_enabled ? aviatrix_firewall_instance.firewall_instance_1[0].public_ip : null
+  description = "The public IP address for firewall 1."
+  sensitive = true
+}
+
+output "firewall_2_mgmt_ip" {
+  value       = var.firenet_enabled && var.firewall_ha ? aviatrix_firewall_instance.firewall_instance_2[0].public_ip : null
+  description = "The public IP address for firewall 2."
   sensitive = true
 }
 
 output "firewall_password" {
-  value       = var.firenet_enabled ? random_password.generate_firewall_secret[*].result : null
+  value       = var.firenet_enabled ? random_password.generate_firewall_secret[0].result : null
   description = "The generated firewall password."
   sensitive   = true
 }
 
-output "api_key" {
-  value       = var.firenet_enabled ? data.external.fortinet_bootstrap[*].result.api_key : null
-  description = "The API Key for fortinet firewall."
+output "firewall_1_api_key" {
+  value       = var.firenet_enabled ? data.external.fortinet_bootstrap_1[0].result.api_key : null
+  description = "The API Key for fortinet firewall 1."
+  sensitive   = true
+}
+
+output "firewall_2_api_key" {
+  value       = var.firenet_enabled ? data.external.fortinet_bootstrap_2[0].result.api_key : null
+  description = "The API Key for fortinet firewall 2."
   sensitive   = true
 }
