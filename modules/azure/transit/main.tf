@@ -101,7 +101,7 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   enable_segmentation              = true
   enable_transit_firenet           = var.firenet_enabled ? true : false
   enable_vpc_dns_server            = false
-  enable_active_mesh               = true
+  # enable_active_mesh               = true # Removed for Aviatrix Release 6.6
 }
 
 # data "aviatrix_transit_gateway" "transit_gw_data" {
