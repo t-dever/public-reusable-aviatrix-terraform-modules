@@ -5,18 +5,6 @@ resource "azurerm_resource_group" "azure_transit_resource_group" {
   location = var.location
 }
 
-# resource "azurerm_storage_account" "storage_account" {
-#   #checkov:skip=CKV_AZURE_35:The network rules are configured in a separate resource below
-#   name                      = var.storage_account_name
-#   resource_group_name       = azurerm_resource_group.azure_transit_resource_group.name
-#   location                  = azurerm_resource_group.azure_transit_resource_group.location
-#   account_tier              = "Standard"
-#   account_replication_type  = "LRS"
-#   min_tls_version           = "TLS1_2"
-#   allow_blob_public_access  = false
-#   enable_https_traffic_only = true
-# }
-
 resource "azurerm_virtual_network" "azure_transit_vnet" {
   name                = var.vnet_name
   location            = azurerm_resource_group.azure_transit_resource_group.location
@@ -70,7 +58,6 @@ resource "azurerm_public_ip" "transit_hagw_public_ip" {
   allocation_method   = "Static"
 }
 
-
 # Create an Aviatrix Azure Transit Network Gateway
 resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   depends_on = [
@@ -104,13 +91,6 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   # enable_active_mesh               = true # Removed for Aviatrix Release 6.6
 }
 
-# data "aviatrix_transit_gateway" "transit_gw_data" {
-#   depends_on = [
-#     aviatrix_transit_gateway.azure_transit_gateway
-#   ]
-#   gw_name = aviatrix_transit_gateway.azure_transit_gateway.gw_name
-# }
-
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
   count = var.enable_transit_gateway_scheduled_shutdown ? 1 : 0
   depends_on = [
@@ -127,7 +107,7 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
   }
 }
 
-resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown1" {
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown_1" {
   count = var.enable_transit_gateway_scheduled_shutdown && var.transit_gateway_ha ? 1 : 0
   depends_on = [
     aviatrix_transit_gateway.azure_transit_gateway
@@ -168,13 +148,20 @@ resource "aviatrix_firenet" "firenet" {
   egress_static_cidrs                  = []
 }
 
+# LIMITATION: In firewall deployment we can't perform a count "x" due to the arm template deployment using the same deployment name
+#             This will cause a failure when attempting to deploy 2 or more instances at the same time. (Potentially look into creating scale set for autoscaling capabilities)
+
+data "aviatrix_transit_gateway" "transit_gw_data" {
+  gw_name = aviatrix_transit_gateway.azure_transit_gateway.gw_name
+}
+
 resource "aviatrix_firewall_instance" "firewall_instance_1" {
   count = var.firenet_enabled ? 1 : 0
   # depends_on = [
   #   aviatrix_transit_gateway.azure_transit_gateway
   # ]
-  # vpc_id = aviatrix_transit_gateway.transit_gw_data.vpc_id
-  vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
+  vpc_id = aviatrix_transit_gateway.transit_gw_data.vpc_id
+  # vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   firewall_name          = "${var.firewall_name}-1"
   firewall_image         = var.firewall_image
@@ -193,8 +180,8 @@ resource "aviatrix_firewall_instance" "firewall_instance_2" {
   depends_on = [
     aviatrix_firewall_instance.firewall_instance_1
   ]
-  # vpc_id = aviatrix_transit_gateway.transit_gw_data.vpc_id
-  vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
+  vpc_id = aviatrix_transit_gateway.transit_gw_data.vpc_id
+  # vpc_id                 = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   firewall_name          = "${var.firewall_name}-2"
   firewall_image         = var.firewall_image
