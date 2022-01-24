@@ -57,6 +57,9 @@ resource "azurerm_subnet" "azure_virtual_machines_subnet" {
 }
 
 resource "azurerm_route_table" "virtual_machine_route_table" {
+  lifecycle {
+    ignore_changes = [route]
+  }
   name                          = "virtual-machine-private-rtb"
   location                      = azurerm_resource_group.azure_spoke_resource_group.location
   resource_group_name           = azurerm_resource_group.azure_spoke_resource_group.name
