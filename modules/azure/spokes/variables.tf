@@ -36,3 +36,13 @@ variable "firenet_inspection" {
   type        = bool
   default     = false
 }
+
+variable "segmentation_domain_name" {
+  description = "The segmentation domain name"
+  type        = string
+}
+
+variable "segmentation_domain_connection_policies" {
+  description = "The segementation domain connection policies to associate to the spoke."
+  type = list()
+}
