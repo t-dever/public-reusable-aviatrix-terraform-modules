@@ -124,7 +124,7 @@ resource "aviatrix_segmentation_security_domain_association" "segmentation_secur
 
 resource "aviatrix_segmentation_security_domain_connection_policy" "segmentation_security_domain_connection_policy" {
   depends_on = [
-    aviatrix_segmentation_security_domain.spoke_segmentation_security_domain
+    aviatrix_segmentation_security_domain.spoke_segmentation_security_domain,
     aviatrix_segmentation_security_domain_association.segmentation_security_domain_association
   ]
   for_each = var.segmentation_domain_connection_policies
