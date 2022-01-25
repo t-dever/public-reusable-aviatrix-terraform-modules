@@ -28,6 +28,9 @@ resource "aviatrix_account" "azure_account" {
 }
 
 resource "aviatrix_controller_security_group_management_config" "test_sqm_config" {
-  account_name                     = aviatrix_account.azure_account.name
+  depends_on = [
+    aviatrix_account.azure_account
+  ]
+  account_name                     = var.azure_account_name
   enable_security_group_management = true
 }
