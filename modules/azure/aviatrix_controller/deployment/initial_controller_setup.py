@@ -173,17 +173,36 @@ class ControllerSetup():
         else:
             try:
                 print("Attempting Software update...")
+                if self.controller_version_short == "6.6":
+                    controller_version = "6.5"
+                else:
+                    controller_version = self.controller_version_short
                 payload = {
                     'action': 'initial_setup',
                     'CID': self._get_cid(),
                     'subaction': 'run',
-                    'target_version': self.controller_version_short
+                    'target_version': controller_version
                 }
                 response = requests.post(self.url, data=payload, verify=False, timeout=300)
                 r = self._format_response(response)
                 if r:
                     if r.get('return') == True:
-                        print(f"Successfully updated software to: {self.controller_version}")
+                        print(f"Successfully updated software to: {controller_version}")
+                        if self.controller_version_short == "6.6":
+                            print(f"Attempting to upgrade to: {self.controller_version_short}")
+                            payload = {
+                                'action': 'upgrade',
+                                'CID': self._get_cid(),
+                                'version': self.controller_version_short
+                            }
+                            response = requests.post(self.url, data=payload, verify=False, timeout=300)
+                            r = self._format_response(response)
+                            if r:
+                                if r.get('return') == True:
+                                    print(f"Successfully updated software to: {self.controller_version_short}")
+                                    return True
+                                else:
+                                    print("Failed to update software")
                         return True
                     else:
                         print("Failed to update software")
