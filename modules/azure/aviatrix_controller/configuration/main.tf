@@ -42,15 +42,12 @@ resource "azurerm_network_security_group" "controller_security_group" {
   lifecycle {
     ignore_changes = [security_rule]
   }
-  name                = "Aviatrix-SG-${var.controller_ip}"
-  location            = azurerm_resource_group.resource_group.location
-  resource_group_name = azurerm_resource_group.resource_group.name
+  name                = "Aviatrix-SG-${var.controller_ip}" # GROSSS
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
 }
 
 resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
-  depends_on = [
-    null_resource.initial_config
-  ]
   name                        = "AllowUserHttpsInboundToController"
   priority                    = 100
   direction                   = "Inbound"
@@ -60,32 +57,29 @@ resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
   destination_port_range      = "*"
   source_address_prefix       = var.controller_user_public_ip_address
   destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.resource_group.name
+  resource_group_name         = var.resource_group_name
   network_security_group_name = azurerm_network_security_group.controller_security_group.name
 }
 
-resource "azurerm_network_security_rule" "allow_build_agent_to_controller_nsg" {
-  depends_on = [
-    null_resource.initial_config
-  ]
-  name                        = "AllowBuildAgentHttpsInboundToController"
-  priority                    = 101
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = var.build_agent_ip_address
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.resource_group.name
-  network_security_group_name = azurerm_network_security_group.controller_security_group.name
-}
+# resource "azurerm_network_security_rule" "allow_build_agent_to_controller_nsg" {
+#   depends_on = [
+#     null_resource.initial_config
+#   ]
+#   name                        = "AllowBuildAgentHttpsInboundToController"
+#   priority                    = 101
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "*"
+#   source_port_range           = "*"
+#   destination_port_range      = "*"
+#   source_address_prefix       = var.build_agent_ip_address
+#   destination_address_prefix  = "*"
+#   resource_group_name         = azurerm_resource_group.resource_group.name
+#   network_security_group_name = azurerm_network_security_group.controller_security_group.name
+# }
 
 resource "azurerm_subnet_network_security_group_association" "azure_controller_nsg_association" {
-  depends_on = [
-    null_resource.initial_config
-  ]
-  subnet_id                 = azurerm_subnet.azure_controller_subnet.id
+  subnet_id                 = var.controller_subnet_id
   network_security_group_id = azurerm_network_security_group.controller_security_group.id
 }
 
