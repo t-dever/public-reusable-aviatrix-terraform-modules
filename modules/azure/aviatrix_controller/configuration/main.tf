@@ -107,7 +107,7 @@ resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
   access                      = "Allow"
   protocol                    = "Udp"
   source_port_range           = "*"
-  destination_port_ranges     = ["31283", "5000"]
+  destination_port_ranges     = [var.netflow_port, var.rsyslog_port]
   source_address_prefix       = "*"
   destination_address_prefix  = var.copilot_private_ip
   resource_group_name         = var.resource_group_name
@@ -121,4 +121,20 @@ resource "azurerm_subnet_network_security_group_association" "azure_controller_n
 
 resource "aviatrix_copilot_association" "copilot_association" {
   copilot_address = var.copilot_public_ip
+}
+
+resource "aviatrix_netflow_agent" "netflow_agent" {
+  count     = var.enable_netflow_to_copilot ? 1 : 0
+  server_ip = var.copilot_public_ip
+  port      = var.netflow_port
+  version   = 9
+}
+
+resource "aviatrix_remote_syslog" "remote_syslog" {
+  count    = var.enable_rsyslog_to_copilot ? 1 : 0
+  index    = 0
+  name     = "copilot"
+  server   = var.copilot_public_ip
+  port     = var.rsyslog_port
+  protocol = var.rsyslog_protocol
 }

@@ -70,3 +70,35 @@ variable "controller_subnet_id" {
   description = "The controller subnet id."
   type        = string
 }
+
+variable "enable_netflow_to_copilot" {
+  description = "Enables netflow logging to CoPilot."
+  type = bool
+}
+
+variable "netflow_port" {
+  description = "The port used for netflow data."
+  type = string
+  default = "31283"
+}
+
+variable "enable_rsyslog_to_copilot" {
+  description = "Enables rsyslog logging to CoPilot."
+  type = bool
+}
+
+variable "rsyslog_port" {
+  description = "The port used for rsyslog data."
+  type = string
+  default = "5000"
+}
+
+variable "rsyslog_protocol" {
+  description = "The protocol used for rsyslog."
+  type = string
+  default = "UDP"
+  validation {
+    condition     = contains(["TCP", "UDP"], var.rsyslog_protocol)
+    error_message = "Valid values for var: rsyslog_protocol are (TCP or UDP)"
+  } 
+}
