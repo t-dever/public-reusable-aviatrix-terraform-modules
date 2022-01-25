@@ -46,9 +46,9 @@ resource "azurerm_route_table" "virtual_machine_route_table" {
   lifecycle {
     ignore_changes = [route]
   }
-  name                          = "virtual-machine-private-rtb"
-  location                      = azurerm_resource_group.azure_spoke_resource_group.location
-  resource_group_name           = azurerm_resource_group.azure_spoke_resource_group.name
+  name                = "virtual-machine-private-rtb"
+  location            = azurerm_resource_group.azure_spoke_resource_group.location
+  resource_group_name = azurerm_resource_group.azure_spoke_resource_group.name
   route {
     name           = "default"
     address_prefix = "0.0.0.0/0"
@@ -124,7 +124,7 @@ resource "aviatrix_segmentation_security_domain_connection_policy" "segmentation
     aviatrix_segmentation_security_domain.spoke_segmentation_security_domain,
     aviatrix_segmentation_security_domain_association.segmentation_security_domain_association
   ]
-  for_each = toset(var.segmentation_domain_connection_policies)
+  for_each      = toset(var.segmentation_domain_connection_policies)
   domain_name_1 = var.segmentation_domain_name
   domain_name_2 = each.value
 }

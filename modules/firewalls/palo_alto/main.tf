@@ -19,9 +19,9 @@ provider "panos" {
 }
 
 resource "panos_management_profile" "allow_health_probes" {
-    name = "HealthCheck"
-    https = true
-    permitted_ips = ["168.63.129.16",]
+  name          = "HealthCheck"
+  https         = true
+  permitted_ips = ["168.63.129.16", ]
 }
 
 resource "panos_ethernet_interface" "ethernet_1" {
@@ -39,7 +39,7 @@ resource "panos_ethernet_interface" "ethernet_2" {
   mode                      = "layer3"
   enable_dhcp               = true
   create_dhcp_default_route = false
-  management_profile = panos_management_profile.allow_health_probes.name
+  management_profile        = panos_management_profile.allow_health_probes.name
   comment                   = "Configured for internal traffic"
 }
 
@@ -68,19 +68,19 @@ resource "panos_zone" "lan_zone" {
 }
 
 resource "panos_security_policy" "allow_all" {
-    rule {
-        name = "allowAll"
-        source_zones = ["any"]
-        source_addresses = ["any"]
-        source_users = ["any"]
-        hip_profiles = ["any"]
-        destination_zones = ["any"]
-        destination_addresses = ["any"]
-        applications = ["any"]
-        services = ["application-default"]
-        categories = ["any"]
-        action = "allow"
-    }
+  rule {
+    name                  = "allowAll"
+    source_zones          = ["any"]
+    source_addresses      = ["any"]
+    source_users          = ["any"]
+    hip_profiles          = ["any"]
+    destination_zones     = ["any"]
+    destination_addresses = ["any"]
+    applications          = ["any"]
+    services              = ["application-default"]
+    categories            = ["any"]
+    action                = "allow"
+  }
 }
 
 resource "null_resource" "commit_configuration" {
@@ -97,8 +97,8 @@ resource "null_resource" "commit_configuration" {
     command = "python ${path.module}/commit.py"
     environment = {
       IP_ADDRESS = var.ip_address
-      USERNAME = var.username
-      PASSWORD = var.password
+      USERNAME   = var.username
+      PASSWORD   = var.password
     }
   }
 }

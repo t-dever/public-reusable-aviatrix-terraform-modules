@@ -21,13 +21,13 @@ output "transit_gateway_name" {
 output "firewall_1_mgmt_ip" {
   value       = var.firenet_enabled ? aviatrix_firewall_instance.firewall_instance_1[0].public_ip : null
   description = "The public IP address for firewall 1."
-  sensitive = true
+  sensitive   = true
 }
 
 output "firewall_2_mgmt_ip" {
   value       = var.firenet_enabled && var.firewall_ha ? aviatrix_firewall_instance.firewall_instance_2[0].public_ip : null
   description = "The public IP address for firewall 2."
-  sensitive = true
+  sensitive   = true
 }
 
 output "firewall_password" {
@@ -50,12 +50,12 @@ output "firewall_2_api_key" {
 
 output "firenet_enabled" {
   description = "Outputs true if firenet is enabled, used to auto add spokes to firewall policy for inspection"
-  value = var.firenet_enabled ? true : false
+  value       = var.firenet_enabled ? true : false
 }
 
 output "firewall_username" {
   description = "The username for the firewalls"
-  value = var.firenet_enabled ? var.firewall_username : null
+  value       = var.firenet_enabled ? var.firewall_username : null
 }
 
 # output "fortinet_combined_firewall" {

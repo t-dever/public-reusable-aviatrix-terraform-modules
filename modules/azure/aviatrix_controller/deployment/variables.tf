@@ -81,8 +81,8 @@ variable "enable_scheduled_shutdown" {
 
 variable "enable_spot_instances" {
   description = "Make the controller and copilot spot instances for best effort or development workloads."
-  type    = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "store_credentials_in_key_vault" {

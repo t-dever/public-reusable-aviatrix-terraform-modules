@@ -21,12 +21,12 @@ output "controller_public_ip" {
 }
 
 output "resource_group_name" {
-  value = azurerm_resource_group.resource_group.name
+  value       = azurerm_resource_group.resource_group.name
   description = "The resource group name"
 }
 
 output "resource_group_location" {
-  value = azurerm_resource_group.resource_group.location
+  value       = azurerm_resource_group.resource_group.location
   description = "The resource group location"
 }
 

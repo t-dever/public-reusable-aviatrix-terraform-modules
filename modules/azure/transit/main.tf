@@ -36,14 +36,14 @@ resource "azurerm_subnet" "azure_transit_firewall_subnet" {
 }
 
 resource "azurerm_network_security_group" "firewall_mgmt_nsg" {
-  count                = var.firenet_enabled ? 1 : 0
+  count               = var.firenet_enabled ? 1 : 0
   name                = "${azurerm_subnet.azure_transit_firewall_subnet[0].name}-nsg"
   location            = azurerm_resource_group.azure_transit_resource_group.location
   resource_group_name = azurerm_resource_group.azure_transit_resource_group.name
 }
 
 resource "azurerm_network_security_rule" "allow_user_and_controller_inbound_to_firewall_mgmt" {
-  count                = var.firenet_enabled ? 1 : 0
+  count                  = var.firenet_enabled ? 1 : 0
   name                   = "allowUserAndControllerInboundToFirewall"
   priority               = 100
   direction              = "Inbound"
@@ -61,7 +61,7 @@ resource "azurerm_network_security_rule" "allow_user_and_controller_inbound_to_f
 }
 
 resource "azurerm_subnet_network_security_group_association" "firewall_mgmt_nsg_association" {
-  count                = var.firenet_enabled ? 1 : 0
+  count                     = var.firenet_enabled ? 1 : 0
   subnet_id                 = azurerm_subnet.azure_transit_firewall_subnet[0].id
   network_security_group_id = azurerm_network_security_group.firewall_mgmt_nsg[0].id
 }
@@ -187,8 +187,8 @@ data "aviatrix_transit_gateway" "transit_gw_data" {
 }
 
 resource "aviatrix_firewall_instance" "firewall_instance_1" {
-  count = var.firenet_enabled ? 1 : 0
-  vpc_id = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
+  count                  = var.firenet_enabled ? 1 : 0
+  vpc_id                 = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   firewall_name          = "${var.firewall_name}-1"
   firewall_image         = var.firewall_image
@@ -207,7 +207,7 @@ resource "aviatrix_firewall_instance" "firewall_instance_2" {
   depends_on = [
     aviatrix_firewall_instance.firewall_instance_1
   ]
-  vpc_id = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
+  vpc_id                 = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
   firenet_gw_name        = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   firewall_name          = "${var.firewall_name}-2"
   firewall_image         = var.firewall_image
@@ -222,7 +222,7 @@ resource "aviatrix_firewall_instance" "firewall_instance_2" {
 }
 
 resource "aviatrix_firewall_instance_association" "firewall_instance_association_1" {
-  count = var.firenet_enabled ? 1 : 0
+  count                = var.firenet_enabled ? 1 : 0
   vpc_id               = aviatrix_firewall_instance.firewall_instance_1[0].vpc_id
   firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   instance_id          = aviatrix_firewall_instance.firewall_instance_1[0].instance_id
@@ -234,7 +234,7 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
 }
 
 resource "aviatrix_firewall_instance_association" "firewall_instance_association_2" {
-  count = var.firenet_enabled && var.firewall_ha ? 1 : 0
+  count                = var.firenet_enabled && var.firewall_ha ? 1 : 0
   vpc_id               = aviatrix_firewall_instance.firewall_instance_2[0].vpc_id
   firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
   instance_id          = aviatrix_firewall_instance.firewall_instance_2[0].instance_id
