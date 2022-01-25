@@ -36,7 +36,7 @@ resource "aviatrix_controller_security_group_management_config" "security_group_
 }
 
 data "azurerm_network_security_group" "controller_security_group" {
-  name                = "Aviatrix-SG-${var.controller_ip}" # GROSSS
+  name                = "Aviatrix-SG-${var.controller_ip}" # GROSSS, I have to do this because I can't reference it as an attribute.
   resource_group_name = var.resource_group_name
 }
 
