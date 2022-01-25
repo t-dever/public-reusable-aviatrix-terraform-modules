@@ -44,5 +44,7 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_aviatrix_azure_account"></a> [aviatrix\_azure\_account](#output\_aviatrix\_azure\_account) | n/a |
 <!-- END_TF_DOCS -->
