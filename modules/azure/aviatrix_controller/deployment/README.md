@@ -149,9 +149,12 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_controller_admin_password"></a> [controller\_admin\_password](#output\_controller\_admin\_password) | The controller admin password |
-| <a name="output_controller_public_ip"></a> [controller\_public\_ip](#output\_controller\_public\_ip) | The IP Address of the Aviatrix Controller |
+| <a name="output_controller_private_ip"></a> [controller\_private\_ip](#output\_controller\_private\_ip) | The Private IP Address of the Aviatrix Controller |
+| <a name="output_controller_public_ip"></a> [controller\_public\_ip](#output\_controller\_public\_ip) | The Public IP Address of the Aviatrix Controller |
 | <a name="output_controller_resource_group_name"></a> [controller\_resource\_group\_name](#output\_controller\_resource\_group\_name) | The resource group name of the controller |
 | <a name="output_controller_subnet_id"></a> [controller\_subnet\_id](#output\_controller\_subnet\_id) | The subnet id for controller |
+| <a name="output_copilot_private_ip"></a> [copilot\_private\_ip](#output\_copilot\_private\_ip) | The Private IP Address of the Aviatrix CoPilot Instance |
+| <a name="output_copilot_public_ip"></a> [copilot\_public\_ip](#output\_copilot\_public\_ip) | The Public IP Address of the Aviatrix CoPilot Instance. |
 | <a name="output_resource_group_location"></a> [resource\_group\_location](#output\_resource\_group\_location) | The resource group location |
 | <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | The resource group name |
 <!-- END_TF_DOCS -->
