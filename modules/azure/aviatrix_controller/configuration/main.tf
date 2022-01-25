@@ -36,7 +36,7 @@ resource "aviatrix_controller_security_group_management_config" "security_group_
 }
 
 data "azurerm_network_security_group" "controller_security_group" {
-  name                = "Aviatrix-SG-${var.controller_ip}" # GROSSS, I have to do this because I can't reference it as an attribute.
+  name                = "Aviatrix-SG-${var.controller_public_ip}" # GROSSS, I have to do this because I can't reference it as an attribute.
   resource_group_name = var.resource_group_name
 }
 
@@ -55,7 +55,7 @@ resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
 }
 
 resource "azurerm_network_security_rule" "allow_controller_inbound_to_copilot" {
-  count                       = var.copilot_ip != "" ? 1 : 0
+  count                       = var.copilot_private_ip != "" ? 1 : 0
   name                        = "AllowControllerInboundToCopilot"
   priority                    = 101
   direction                   = "Inbound"
@@ -70,7 +70,7 @@ resource "azurerm_network_security_rule" "allow_controller_inbound_to_copilot" {
 }
 
 resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
-  count                       = var.copilot_ip != "" ? 1 : 0
+  count                       = var.copilot_public_ip != "" ? 1 : 0
   name                        = "AllowCoPilotInboundToController"
   priority                    = 102
   direction                   = "Inbound"
@@ -85,7 +85,7 @@ resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
 }
 
 resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
-  count                       = var.copilot_ip != "" ? 1 : 0
+  count                       = var.copilot_private_ip != "" ? 1 : 0
   name                        = "AllowNetflowInboundToCoPilot"
   priority                    = 103
   direction                   = "Inbound"
