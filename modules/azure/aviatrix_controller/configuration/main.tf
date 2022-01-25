@@ -104,4 +104,8 @@ resource "azurerm_subnet_network_security_group_association" "azure_controller_n
   network_security_group_id = data.azurerm_network_security_group.controller_security_group.id
 }
 
+resource "aviatrix_copilot_association" "copilot_association" {
+  copilot_address = var.copilot_public_ip
+}
+
 
