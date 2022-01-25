@@ -26,7 +26,7 @@ output "storage_account_name" {
 }
 
 output "storage_account_backup_container_name" {
-  value = azurerm_storage_container.controller_backup_container.name
+  value       = azurerm_storage_container.controller_backup_container.name
   description = "The name of the container where backups will be stored."
 }
 
