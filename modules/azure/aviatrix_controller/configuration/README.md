@@ -3,14 +3,14 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_aviatrix"></a> [aviatrix](#requirement\_aviatrix) | 2.21.0 |
+| <a name="requirement_aviatrix"></a> [aviatrix](#requirement\_aviatrix) | 2.21.0-6.6.ga |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >=2.92.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aviatrix"></a> [aviatrix](#provider\_aviatrix) | 2.21.0 |
+| <a name="provider_aviatrix"></a> [aviatrix](#provider\_aviatrix) | 2.21.0-6.6.ga |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >=2.92.0 |
 
 ## Modules
@@ -21,9 +21,9 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aviatrix_account.azure_account](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0/docs/resources/account) | resource |
-| [aviatrix_controller_security_group_management_config.security_group_management](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0/docs/resources/controller_security_group_management_config) | resource |
-| [aviatrix_copilot_association.copilot_association](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0/docs/resources/copilot_association) | resource |
+| [aviatrix_account.azure_account](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/account) | resource |
+| [aviatrix_controller_security_group_management_config.security_group_management](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/controller_security_group_management_config) | resource |
+| [aviatrix_copilot_association.copilot_association](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/copilot_association) | resource |
 | [azurerm_network_security_rule.allow_controller_inbound_to_copilot](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
 | [azurerm_network_security_rule.allow_copilot_inbound_to_controller](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
 | [azurerm_network_security_rule.allow_netflow_inbound_to_copilot](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
