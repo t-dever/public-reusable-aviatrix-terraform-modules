@@ -12,6 +12,13 @@ variable "controller_password" {
   sensitive   = true
 }
 
+variable "controller_public_ip" {
+  description = "The controllers public IP address."
+  default     = "1.2.3.4"
+  type        = string
+  sensitive   = true
+}
+
 variable "resource_group_name" {
   description = "The resource group name to be created."
   type        = string
@@ -76,12 +83,6 @@ variable "insane_mode" {
   default     = false
 }
 
-variable "controller_public_ip" {
-  description = "The controllers public IP address."
-  default     = "1.2.3.4"
-  type        = string
-  sensitive   = true
-}
 variable "aviatrix_azure_account" {
   description = "The account used to manage the transit gateway"
   type        = string
