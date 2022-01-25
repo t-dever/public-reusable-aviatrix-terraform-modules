@@ -230,11 +230,11 @@ class ControllerSetup():
         if self._is_software_up_to_date(self.controller_version_short):
             return True
         elif self.controller_version_short == "6.6":
-            result = self.initial_software_update(self, "6.5")
+            result = self.initial_software_update("6.5")
             if result:
-                result = self.controller_upgrade(self, "6.6")
+                result = self.controller_upgrade("6.6")
         else:
-            result = self.initial_software_update(self, self.controller_version_short)
+            result = self.initial_software_update(self.controller_version_short)
         if result:
             print("All Software Updates Succeeded.")
             return True
