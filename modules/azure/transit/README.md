@@ -74,14 +74,14 @@ No modules.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_aviatrix"></a> [aviatrix](#requirement\_aviatrix) | 2.21.0-6.6.ga |
+| <a name="requirement_aviatrix"></a> [aviatrix](#requirement\_aviatrix) | >=2.20.3 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 2.89.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aviatrix"></a> [aviatrix](#provider\_aviatrix) | 2.21.0-6.6.ga |
+| <a name="provider_aviatrix"></a> [aviatrix](#provider\_aviatrix) | >=2.20.3 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 2.89.0 |
 | <a name="provider_external"></a> [external](#provider\_external) | n/a |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
@@ -94,12 +94,12 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aviatrix_firenet.firenet](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/firenet) | resource |
-| [aviatrix_firewall_instance.firewall_instance_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/firewall_instance) | resource |
-| [aviatrix_firewall_instance.firewall_instance_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/firewall_instance) | resource |
-| [aviatrix_firewall_instance_association.firewall_instance_association_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/firewall_instance_association) | resource |
-| [aviatrix_firewall_instance_association.firewall_instance_association_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/firewall_instance_association) | resource |
-| [aviatrix_transit_gateway.azure_transit_gateway](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/transit_gateway) | resource |
+| [aviatrix_firenet.firenet](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/firenet) | resource |
+| [aviatrix_firewall_instance.firewall_instance_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/firewall_instance) | resource |
+| [aviatrix_firewall_instance.firewall_instance_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/firewall_instance) | resource |
+| [aviatrix_firewall_instance_association.firewall_instance_association_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/firewall_instance_association) | resource |
+| [aviatrix_firewall_instance_association.firewall_instance_association_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/firewall_instance_association) | resource |
+| [aviatrix_transit_gateway.azure_transit_gateway](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/transit_gateway) | resource |
 | [azurerm_dev_test_global_vm_shutdown_schedule.transit_shutdown](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
 | [azurerm_dev_test_global_vm_shutdown_schedule.transit_shutdown_1](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
 | [azurerm_key_vault_secret.firewall_secret](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/key_vault_secret) | resource |
@@ -114,9 +114,9 @@ No modules.
 | [azurerm_subnet_network_security_group_association.firewall_mgmt_nsg_association](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/subnet_network_security_group_association) | resource |
 | [azurerm_virtual_network.azure_transit_vnet](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/virtual_network) | resource |
 | [random_password.generate_firewall_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
-| [aviatrix_firenet_vendor_integration.vendor_integration_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/data-sources/firenet_vendor_integration) | data source |
-| [aviatrix_firenet_vendor_integration.vendor_integration_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/data-sources/firenet_vendor_integration) | data source |
-| [aviatrix_transit_gateway.transit_gw_data](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/data-sources/transit_gateway) | data source |
+| [aviatrix_firenet_vendor_integration.vendor_integration_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/data-sources/firenet_vendor_integration) | data source |
+| [aviatrix_firenet_vendor_integration.vendor_integration_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/data-sources/firenet_vendor_integration) | data source |
+| [aviatrix_transit_gateway.transit_gw_data](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/data-sources/transit_gateway) | data source |
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/data-sources/client_config) | data source |
 | [external_external.fortinet_bootstrap_1](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
 | [external_external.fortinet_bootstrap_2](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
