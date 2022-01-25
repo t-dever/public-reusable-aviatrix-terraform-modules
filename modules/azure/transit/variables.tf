@@ -1,3 +1,17 @@
+variable "controller_username" {
+  description = "The controllers username."
+  default     = "admin"
+  type        = string
+  sensitive   = true
+}
+
+variable "controller_password" {
+  description = "The controllers password."
+  default     = ""
+  type        = string
+  sensitive   = true
+}
+
 variable "resource_group_name" {
   description = "The resource group name to be created."
   type        = string
