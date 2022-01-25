@@ -74,6 +74,7 @@ variable "controller_subnet_id" {
 variable "enable_netflow_to_copilot" {
   description = "Enables netflow logging to CoPilot."
   type        = bool
+  default     = false
 }
 
 variable "netflow_port" {
@@ -85,6 +86,7 @@ variable "netflow_port" {
 variable "enable_rsyslog_to_copilot" {
   description = "Enables rsyslog logging to CoPilot."
   type        = bool
+  default     = false
 }
 
 variable "rsyslog_port" {
