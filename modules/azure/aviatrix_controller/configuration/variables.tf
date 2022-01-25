@@ -104,3 +104,21 @@ variable "rsyslog_protocol" {
     error_message = "Valid values for var: rsyslog_protocol are (TCP or UDP)."
   }
 }
+
+variable "enable_backup" {
+  description = "Enable backup for the aviatrix controller."
+  type = bool
+  default = false
+}
+
+variable "backup_storage_name" {
+  description = "The name of the storage account to store backups for the aviatrix controller."
+  type = string
+  default = ""
+}
+
+variable "backup_container_name" {
+  description = "The name of the storage account container to store backups for the aviatrix controller."
+  type = string
+  default = ""
+}

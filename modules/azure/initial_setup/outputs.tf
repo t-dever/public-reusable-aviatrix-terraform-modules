@@ -25,6 +25,11 @@ output "storage_account_name" {
   description = "The storage account name"
 }
 
+output "storage_account_backup_container_name" {
+  value = azurerm_storage_container.controller_backup_container.name
+  description = "The name of the container where backups will be stored."
+}
+
 output "log_analytics_workspace_id" {
   value       = azurerm_log_analytics_workspace.log_analytics.workspace_id
   description = "The log analytics workspace id"
