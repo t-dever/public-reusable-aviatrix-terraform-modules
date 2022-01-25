@@ -17,7 +17,7 @@ provider "azurerm" {
 }
 
 provider "aviatrix" {
-  controller_ip = var.controller_ip
+  controller_ip = var.controller_public_ip
   username      = var.controller_username
   password      = var.controller_password
 }
