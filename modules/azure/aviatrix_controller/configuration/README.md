@@ -48,8 +48,8 @@ No modules.
 | <a name="input_controller_username"></a> [controller\_username](#input\_controller\_username) | The controllers username. | `string` | `"admin"` | no |
 | <a name="input_copilot_private_ip"></a> [copilot\_private\_ip](#input\_copilot\_private\_ip) | The CoPilots Private IP Address | `string` | `""` | no |
 | <a name="input_copilot_public_ip"></a> [copilot\_public\_ip](#input\_copilot\_public\_ip) | The CoPilots Public IP Address. | `string` | `""` | no |
-| <a name="input_enable_netflow_to_copilot"></a> [enable\_netflow\_to\_copilot](#input\_enable\_netflow\_to\_copilot) | Enables netflow logging to CoPilot. | `bool` | n/a | yes |
-| <a name="input_enable_rsyslog_to_copilot"></a> [enable\_rsyslog\_to\_copilot](#input\_enable\_rsyslog\_to\_copilot) | Enables rsyslog logging to CoPilot. | `bool` | n/a | yes |
+| <a name="input_enable_netflow_to_copilot"></a> [enable\_netflow\_to\_copilot](#input\_enable\_netflow\_to\_copilot) | Enables netflow logging to CoPilot. | `bool` | `false` | no |
+| <a name="input_enable_rsyslog_to_copilot"></a> [enable\_rsyslog\_to\_copilot](#input\_enable\_rsyslog\_to\_copilot) | Enables rsyslog logging to CoPilot. | `bool` | `false` | no |
 | <a name="input_netflow_port"></a> [netflow\_port](#input\_netflow\_port) | The port used for netflow data. | `string` | `"31283"` | no |
 | <a name="input_resource_group_location"></a> [resource\_group\_location](#input\_resource\_group\_location) | The name of the controller resource group location | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the controller resource group | `string` | n/a | yes |
