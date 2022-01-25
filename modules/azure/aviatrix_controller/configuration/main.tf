@@ -45,7 +45,7 @@ data "azurerm_network_security_group" "controller_security_group" {
 
 resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
   depends_on = [
-    azurerm_network_security_group.controller_security_group
+    data.azurerm_network_security_group.controller_security_group
   ]
   name                        = "AllowUserHttpsInboundToController"
   priority                    = 100
@@ -62,7 +62,7 @@ resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
 
 resource "azurerm_network_security_rule" "allow_controller_inbound_to_copilot" {
   depends_on = [
-    azurerm_network_security_group.controller_security_group
+    data.azurerm_network_security_group.controller_security_group
   ]
   count                       = var.copilot_private_ip != "" ? 1 : 0
   name                        = "AllowControllerInboundToCopilot"
@@ -80,7 +80,7 @@ resource "azurerm_network_security_rule" "allow_controller_inbound_to_copilot" {
 
 resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
   depends_on = [
-    azurerm_network_security_group.controller_security_group
+    data.azurerm_network_security_group.controller_security_group
   ]
   count                       = var.copilot_public_ip != "" ? 1 : 0
   name                        = "AllowCoPilotInboundToController"
@@ -98,7 +98,7 @@ resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
 
 resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
   depends_on = [
-    azurerm_network_security_group.controller_security_group
+    data.azurerm_network_security_group.controller_security_group
   ]
   count                       = var.copilot_private_ip != "" ? 1 : 0
   name                        = "AllowNetflowInboundToCoPilot"

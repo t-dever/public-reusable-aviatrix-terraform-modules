@@ -12,16 +12,15 @@ class ControllerSetup():
         self.access_account = os.getenv('ACCESS_ACCOUNT')
         self.admin_email = os.getenv('ADMIN_EMAIL')
         self.customer_id = os.getenv('CUSTOMER_ID')
-        # self.subscription_id = os.getenv('SUBSCRIPTION_ID')
-        # self.directory_id = os.getenv('DIRECTORY_ID')
-        # self.client_id = os.getenv('CLIENT_ID')
-        # self.client_secret = os.getenv('CLIENT_SECRET')
         self.controller_version = os.getenv('CONTROLLER_VERSION')
         self.controller_version_short = os.getenv('CONTROLLER_VERSION').split('-')[1][0:3]
         self.controller_username = "admin"
         self.controller_initial_password = os.getenv('AVIATRIX_CONTROLLER_PRIVATE_IP')
         self.controller_new_password = os.getenv('AVIATRIX_CONTROLLER_PASSWORD')
-
+        # self.subscription_id = os.getenv('SUBSCRIPTION_ID')
+        # self.directory_id = os.getenv('DIRECTORY_ID')
+        # self.client_id = os.getenv('CLIENT_ID')
+        # self.client_secret = os.getenv('CLIENT_SECRET')
 
     def _get_cid(self):
         payload = {
@@ -145,28 +144,6 @@ class ControllerSetup():
             print("Failed to set customer id")
         sys.exit(1)
 
-    # def onboard_azure_account(self):
-    #     print("Onboarding Azure Account")
-    #     payload = {
-    #         'action': 'setup_account_profile',
-    #         'CID': self._get_cid(),
-    #         'cloud_type': 8,
-    #         'account_email': self.admin_email,
-    #         'account_name': self.access_account,
-    #         'arm_subscription_id': self.subscription_id,
-    #         'arm_application_endpoint': self.directory_id,
-    #         'arm_application_client_id': self.client_id,
-    #         'arm_application_client_secret': self.client_secret
-    #     }
-    #     response = requests.post(self.url, data=payload, verify=False)
-    #     r = self._format_response(response)
-    #     if r:
-    #         print("Successfully added azure account")
-    #         return
-    #     else:
-    #         print("Failed to add azure account")
-    #     sys.exit(1)
-
     def initial_software_update(self, controller_version):
         print("Attempting Initial Software Update...")
         try:
@@ -229,10 +206,12 @@ class ControllerSetup():
     def perform_software_updates(self):
         if self._is_software_up_to_date(self.controller_version_short):
             return True
+        # If controller is being upgraded to 6.6 then do the initial software update then upgrade from 6.5 to 6.6
         elif self.controller_version_short == "6.6":
             result = self.initial_software_update("6.5")
             if result:
                 result = self.controller_upgrade("6.6")
+        # If controller is not being upgraded to 6.6 then just do initial_software_update
         else:
             result = self.initial_software_update(self.controller_version_short)
         if result:
@@ -240,6 +219,42 @@ class ControllerSetup():
             return True
         print("All attempts to update software failed")
         sys.exit(1)
+
+
+def main():
+    controller = ControllerSetup()
+
+    controller.set_admin_email()
+    controller.reset_admin_password()
+    controller.set_customer_id()
+    controller.perform_software_updates()
+
+
+main()
+sys.exit(0)
+
+
+    # def onboard_azure_account(self):
+    #     print("Onboarding Azure Account")
+    #     payload = {
+    #         'action': 'setup_account_profile',
+    #         'CID': self._get_cid(),
+    #         'cloud_type': 8,
+    #         'account_email': self.admin_email,
+    #         'account_name': self.access_account,
+    #         'arm_subscription_id': self.subscription_id,
+    #         'arm_application_endpoint': self.directory_id,
+    #         'arm_application_client_id': self.client_id,
+    #         'arm_application_client_secret': self.client_secret
+    #     }
+    #     response = requests.post(self.url, data=payload, verify=False)
+    #     r = self._format_response(response)
+    #     if r:
+    #         print("Successfully added azure account")
+    #         return
+    #     else:
+    #         print("Failed to add azure account")
+    #     sys.exit(1)
 
     # def enable_security_group_management(self):
     #     print("Enabling auto security group management")
@@ -263,18 +278,7 @@ class ControllerSetup():
     #             continue
     #     sys.exit(1)
 
-
-def main():
-    controller = ControllerSetup()
-
-    controller.set_admin_email()
-    controller.reset_admin_password()
-    controller.set_customer_id()
     # controller.onboard_azure_account()
-    controller.perform_software_updates()
     # print("Sleeping for 60 seconds before attempting to enable security group management")
     # time.sleep(60)
     # controller.enable_security_group_management()
-
-main()
-sys.exit(0)
