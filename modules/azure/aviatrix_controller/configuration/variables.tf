@@ -119,12 +119,12 @@ variable "backup_storage_name" {
 
 variable "backup_container_name" {
   description = "The name of the storage account container to store backups for the aviatrix controller."
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "backup_region" {
   description = "The region where the storage account is stored."
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
