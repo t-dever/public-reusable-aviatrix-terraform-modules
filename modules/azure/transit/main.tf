@@ -170,7 +170,7 @@ resource "azurerm_key_vault_secret" "firewall_secret" {
 
 resource "aviatrix_firenet" "firenet" {
   count                                = var.firenet_enabled ? 1 : 0
-  vpc_id                               = aviatrix_transit_gateway.azure_transit_gateway.vpc_id
+  vpc_id                               = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
   inspection_enabled                   = true
   egress_enabled                       = var.egress_enabled
   keep_alive_via_lan_interface_enabled = false
