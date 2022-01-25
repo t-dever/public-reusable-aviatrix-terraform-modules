@@ -22,6 +22,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [aviatrix_account.azure_account](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/account) | resource |
+| [aviatrix_controller_config.controller_backup](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/controller_config) | resource |
 | [aviatrix_controller_security_group_management_config.security_group_management](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/controller_security_group_management_config) | resource |
 | [aviatrix_copilot_association.copilot_association](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/copilot_association) | resource |
 | [aviatrix_netflow_agent.netflow_agent](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/netflow_agent) | resource |
@@ -39,6 +40,8 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_azure_account_name"></a> [azure\_account\_name](#input\_azure\_account\_name) | The account name to add to the controller | `string` | n/a | yes |
+| <a name="input_backup_container_name"></a> [backup\_container\_name](#input\_backup\_container\_name) | The name of the storage account container to store backups for the aviatrix controller. | `string` | `""` | no |
+| <a name="input_backup_storage_name"></a> [backup\_storage\_name](#input\_backup\_storage\_name) | The name of the storage account to store backups for the aviatrix controller. | `string` | `""` | no |
 | <a name="input_client_secret"></a> [client\_secret](#input\_client\_secret) | The Client secret for the account to be added | `string` | n/a | yes |
 | <a name="input_controller_password"></a> [controller\_password](#input\_controller\_password) | The controllers password. | `string` | `""` | no |
 | <a name="input_controller_private_ip"></a> [controller\_private\_ip](#input\_controller\_private\_ip) | The controllers private IP address. | `string` | `"1.2.3.4"` | no |
@@ -48,6 +51,7 @@ No modules.
 | <a name="input_controller_username"></a> [controller\_username](#input\_controller\_username) | The controllers username. | `string` | `"admin"` | no |
 | <a name="input_copilot_private_ip"></a> [copilot\_private\_ip](#input\_copilot\_private\_ip) | The CoPilots Private IP Address | `string` | `""` | no |
 | <a name="input_copilot_public_ip"></a> [copilot\_public\_ip](#input\_copilot\_public\_ip) | The CoPilots Public IP Address. | `string` | `""` | no |
+| <a name="input_enable_backup"></a> [enable\_backup](#input\_enable\_backup) | Enable backup for the aviatrix controller. | `bool` | `false` | no |
 | <a name="input_enable_netflow_to_copilot"></a> [enable\_netflow\_to\_copilot](#input\_enable\_netflow\_to\_copilot) | Enables netflow logging to CoPilot. | `bool` | `false` | no |
 | <a name="input_enable_rsyslog_to_copilot"></a> [enable\_rsyslog\_to\_copilot](#input\_enable\_rsyslog\_to\_copilot) | Enables rsyslog logging to CoPilot. | `bool` | `false` | no |
 | <a name="input_netflow_port"></a> [netflow\_port](#input\_netflow\_port) | The port used for netflow data. | `string` | `"31283"` | no |
