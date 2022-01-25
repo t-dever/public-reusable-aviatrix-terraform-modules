@@ -146,5 +146,6 @@ resource "aviatrix_controller_config" "controller_backup" {
   backup_account_name  = var.azure_account_name
   backup_storage_name   = var.backup_storage_name
   backup_container_name = var.backup_container_name
+  backup_region         = var.backup_region
   multiple_backups = true
 }

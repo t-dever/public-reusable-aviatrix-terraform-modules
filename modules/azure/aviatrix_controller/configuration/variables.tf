@@ -122,3 +122,9 @@ variable "backup_container_name" {
   type = string
   default = ""
 }
+
+variable "backup_region" {
+  description = "The region where the storage account is stored."
+  type = string
+  default = ""
+}
