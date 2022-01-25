@@ -102,5 +102,5 @@ variable "rsyslog_protocol" {
   validation {
     condition     = contains(["TCP", "UDP"], var.rsyslog_protocol)
     error_message = "Valid values for var: rsyslog_protocol are (TCP or UDP)."
-  } 
+  }
 }
