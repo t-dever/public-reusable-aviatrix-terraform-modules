@@ -46,5 +46,6 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_aviatrix_azure_account"></a> [aviatrix\_azure\_account](#output\_aviatrix\_azure\_account) | n/a |
+| <a name="output_aviatrix_azure_account"></a> [aviatrix\_azure\_account](#output\_aviatrix\_azure\_account) | The name of the account added. |
+| <a name="output_user_public_ip_address"></a> [user\_public\_ip\_address](#output\_user\_public\_ip\_address) | The ip address of the user accessing the stuff. |
 <!-- END_TF_DOCS -->
