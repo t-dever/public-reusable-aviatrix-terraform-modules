@@ -140,12 +140,16 @@ resource "aviatrix_remote_syslog" "remote_syslog" {
 }
 
 resource "aviatrix_controller_config" "controller_backup" {
-  count    = var.enable_backup ? 1 : 0
-  backup_configuration = true
-  backup_cloud_type    = 8
-  backup_account_name  = var.azure_account_name
+  count                 = var.enable_backup ? 1 : 0
+  backup_configuration  = true
+  backup_cloud_type     = 8
+  backup_account_name   = var.azure_account_name
   backup_storage_name   = var.backup_storage_name
   backup_container_name = var.backup_container_name
+<<<<<<< HEAD
   backup_region         = var.backup_region
   multiple_backups = true
+=======
+  multiple_backups      = true
+>>>>>>> 3ab0fcd53e9adb606ea97e5e0fbadac4a22bc3a9
 }

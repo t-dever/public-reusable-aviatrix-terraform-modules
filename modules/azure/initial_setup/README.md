@@ -119,6 +119,7 @@ No modules.
 | <a name="output_log_analytics_region"></a> [log\_analytics\_region](#output\_log\_analytics\_region) | The log analytics regions/location |
 | <a name="output_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#output\_log\_analytics\_workspace\_id) | The log analytics workspace id |
 | <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | The resource group name |
+| <a name="output_storage_account_backup_container_name"></a> [storage\_account\_backup\_container\_name](#output\_storage\_account\_backup\_container\_name) | The name of the container where backups will be stored. |
 | <a name="output_storage_account_id"></a> [storage\_account\_id](#output\_storage\_account\_id) | The storage account ID |
 | <a name="output_storage_account_name"></a> [storage\_account\_name](#output\_storage\_account\_name) | The storage account name |
 <!-- END_TF_DOCS -->

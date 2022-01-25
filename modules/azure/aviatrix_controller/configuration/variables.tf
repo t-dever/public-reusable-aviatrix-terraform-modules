@@ -107,14 +107,14 @@ variable "rsyslog_protocol" {
 
 variable "enable_backup" {
   description = "Enable backup for the aviatrix controller."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "backup_storage_name" {
   description = "The name of the storage account to store backups for the aviatrix controller."
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "backup_container_name" {
