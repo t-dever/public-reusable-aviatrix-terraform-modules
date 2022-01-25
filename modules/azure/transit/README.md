@@ -126,7 +126,9 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aviatrix_azure_account"></a> [aviatrix\_azure\_account](#input\_aviatrix\_azure\_account) | The account used to manage the transit gateway | `string` | `"test-account"` | no |
+| <a name="input_controller_password"></a> [controller\_password](#input\_controller\_password) | The controllers password. | `string` | `""` | no |
 | <a name="input_controller_public_ip"></a> [controller\_public\_ip](#input\_controller\_public\_ip) | The controllers public IP address. | `string` | `"1.2.3.4"` | no |
+| <a name="input_controller_username"></a> [controller\_username](#input\_controller\_username) | The controllers username. | `string` | `"admin"` | no |
 | <a name="input_egress_enabled"></a> [egress\_enabled](#input\_egress\_enabled) | Allow traffic to the internet through firewall | `bool` | `false` | no |
 | <a name="input_enable_transit_gateway_scheduled_shutdown"></a> [enable\_transit\_gateway\_scheduled\_shutdown](#input\_enable\_transit\_gateway\_scheduled\_shutdown) | Enable automatic shutdown on transit gateway. | `bool` | `false` | no |
 | <a name="input_firenet_enabled"></a> [firenet\_enabled](#input\_firenet\_enabled) | Enables firenet on the aviatrix transit gateway | `bool` | `false` | no |
