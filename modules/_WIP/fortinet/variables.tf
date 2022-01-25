@@ -1,9 +1,9 @@
 variable "firewall_ip" {
-  type = string
+  type        = string
   description = "The firewall IP Address"
 }
 
 variable "firewall_api_key" {
-  type = string
+  type        = string
   description = "The firewall api key"
 }

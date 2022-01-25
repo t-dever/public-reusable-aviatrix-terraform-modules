@@ -78,5 +78,5 @@ variable "segmentation_domain_name" {
 
 variable "segmentation_domain_connection_policies" {
   description = "The segementation domain connection policies to associate to the spoke."
-  type = list(string)
+  type        = list(string)
 }

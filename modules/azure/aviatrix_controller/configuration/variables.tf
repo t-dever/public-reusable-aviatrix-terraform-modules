@@ -1,10 +1,10 @@
 variable "azure_account_name" {
-  type = string
+  type        = string
   description = "The account name to add to the controller"
 }
 
 variable "client_secret" {
-  type = string
+  type        = string
   description = "The Client secret for the account to be added"
 }
 
@@ -31,12 +31,12 @@ variable "controller_password" {
 
 variable "resource_group_name" {
   description = "The name of the controller resource group"
-  type = string
+  type        = string
 }
 
 variable "resource_group_location" {
   description = "The name of the controller resource group location"
-  type = string
+  type        = string
 }
 
 variable "controller_user_public_ip_address" {
@@ -47,5 +47,5 @@ variable "controller_user_public_ip_address" {
 
 variable "controller_subnet_id" {
   description = "The controller subnet id."
-  type = string
+  type        = string
 }
