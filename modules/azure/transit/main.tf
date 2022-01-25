@@ -222,9 +222,12 @@ resource "aviatrix_firewall_instance" "firewall_instance_2" {
 }
 
 resource "aviatrix_firewall_instance_association" "firewall_instance_association_1" {
+  depends_on = [
+    aviatrix_transit_gateway.transit_gw_data
+  ]
   count                = var.firenet_enabled ? 1 : 0
   vpc_id               = aviatrix_firewall_instance.firewall_instance_1[0].vpc_id
-  firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
+  firenet_gw_name      = data.aviatrix_transit_gateway.transit_gw_data.gw_name
   instance_id          = aviatrix_firewall_instance.firewall_instance_1[0].instance_id
   firewall_name        = aviatrix_firewall_instance.firewall_instance_1[0].firewall_name
   lan_interface        = aviatrix_firewall_instance.firewall_instance_1[0].lan_interface
@@ -234,9 +237,12 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
 }
 
 resource "aviatrix_firewall_instance_association" "firewall_instance_association_2" {
+  depends_on = [
+    aviatrix_transit_gateway.transit_gw_data
+  ]
   count                = var.firenet_enabled && var.firewall_ha ? 1 : 0
   vpc_id               = aviatrix_firewall_instance.firewall_instance_2[0].vpc_id
-  firenet_gw_name      = aviatrix_transit_gateway.azure_transit_gateway.gw_name
+  firenet_gw_name      = data.aviatrix_transit_gateway.transit_gw_data.gw_name
   instance_id          = aviatrix_firewall_instance.firewall_instance_2[0].instance_id
   firewall_name        = aviatrix_firewall_instance.firewall_instance_2[0].firewall_name
   lan_interface        = aviatrix_firewall_instance.firewall_instance_2[0].lan_interface
