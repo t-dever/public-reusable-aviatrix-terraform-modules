@@ -41,6 +41,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_azure_account_name"></a> [azure\_account\_name](#input\_azure\_account\_name) | The account name to add to the controller | `string` | n/a | yes |
 | <a name="input_backup_container_name"></a> [backup\_container\_name](#input\_backup\_container\_name) | The name of the storage account container to store backups for the aviatrix controller. | `string` | `""` | no |
+| <a name="input_backup_region"></a> [backup\_region](#input\_backup\_region) | The region where the storage account is stored. | `string` | `""` | no |
 | <a name="input_backup_storage_name"></a> [backup\_storage\_name](#input\_backup\_storage\_name) | The name of the storage account to store backups for the aviatrix controller. | `string` | `""` | no |
 | <a name="input_client_secret"></a> [client\_secret](#input\_client\_secret) | The Client secret for the account to be added | `string` | n/a | yes |
 | <a name="input_controller_password"></a> [controller\_password](#input\_controller\_password) | The controllers password. | `string` | `""` | no |
