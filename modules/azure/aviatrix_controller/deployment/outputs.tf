@@ -16,7 +16,25 @@ output "controller_admin_password" {
 
 output "controller_public_ip" {
   value       = azurerm_linux_virtual_machine.aviatrix_controller_vm.public_ip_address
-  description = "The IP Address of the Aviatrix Controller"
+  description = "The Public IP Address of the Aviatrix Controller"
+  sensitive   = true
+}
+
+output "controller_private_ip" {
+  value       = azurerm_linux_virtual_machine.aviatrix_controller_vm.private_ip_address
+  description = "The Private IP Address of the Aviatrix Controller"
+  sensitive   = true
+}
+
+output "copilot_public_ip" {
+  value       = var.deploy_copilot ? azurerm_linux_virtual_machine.aviatrix_copilot_vm.public_ip_address : null
+  description = "The Public IP Address of the Aviatrix CoPilot Instance."
+  sensitive   = true
+}
+
+output "copilot_private_ip" {
+  value       = var.deploy_copilot ? azurerm_linux_virtual_machine.aviatrix_copilot_vm.private_ip_address : null
+  description = "The Private IP Address of the Aviatrix CoPilot Instance"
   sensitive   = true
 }
 
@@ -29,22 +47,3 @@ output "resource_group_location" {
   value       = azurerm_resource_group.resource_group.location
   description = "The resource group location"
 }
-
-# output "controller_security_group_name" {
-#   value       = azurerm_network_security_group.controller_security_group.name
-#   description = "The Controllers network security group"
-#   sensitive   = true
-# }
-
-# output "user_public_ip_address" {
-#   value       = var.controller_user_public_ip_address
-#   description = "The public IP address of the User; used for NSG rules"
-#   sensitive   = true
-# }
-
-# output "aviatrix_azure_account" {
-#   value       = var.aviatrix_azure_access_account_name
-#   description = "The Azure account provisioned in the aviatrix controller used for accessing subscriptions"
-#   sensitive   = true
-# }
-

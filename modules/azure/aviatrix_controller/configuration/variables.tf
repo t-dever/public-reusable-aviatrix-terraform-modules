@@ -8,8 +8,15 @@ variable "client_secret" {
   description = "The Client secret for the account to be added"
 }
 
-variable "controller_ip" {
+variable "controller_public_ip" {
   description = "The controllers public IP address."
+  default     = "1.2.3.4"
+  type        = string
+  sensitive   = true
+}
+
+variable "controller_private_ip" {
+  description = "The controllers private IP address."
   default     = "1.2.3.4"
   type        = string
   sensitive   = true
@@ -27,6 +34,20 @@ variable "controller_password" {
   default     = ""
   type        = string
   sensitive   = true
+}
+
+variable "copilot_public_ip" {
+  description = "The CoPilots Public IP Address."
+  type = string
+  sensitive = true
+  default = ""
+}
+
+variable "copilot_private_ip" {
+  description = "The CoPilots Private IP Address"
+  type = string
+  sensitive = true
+  default = ""
 }
 
 variable "resource_group_name" {
