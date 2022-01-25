@@ -30,11 +30,6 @@ output "resource_group_location" {
   description = "The resource group location"
 }
 
-output "controller_subnet_id" {
-  value = azurerm_subnet.azure_controller_subnet.id
-  description = "The controller subnet id"
-}
-
 # output "controller_security_group_name" {
 #   value       = azurerm_network_security_group.controller_security_group.name
 #   description = "The Controllers network security group"
