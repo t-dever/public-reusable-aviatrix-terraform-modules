@@ -20,6 +20,11 @@ output "controller_public_ip" {
   sensitive   = true
 }
 
+output "resource_group_name" {
+  value = azurerm_resource_group.resource_group.name
+  description = "The resource group name"
+}
+
 # output "controller_security_group_name" {
 #   value       = azurerm_network_security_group.controller_security_group.name
 #   description = "The Controllers network security group"

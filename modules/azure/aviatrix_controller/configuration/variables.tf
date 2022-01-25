@@ -28,3 +28,8 @@ variable "controller_password" {
   type        = string
   sensitive   = true
 }
+
+variable "resource_group_name" {
+  description = "The name of the controller resource group"
+  type = string
+}
