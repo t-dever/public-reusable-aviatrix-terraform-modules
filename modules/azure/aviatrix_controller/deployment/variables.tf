@@ -43,6 +43,12 @@ variable "controller_version" {
   type        = string
 }
 
+variable "controller_customer_id" {
+  description = "The customer id for the aviatrix controller"
+  type        = string
+  sensitive   = true
+}
+
 variable "admin_email" {
   description = "The email address used for the aviatrix controller registration."
   type        = string
@@ -99,11 +105,6 @@ variable "key_vault_id" {
 # }
 
 
-# variable "controller_customer_id" {
-#   description = "The customer id for the aviatrix controller"
-#   type        = string
-#   sensitive   = true
-# }
 
 # variable "build_agent_ip_address" {
 #   description = "The Public IP Address of the build agent to add to the NSG allow rule"

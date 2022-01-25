@@ -138,13 +138,12 @@ resource "null_resource" "initial_config" {
       AVIATRIX_CONTROLLER_PASSWORD   = random_password.generate_controller_secret.result
       ADMIN_EMAIL                    = var.admin_email
       CONTROLLER_VERSION             = var.controller_version
+      CUSTOMER_ID                    = var.controller_customer_id
       # ACCESS_ACCOUNT                 = var.aviatrix_azure_access_account_name
-      # CUSTOMER_ID                    = var.controller_customer_id
       # SUBSCRIPTION_ID                = data.azurerm_client_config.current.subscription_id
       # DIRECTORY_ID                   = data.azurerm_client_config.current.tenant_id
       # CLIENT_ID                      = data.azurerm_client_config.current.client_id
       # CLIENT_SECRET                  = var.azure_application_key
-
     }
   }
 }

@@ -11,7 +11,7 @@ class ControllerSetup():
         self.url = f"https://{os.getenv('AVIATRIX_CONTROLLER_PUBLIC_IP')}/v1/api"
         self.access_account = os.getenv('ACCESS_ACCOUNT')
         self.admin_email = os.getenv('ADMIN_EMAIL')
-        # self.customer_id = os.getenv('CUSTOMER_ID')
+        self.customer_id = os.getenv('CUSTOMER_ID')
         # self.subscription_id = os.getenv('SUBSCRIPTION_ID')
         # self.directory_id = os.getenv('DIRECTORY_ID')
         # self.client_id = os.getenv('CLIENT_ID')
@@ -129,21 +129,21 @@ class ControllerSetup():
             print("Failed to reset admin password")
         sys.exit(1)
 
-    # def set_customer_id(self):
-    #     print("Setting the customer ID.")
-    #     payload = {
-    #         'action': 'setup_customer_id',
-    #         'CID': self._get_cid(),
-    #         'customer_id': self.customer_id
-    #     }
-    #     response = requests.post(self.url, data=payload, verify=False)
-    #     r = self._format_response(response)
-    #     if r:
-    #         print("Successfully set customer id")
-    #         return
-    #     else:
-    #         print("Failed to set customer id")
-    #     sys.exit(1)
+    def set_customer_id(self):
+        print("Setting the customer ID.")
+        payload = {
+            'action': 'setup_customer_id',
+            'CID': self._get_cid(),
+            'customer_id': self.customer_id
+        }
+        response = requests.post(self.url, data=payload, verify=False)
+        r = self._format_response(response)
+        if r:
+            print("Successfully set customer id")
+            return
+        else:
+            print("Failed to set customer id")
+        sys.exit(1)
 
     # def onboard_azure_account(self):
     #     print("Onboarding Azure Account")
@@ -229,7 +229,7 @@ def main():
 
     controller.set_admin_email()
     controller.reset_admin_password()
-    # controller.set_customer_id()
+    controller.set_customer_id()
     # controller.onboard_azure_account()
     controller.perform_software_updates()
     # print("Sleeping for 60 seconds before attempting to enable security group management")
