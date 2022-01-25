@@ -35,17 +35,22 @@ resource "aviatrix_controller_security_group_management_config" "security_group_
   enable_security_group_management = true
 }
 
-resource "azurerm_network_security_group" "controller_security_group" {
-  depends_on = [
-    aviatrix_controller_security_group_management_config.security_group_management
-  ]
-  lifecycle {
-    ignore_changes = [security_rule]
-  }
+data "azurerm_network_security_group" "controller_security_group" {
   name                = "Aviatrix-SG-${var.controller_ip}" # GROSSS
-  location            = var.resource_group_location
   resource_group_name = var.resource_group_name
 }
+
+# resource "azurerm_network_security_group" "controller_security_group" {
+#   depends_on = [
+#     aviatrix_controller_security_group_management_config.security_group_management
+#   ]
+#   lifecycle {
+#     ignore_changes = [security_rule]
+#   }
+#   name                = "Aviatrix-SG-${var.controller_ip}" # GROSSS
+#   location            = var.resource_group_location
+#   resource_group_name = var.resource_group_name
+# }
 
 resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
   name                        = "AllowUserHttpsInboundToController"
@@ -58,7 +63,7 @@ resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
   source_address_prefix       = var.controller_user_public_ip_address
   destination_address_prefix  = "*"
   resource_group_name         = var.resource_group_name
-  network_security_group_name = azurerm_network_security_group.controller_security_group.name
+  network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
 }
 
 # resource "azurerm_network_security_rule" "allow_build_agent_to_controller_nsg" {
@@ -80,7 +85,7 @@ resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
 
 resource "azurerm_subnet_network_security_group_association" "azure_controller_nsg_association" {
   subnet_id                 = var.controller_subnet_id
-  network_security_group_id = azurerm_network_security_group.controller_security_group.id
+  network_security_group_id = data.azurerm_network_security_group.controller_security_group.id
 }
 
 
