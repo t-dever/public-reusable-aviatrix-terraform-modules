@@ -38,16 +38,16 @@ variable "controller_password" {
 
 variable "copilot_public_ip" {
   description = "The CoPilots Public IP Address."
-  type = string
-  sensitive = true
-  default = ""
+  type        = string
+  sensitive   = true
+  default     = ""
 }
 
 variable "copilot_private_ip" {
   description = "The CoPilots Private IP Address"
-  type = string
-  sensitive = true
-  default = ""
+  type        = string
+  sensitive   = true
+  default     = ""
 }
 
 variable "resource_group_name" {

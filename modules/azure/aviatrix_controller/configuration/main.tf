@@ -92,7 +92,7 @@ resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
   access                      = "Allow"
   protocol                    = "Udp"
   source_port_range           = "*"
-  destination_port_ranges      = ["31283", "5000"]
+  destination_port_ranges     = ["31283", "5000"]
   source_address_prefix       = "*"
   destination_address_prefix  = var.copilot_private_ip
   resource_group_name         = var.resource_group_name
