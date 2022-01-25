@@ -24,6 +24,8 @@ No modules.
 | [aviatrix_account.azure_account](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/account) | resource |
 | [aviatrix_controller_security_group_management_config.security_group_management](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/controller_security_group_management_config) | resource |
 | [aviatrix_copilot_association.copilot_association](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/copilot_association) | resource |
+| [aviatrix_netflow_agent.netflow_agent](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/netflow_agent) | resource |
+| [aviatrix_remote_syslog.remote_syslog](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/remote_syslog) | resource |
 | [azurerm_network_security_rule.allow_controller_inbound_to_copilot](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
 | [azurerm_network_security_rule.allow_copilot_inbound_to_controller](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
 | [azurerm_network_security_rule.allow_netflow_inbound_to_copilot](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
@@ -46,8 +48,13 @@ No modules.
 | <a name="input_controller_username"></a> [controller\_username](#input\_controller\_username) | The controllers username. | `string` | `"admin"` | no |
 | <a name="input_copilot_private_ip"></a> [copilot\_private\_ip](#input\_copilot\_private\_ip) | The CoPilots Private IP Address | `string` | `""` | no |
 | <a name="input_copilot_public_ip"></a> [copilot\_public\_ip](#input\_copilot\_public\_ip) | The CoPilots Public IP Address. | `string` | `""` | no |
+| <a name="input_enable_netflow_to_copilot"></a> [enable\_netflow\_to\_copilot](#input\_enable\_netflow\_to\_copilot) | Enables netflow logging to CoPilot. | `bool` | n/a | yes |
+| <a name="input_enable_rsyslog_to_copilot"></a> [enable\_rsyslog\_to\_copilot](#input\_enable\_rsyslog\_to\_copilot) | Enables rsyslog logging to CoPilot. | `bool` | n/a | yes |
+| <a name="input_netflow_port"></a> [netflow\_port](#input\_netflow\_port) | The port used for netflow data. | `string` | `"31283"` | no |
 | <a name="input_resource_group_location"></a> [resource\_group\_location](#input\_resource\_group\_location) | The name of the controller resource group location | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the controller resource group | `string` | n/a | yes |
+| <a name="input_rsyslog_port"></a> [rsyslog\_port](#input\_rsyslog\_port) | The port used for rsyslog data. | `string` | `"5000"` | no |
+| <a name="input_rsyslog_protocol"></a> [rsyslog\_protocol](#input\_rsyslog\_protocol) | The protocol used for rsyslog. | `string` | `"UDP"` | no |
 
 ## Outputs
 
