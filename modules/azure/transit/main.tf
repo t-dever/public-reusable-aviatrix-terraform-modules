@@ -223,7 +223,7 @@ resource "aviatrix_firewall_instance" "firewall_instance_2" {
 
 resource "aviatrix_firewall_instance_association" "firewall_instance_association_1" {
   depends_on = [
-    aviatrix_transit_gateway.transit_gw_data
+    data.aviatrix_transit_gateway.transit_gw_data
   ]
   count                = var.firenet_enabled ? 1 : 0
   vpc_id               = aviatrix_firewall_instance.firewall_instance_1[0].vpc_id
@@ -238,7 +238,7 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
 
 resource "aviatrix_firewall_instance_association" "firewall_instance_association_2" {
   depends_on = [
-    aviatrix_transit_gateway.transit_gw_data
+    data.aviatrix_transit_gateway.transit_gw_data
   ]
   count                = var.firenet_enabled && var.firewall_ha ? 1 : 0
   vpc_id               = aviatrix_firewall_instance.firewall_instance_2[0].vpc_id
