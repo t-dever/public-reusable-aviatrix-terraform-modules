@@ -66,14 +66,14 @@ No outputs.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_aviatrix"></a> [aviatrix](#requirement\_aviatrix) | 2.21.0-6.6.ga |
+| <a name="requirement_aviatrix"></a> [aviatrix](#requirement\_aviatrix) | >=2.21.0-6.6.ga |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 2.89.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aviatrix"></a> [aviatrix](#provider\_aviatrix) | 2.21.0-6.6.ga |
+| <a name="provider_aviatrix"></a> [aviatrix](#provider\_aviatrix) | >=2.21.0-6.6.ga |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 2.89.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
@@ -85,12 +85,12 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aviatrix_segmentation_security_domain.spoke_segmentation_security_domain](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/segmentation_security_domain) | resource |
-| [aviatrix_segmentation_security_domain_association.segmentation_security_domain_association](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/segmentation_security_domain_association) | resource |
-| [aviatrix_segmentation_security_domain_connection_policy.segmentation_security_domain_connection_policy](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/segmentation_security_domain_connection_policy) | resource |
-| [aviatrix_spoke_gateway.azure_spoke_gateway](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/spoke_gateway) | resource |
-| [aviatrix_spoke_transit_attachment.attach_spoke](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/spoke_transit_attachment) | resource |
-| [aviatrix_transit_firenet_policy.spoke_transit_firenet_policy](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/transit_firenet_policy) | resource |
+| [aviatrix_segmentation_security_domain.spoke_segmentation_security_domain](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/segmentation_security_domain) | resource |
+| [aviatrix_segmentation_security_domain_association.segmentation_security_domain_association](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/segmentation_security_domain_association) | resource |
+| [aviatrix_segmentation_security_domain_connection_policy.segmentation_security_domain_connection_policy](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/segmentation_security_domain_connection_policy) | resource |
+| [aviatrix_spoke_gateway.azure_spoke_gateway](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/spoke_gateway) | resource |
+| [aviatrix_spoke_transit_attachment.attach_spoke](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/spoke_transit_attachment) | resource |
+| [aviatrix_transit_firenet_policy.spoke_transit_firenet_policy](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/transit_firenet_policy) | resource |
 | [azurerm_dev_test_global_vm_shutdown_schedule.gateway_shutdown](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
 | [azurerm_dev_test_global_vm_shutdown_schedule.vm_shutdown](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
 | [azurerm_key_vault_secret.vm1_secret](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/key_vault_secret) | resource |
