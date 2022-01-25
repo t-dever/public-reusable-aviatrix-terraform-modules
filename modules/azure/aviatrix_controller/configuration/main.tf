@@ -36,11 +36,17 @@ resource "aviatrix_controller_security_group_management_config" "security_group_
 }
 
 data "azurerm_network_security_group" "controller_security_group" {
+  depends_on = [
+    aviatrix_controller_security_group_management_config.security_group_management
+  ]
   name                = "Aviatrix-SG-${var.controller_public_ip}" # GROSSS, I have to do this because I can't reference it as an attribute.
   resource_group_name = var.resource_group_name
 }
 
 resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
+  depends_on = [
+    azurerm_network_security_group.controller_security_group
+  ]
   name                        = "AllowUserHttpsInboundToController"
   priority                    = 100
   direction                   = "Inbound"
@@ -55,6 +61,9 @@ resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
 }
 
 resource "azurerm_network_security_rule" "allow_controller_inbound_to_copilot" {
+  depends_on = [
+    azurerm_network_security_group.controller_security_group
+  ]
   count                       = var.copilot_private_ip != "" ? 1 : 0
   name                        = "AllowControllerInboundToCopilot"
   priority                    = 101
@@ -70,6 +79,9 @@ resource "azurerm_network_security_rule" "allow_controller_inbound_to_copilot" {
 }
 
 resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
+  depends_on = [
+    azurerm_network_security_group.controller_security_group
+  ]
   count                       = var.copilot_public_ip != "" ? 1 : 0
   name                        = "AllowCoPilotInboundToController"
   priority                    = 102
@@ -85,6 +97,9 @@ resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
 }
 
 resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
+  depends_on = [
+    azurerm_network_security_group.controller_security_group
+  ]
   count                       = var.copilot_private_ip != "" ? 1 : 0
   name                        = "AllowNetflowInboundToCoPilot"
   priority                    = 103
@@ -107,5 +122,3 @@ resource "azurerm_subnet_network_security_group_association" "azure_controller_n
 resource "aviatrix_copilot_association" "copilot_association" {
   copilot_address = var.copilot_public_ip
 }
-
-

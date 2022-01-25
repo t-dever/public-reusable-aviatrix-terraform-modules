@@ -70,7 +70,7 @@ class ControllerSetup():
             print(response.text)
         return False
 
-    def _is_software_up_to_date(self):
+    def _is_software_up_to_date(self, controller_version):
         print("Checking if software is up-to-date...")
         payload = {
             'action': 'list_version_info',
@@ -82,9 +82,9 @@ class ControllerSetup():
             if r.get('return') == True:
                 results = r.get('results')
                 print(f"Current Software Version: {results.get('current_version')}")
-                print(f"Expected Software Version: {self.controller_version}")
+                print(f"Expected Software Version: {controller_version}")
                 current_version_short = results.get('current_version').split('-')[1][0:3]
-                if current_version_short == self.controller_version_short:
+                if current_version_short == controller_version:
                     print("Software is up-to-date")
                     return True
                 else:
@@ -167,56 +167,77 @@ class ControllerSetup():
     #         print("Failed to add azure account")
     #     sys.exit(1)
 
+    def initial_software_update(self, controller_version):
+        print("Attempting Initial Software Update...")
+        try:
+            payload = {
+                'action': 'initial_setup',
+                'CID': self._get_cid(),
+                'subaction': 'run',
+                'target_version': controller_version
+            }
+            response = requests.post(self.url, data=payload, verify=False, timeout=300)
+            r = self._format_response(response)
+            if r:
+                if r.get('return') == True:
+                    print(f"Successfully updated software to: {controller_version}")
+                    return True
+            return False
+        except requests.exceptions.Timeout:
+            attempts = 5
+            while attempts != 0:
+                print(f"Attempts remaining to check software version: {attempts}")
+                attempts -= 1
+                if self._is_software_up_to_date(controller_version):
+                    return True
+                time.sleep(30)
+                continue
+            return False
+        except Exception as err:
+            print(str(err))
+            return False
+
+    def controller_upgrade(self, controller_version):
+        print("Attempting Next Software Update...")
+        try:
+            payload = {
+                'action': 'upgrade',
+                'CID': self._get_cid(),
+                'version': self.controller_version_short
+            }
+            response = requests.post(self.url, data=payload, verify=False, timeout=300)
+            r = self._format_response(response)
+            if r:
+                if r.get('return') == True:
+                    print(f"Successfully updated software to: {controller_version}")
+                    return True
+            return False
+        except requests.exceptions.Timeout:
+            attempts = 5
+            while attempts != 0:
+                print(f"Attempts remaining to check software version: {attempts}")
+                attempts -= 1
+                if self._is_software_up_to_date(controller_version):
+                    return True
+                time.sleep(30)
+                continue
+            return False
+        except Exception as err:
+            print(str(err))
+            return False
+
     def perform_software_updates(self):
-        if self._is_software_up_to_date():
+        if self._is_software_up_to_date(self.controller_version_short):
             return True
+        elif self.controller_version_short == "6.6":
+            result = self.initial_software_update(self, "6.5")
+            if result:
+                result = self.controller_upgrade(self, "6.6")
         else:
-            try:
-                print("Attempting Software update...")
-                if self.controller_version_short == "6.6":
-                    controller_version = "6.5"
-                else:
-                    controller_version = self.controller_version_short
-                payload = {
-                    'action': 'initial_setup',
-                    'CID': self._get_cid(),
-                    'subaction': 'run',
-                    'target_version': controller_version
-                }
-                response = requests.post(self.url, data=payload, verify=False, timeout=300)
-                r = self._format_response(response)
-                if r:
-                    if r.get('return') == True:
-                        print(f"Successfully updated software to: {controller_version}")
-                        if self.controller_version_short == "6.6":
-                            print(f"Attempting to upgrade to: {self.controller_version_short}")
-                            payload = {
-                                'action': 'upgrade',
-                                'CID': self._get_cid(),
-                                'version': self.controller_version_short
-                            }
-                            response = requests.post(self.url, data=payload, verify=False, timeout=300)
-                            r = self._format_response(response)
-                            if r:
-                                if r.get('return') == True:
-                                    print(f"Successfully updated software to: {self.controller_version_short}")
-                                    return True
-                                else:
-                                    print("Failed to update software")
-                        return True
-                    else:
-                        print("Failed to update software")
-            except Exception as err:
-                print(str(err))
-                print('Software Upgrade API Response Timeout occurred checking if update worked.')
-                attempts = 5
-                while attempts != 0:
-                    print(f"Attempts remaining to check software version: {attempts}")
-                    attempts -= 1
-                    if self._is_software_up_to_date():
-                        return True
-                    time.sleep(30)
-                    continue
+            result = self.initial_software_update(self, self.controller_version_short)
+        if result:
+            print("All Software Updates Succeeded.")
+            return True
         print("All attempts to update software failed")
         sys.exit(1)
 
