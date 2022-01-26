@@ -80,15 +80,15 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   lifecycle {
     ignore_changes = [tags]
   }
-  name                            = var.aviatrix_controller_name
-  location                        = azurerm_resource_group.resource_group.location
-  resource_group_name             = azurerm_resource_group.resource_group.name
-  network_interface_ids           = ["${azurerm_network_interface.azure_controller_nic.id}"]
-  computer_name                   = "avx-controller"
-  size                            = var.controller_vm_size
-  priority                        = var.enable_spot_instances ? "Spot" : null
-  eviction_policy                 = var.enable_spot_instances ? "Deallocate" : null
-  admin_username                  = "adminUser"
+  name                  = var.aviatrix_controller_name
+  location              = azurerm_resource_group.resource_group.location
+  resource_group_name   = azurerm_resource_group.resource_group.name
+  network_interface_ids = ["${azurerm_network_interface.azure_controller_nic.id}"]
+  computer_name         = "avx-controller"
+  size                  = var.controller_vm_size
+  priority              = var.enable_spot_instances ? "Spot" : null
+  eviction_policy       = var.enable_spot_instances ? "Deallocate" : null
+  admin_username        = "adminUser"
   # admin_password                  = random_password.generate_controller_secret.result
   disable_password_authentication = true
   allow_extension_operations      = false
