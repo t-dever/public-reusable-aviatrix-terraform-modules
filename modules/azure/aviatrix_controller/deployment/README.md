@@ -88,6 +88,7 @@ No modules.
 | Name | Version |
 |------|---------|
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >=2.92.0 |
+| <a name="requirement_tls"></a> [tls](#requirement\_tls) | 3.1.0 |
 
 ## Providers
 
@@ -96,6 +97,7 @@ No modules.
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >=2.92.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | n/a |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 3.1.0 |
 
 ## Modules
 
@@ -120,6 +122,7 @@ No modules.
 | [azurerm_virtual_network.azure_controller_vnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
 | [null_resource.initial_config](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [random_password.generate_controller_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [tls_private_key.generate_private_key](https://registry.terraform.io/providers/hashicorp/tls/3.1.0/docs/resources/private_key) | resource |
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
 
 ## Inputs
@@ -128,6 +131,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_admin_email"></a> [admin\_email](#input\_admin\_email) | The email address used for the aviatrix controller registration. | `string` | n/a | yes |
 | <a name="input_aviatrix_controller_name"></a> [aviatrix\_controller\_name](#input\_aviatrix\_controller\_name) | The name of the azure virtual machine resource. | `string` | n/a | yes |
+| <a name="input_aviatrix_controller_username"></a> [aviatrix\_controller\_username](#input\_aviatrix\_controller\_username) | The username to be applied to the aviatrix controller for admin access. | `string` | `"admin"` | no |
 | <a name="input_controller_customer_id"></a> [controller\_customer\_id](#input\_controller\_customer\_id) | The customer id for the aviatrix controller | `string` | n/a | yes |
 | <a name="input_controller_subnet_address_prefix"></a> [controller\_subnet\_address\_prefix](#input\_controller\_subnet\_address\_prefix) | The subnet address prefix that's used for the controller and copilot VMs. e.g. 10.0.0.0/24 | `string` | `"10.0.0.0/24"` | no |
 | <a name="input_controller_version"></a> [controller\_version](#input\_controller\_version) | The version used for the controller | `string` | `"UserConnect-6.5.2613"` | no |
@@ -149,6 +153,7 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_controller_admin_password"></a> [controller\_admin\_password](#output\_controller\_admin\_password) | The controller admin password |
+| <a name="output_controller_admin_username"></a> [controller\_admin\_username](#output\_controller\_admin\_username) | The controller admin password |
 | <a name="output_controller_private_ip"></a> [controller\_private\_ip](#output\_controller\_private\_ip) | The Private IP Address of the Aviatrix Controller |
 | <a name="output_controller_public_ip"></a> [controller\_public\_ip](#output\_controller\_public\_ip) | The Public IP Address of the Aviatrix Controller |
 | <a name="output_controller_resource_group_name"></a> [controller\_resource\_group\_name](#output\_controller\_resource\_group\_name) | The resource group name of the controller |
