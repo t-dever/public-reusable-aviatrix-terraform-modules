@@ -140,6 +140,9 @@ resource "aviatrix_remote_syslog" "remote_syslog" {
 }
 
 resource "aviatrix_controller_config" "controller_backup" {
+  depends_on = [
+    aviatrix_account.azure_account
+  ]
   count                 = var.enable_backup ? 1 : 0
   backup_configuration  = true
   backup_cloud_type     = 8
