@@ -71,9 +71,8 @@ resource "azurerm_network_interface" "azure_controller_nic" {
 }
 
 resource "tls_private_key" "generate_private_key" {
-  algorithm   = "ECDSA"
+  algorithm   = "RSA"
   rsa_bits    = 2048
-  ecdsa_curve = "P521"
 }
 
 resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
