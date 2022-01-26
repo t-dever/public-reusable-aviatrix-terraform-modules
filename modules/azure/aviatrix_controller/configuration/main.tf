@@ -1,23 +1,5 @@
 data "azurerm_client_config" "current" {}
 
-# provider "azuread" {
-#   version = "=0.7.0"
-#   client_id = var.aws_client_id
-#   subscription_id = var.aws_subscription_id
-#   tenant_id = var.aws_tenant_id
-#   client_secret = var.aws_client_secret
-# }
-
-# # Create an application
-# resource "azuread_application" "app" {
-#   name = var.azurerd_app_name
-# }
-
-# # Create a service principal
-# resource "azuread_service_principal" "app" {
-#   application_id = azuread_application.app.application_id
-# }
-
 resource "aviatrix_account" "azure_account" {
   account_name        = var.azure_account_name
   cloud_type          = 8
@@ -45,7 +27,9 @@ data "azurerm_network_security_group" "controller_security_group" {
 
 resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
   depends_on = [
-    data.azurerm_network_security_group.controller_security_group
+    data.azurerm_network_security_group.controller_security_group,
+    aviatrix_account.azure_account,
+    aviatrix_controller_security_group_management_config.security_group_management
   ]
   name                        = "AllowUserHttpsInboundToController"
   priority                    = 100
@@ -98,7 +82,7 @@ resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
 
 resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
   depends_on = [
-    data.azurerm_network_security_group.controller_security_group
+    data.azurerm_network_security_group.controller_security_group,
   ]
   count                       = var.copilot_private_ip != "" ? 1 : 0
   name                        = "AllowNetflowInboundToCoPilot"
@@ -115,6 +99,10 @@ resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "azure_controller_nsg_association" {
+  depends_on = [
+    aviatrix_account.azure_account,
+    aviatrix_controller_security_group_management_config.security_group_management
+  ]
   subnet_id                 = var.controller_subnet_id
   network_security_group_id = data.azurerm_network_security_group.controller_security_group.id
 }
