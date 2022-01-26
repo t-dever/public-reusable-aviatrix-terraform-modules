@@ -92,7 +92,7 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   disable_password_authentication = true
   allow_extension_operations      = false
   admin_ssh_key {
-    username   = var.aviatrix_controller_username
+    username   = "adminUser"
     public_key = tls_private_key.generate_private_key.public_key_openssh
   }
   tags = {
