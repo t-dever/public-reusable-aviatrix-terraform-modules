@@ -71,8 +71,8 @@ resource "azurerm_network_interface" "azure_controller_nic" {
 }
 
 resource "tls_private_key" "generate_private_key" {
-  algorithm   = "RSA"
-  rsa_bits    = 2048
+  algorithm = "RSA"
+  rsa_bits  = 2048
 }
 
 resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
