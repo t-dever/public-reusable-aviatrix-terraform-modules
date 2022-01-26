@@ -8,6 +8,12 @@ output "controller_resource_group_name" {
   description = "The resource group name of the controller"
 }
 
+output "controller_admin_username" {
+  value       = var.aviatrix_controller_username
+  description = "The controller admin password"
+  sensitive   = true
+}
+
 output "controller_admin_password" {
   value       = random_password.generate_controller_secret.result
   description = "The controller admin password"

@@ -70,6 +70,12 @@ resource "azurerm_network_interface" "azure_controller_nic" {
   }
 }
 
+resource "tls_private_key" "generate_private_key" {
+  algorithm   = "ECDSA"
+  rsa_bits    = 2048
+  ecdsa_curve = "P521"
+}
+
 resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   lifecycle {
     ignore_changes = [tags]
@@ -83,9 +89,13 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   priority                        = var.enable_spot_instances ? "Spot" : null
   eviction_policy                 = var.enable_spot_instances ? "Deallocate" : null
   admin_username                  = "adminUser"
-  admin_password                  = random_password.generate_controller_secret.result
-  disable_password_authentication = false
+  # admin_password                  = random_password.generate_controller_secret.result
+  disable_password_authentication = true
   allow_extension_operations      = false
+  admin_ssh_key {
+    username   = var.aviatrix_controller_username
+    public_key = tls_private_key.generate_private_key.public_key_openssh
+  }
   tags = {
     "deploymentTime" : timestamp()
   }

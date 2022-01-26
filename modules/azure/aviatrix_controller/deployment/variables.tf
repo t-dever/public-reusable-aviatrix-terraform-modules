@@ -31,6 +31,13 @@ variable "aviatrix_controller_name" {
   type        = string
 }
 
+variable "aviatrix_controller_username" {
+  description = "The username to be applied to the aviatrix controller for admin access."
+  type        = string
+  sensitive   = true
+  default     = "admin"
+}
+
 variable "controller_vm_size" {
   description = "The size for the controller VM."
   type        = string
@@ -97,30 +104,3 @@ variable "key_vault_id" {
   sensitive   = true
   default     = ""
 }
-
-# variable "controller_user_public_ip_address" {
-#   description = "The public IP address of the user that is logging into the controller"
-#   type        = string
-#   sensitive   = true
-# }
-
-
-
-# variable "build_agent_ip_address" {
-#   description = "The Public IP Address of the build agent to add to the NSG allow rule"
-#   type        = string
-#   sensitive   = true
-#   default     = "1.1.1.1"
-# }
-
-# variable "aviatrix_azure_access_account_name" {
-#   description = "The account used to manage the aviatrix controller in azure"
-#   type        = string
-#   sensitive   = true
-# }
-
-# variable "azure_application_key" {
-#   description = "The application/client secret/key to perform a backup restore"
-#   type        = string
-#   sensitive   = true
-# }
