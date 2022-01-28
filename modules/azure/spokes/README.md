@@ -133,5 +133,11 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_spoke_address_prefix"></a> [spoke\_address\_prefix](#output\_spoke\_address\_prefix) | The spoke vnet address space |
+| <a name="output_spoke_gateway_name"></a> [spoke\_gateway\_name](#output\_spoke\_gateway\_name) | The spoke gateway name |
+| <a name="output_spoke_resource_group_name"></a> [spoke\_resource\_group\_name](#output\_spoke\_resource\_group\_name) | The spoke resource group name |
+| <a name="output_spoke_segmentation_domain_name"></a> [spoke\_segmentation\_domain\_name](#output\_spoke\_segmentation\_domain\_name) | The name of the segmentation domain created for the spoke. |
+| <a name="output_spoke_vnet_name"></a> [spoke\_vnet\_name](#output\_spoke\_vnet\_name) | The spoke vnet name |
 <!-- END_TF_DOCS -->
