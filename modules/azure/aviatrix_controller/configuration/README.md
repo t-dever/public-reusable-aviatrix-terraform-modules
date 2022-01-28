@@ -55,6 +55,7 @@ No modules.
 | <a name="input_enable_backup"></a> [enable\_backup](#input\_enable\_backup) | Enable backup for the aviatrix controller. | `bool` | `false` | no |
 | <a name="input_enable_netflow_to_copilot"></a> [enable\_netflow\_to\_copilot](#input\_enable\_netflow\_to\_copilot) | Enables netflow logging to CoPilot. | `bool` | `false` | no |
 | <a name="input_enable_rsyslog_to_copilot"></a> [enable\_rsyslog\_to\_copilot](#input\_enable\_rsyslog\_to\_copilot) | Enables rsyslog logging to CoPilot. | `bool` | `false` | no |
+| <a name="input_enable_security_group_management"></a> [enable\_security\_group\_management](#input\_enable\_security\_group\_management) | Enables security group management. | `bool` | `true` | no |
 | <a name="input_netflow_port"></a> [netflow\_port](#input\_netflow\_port) | The port used for netflow data. | `string` | `"31283"` | no |
 | <a name="input_resource_group_location"></a> [resource\_group\_location](#input\_resource\_group\_location) | The name of the controller resource group location | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the controller resource group | `string` | n/a | yes |
