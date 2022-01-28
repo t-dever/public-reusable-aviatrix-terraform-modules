@@ -1,30 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "2.80.0"
-    }
-    local = {
-      source  = "hashicorp/local"
-      version = "2.1.0"
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = "3.1.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features {
-    key_vault {
-      purge_soft_delete_on_destroy = true
-    }
-  }
-  skip_provider_registration = true
-  storage_use_azuread        = true
-}
-
 locals {
   storage_account_name = replace("${var.resource_prefix}sa", "-", "")
 }
@@ -66,7 +39,6 @@ resource "azurerm_storage_account" "backup_storage_account" {
   allow_blob_public_access  = false
   enable_https_traffic_only = true
 }
-
 
 resource "azurerm_storage_container" "controller_backup_container" {
   name                  = "controller-backup"
@@ -120,6 +92,32 @@ resource "azurerm_role_assignment" "key_vault_user" {
   scope                = azurerm_key_vault.key_vault.id
   role_definition_name = "Key Vault Secrets Officer"
   principal_id         = var.user_principal_id
+}
+
+resource "azurerm_role_assignment" "key_vault_key_service_principal" {
+  scope                = azurerm_key_vault.key_vault.id
+  role_definition_name = "Key Vault Crypto Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
+resource "azurerm_key_vault_key" "generated_ssh_private_key" {
+  depends_on = [
+    azurerm_role_assignment.key_vault_key_service_principal
+  ]
+  count        = var.generate_private_ssh_key ? 1 : 0
+  name         = "generated-private-ssh-key"
+  key_vault_id = azurerm_key_vault.key_vault.id
+  key_type     = "RSA"
+  key_size     = 4096
+
+  key_opts = [
+    "decrypt",
+    "encrypt",
+    "sign",
+    "unwrapKey",
+    "verify",
+    "wrapKey",
+  ]
 }
 
 resource "time_sleep" "wait_1_minute" {
