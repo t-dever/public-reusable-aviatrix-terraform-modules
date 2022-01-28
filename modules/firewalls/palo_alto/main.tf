@@ -1,23 +1,3 @@
-variable "ip_address" {
-  default = "127.0.0.1"
-}
-variable "username" {}
-variable "password" {}
-
-terraform {
-  required_providers {
-    panos = {
-      source  = "PaloAltoNetworks/panos"
-      version = "1.8.3"
-    }
-  }
-}
-provider "panos" {
-  hostname = var.ip_address
-  username = var.username
-  password = var.password
-}
-
 resource "panos_management_profile" "allow_health_probes" {
   name          = "HealthCheck"
   https         = true
@@ -96,9 +76,9 @@ resource "null_resource" "commit_configuration" {
   provisioner "local-exec" {
     command = "python ${path.module}/commit.py"
     environment = {
-      IP_ADDRESS = var.ip_address
-      USERNAME   = var.username
-      PASSWORD   = var.password
+      IP_ADDRESS = var.palo_ip_address
+      USERNAME   = var.palo_username
+      PASSWORD   = var.palo_password
     }
   }
 }
