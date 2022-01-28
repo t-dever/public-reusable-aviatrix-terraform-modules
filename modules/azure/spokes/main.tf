@@ -94,7 +94,7 @@ resource "aviatrix_spoke_gateway" "azure_spoke_gateway" {
   eip                               = azurerm_public_ip.azure_gateway_public_ip.ip_address
   azure_eip_name_resource_group     = "${azurerm_public_ip.azure_gateway_public_ip.name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}"
   manage_transit_gateway_attachment = false
-  # enable_active_mesh                = true # Removed for Aviatrix Release 6.6
+  enable_active_mesh                = true
 }
 
 resource "aviatrix_spoke_transit_attachment" "attach_spoke" {
