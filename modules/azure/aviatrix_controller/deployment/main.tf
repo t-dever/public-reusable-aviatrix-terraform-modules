@@ -69,7 +69,7 @@ resource "azurerm_network_interface" "azure_controller_nic" {
 }
 
 resource "tls_private_key" "generate_private_key" {
-  count     = var.ssh_public_key == "" ? 1 : 0
+  count     = length(var.ssh_public_key) >= 0 ? 0 : 1
   algorithm = "RSA"
   rsa_bits  = 2048
 }
@@ -92,7 +92,7 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
 
   admin_ssh_key {
     username   = "adminUser"
-    public_key = var.ssh_public_key == "" ? tls_private_key.generate_private_key[0].public_key_openssh : var.ssh_public_key
+    public_key = length(var.ssh_public_key) >= 0 ? var.ssh_public_key : tls_private_key.generate_private_key[0].public_key_openssh
   }
 
   tags = {
@@ -198,7 +198,7 @@ resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
 
   admin_ssh_key {
     username   = "adminUser"
-    public_key = var.ssh_public_key == "" ? tls_private_key.generate_private_key[0].public_key_openssh : var.ssh_public_key
+    public_key = length(var.ssh_public_key) >= 0 ? var.ssh_public_key : tls_private_key.generate_private_key[0].public_key_openssh
   }
 
   source_image_reference {
