@@ -13,8 +13,8 @@ resource "aviatrix_controller_security_group_management_config" "security_group_
   depends_on = [
     aviatrix_account.azure_account
   ]
-  account_name                     = var.azure_account_name
-  enable_security_group_management = true
+  account_name                     = var.enable_security_group_management ? var.azure_account_name : null
+  enable_security_group_management = var.enable_security_group_management ? true : false
 }
 
 data "azurerm_network_security_group" "controller_security_group" {

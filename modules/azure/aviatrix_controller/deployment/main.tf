@@ -88,7 +88,6 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   priority              = var.enable_spot_instances ? "Spot" : null
   eviction_policy       = var.enable_spot_instances ? "Deallocate" : null
   admin_username        = "adminUser"
-  # admin_password                  = random_password.generate_controller_secret.result
   disable_password_authentication = true
   allow_extension_operations      = false
   admin_ssh_key {
@@ -132,30 +131,30 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "controller_shutdown" {
   }
 }
 
-# resource "null_resource" "initial_config" {
-#   depends_on = [
-#     azurerm_linux_virtual_machine.aviatrix_controller_vm
-#   ]
-#   triggers = {
-#     "id" = azurerm_linux_virtual_machine.aviatrix_controller_vm.id
-#   }
-#   provisioner "local-exec" {
-#     command = "python ${path.module}/initial_controller_setup.py"
-#     environment = {
-#       AVIATRIX_CONTROLLER_PUBLIC_IP  = azurerm_public_ip.azure_controller_public_ip.ip_address
-#       AVIATRIX_CONTROLLER_PRIVATE_IP = azurerm_network_interface.azure_controller_nic.private_ip_address
-#       AVIATRIX_CONTROLLER_PASSWORD   = random_password.generate_controller_secret.result
-#       ADMIN_EMAIL                    = var.admin_email
-#       CONTROLLER_VERSION             = var.controller_version
-#       CUSTOMER_ID                    = var.controller_customer_id
-#       # ACCESS_ACCOUNT                 = var.aviatrix_azure_access_account_name
-#       # SUBSCRIPTION_ID                = data.azurerm_client_config.current.subscription_id
-#       # DIRECTORY_ID                   = data.azurerm_client_config.current.tenant_id
-#       # CLIENT_ID                      = data.azurerm_client_config.current.client_id
-#       # CLIENT_SECRET                  = var.azure_application_key
-#     }
-#   }
-# }
+resource "null_resource" "initial_config" {
+  depends_on = [
+    azurerm_linux_virtual_machine.aviatrix_controller_vm
+  ]
+  triggers = {
+    "id" = azurerm_linux_virtual_machine.aviatrix_controller_vm.id
+  }
+  provisioner "local-exec" {
+    command = "python ${path.module}/initial_controller_setup.py"
+    environment = {
+      AVIATRIX_CONTROLLER_PUBLIC_IP  = azurerm_public_ip.azure_controller_public_ip.ip_address
+      AVIATRIX_CONTROLLER_PRIVATE_IP = azurerm_network_interface.azure_controller_nic.private_ip_address
+      AVIATRIX_CONTROLLER_PASSWORD   = random_password.generate_controller_secret.result
+      ADMIN_EMAIL                    = var.admin_email
+      CONTROLLER_VERSION             = var.controller_version
+      CUSTOMER_ID                    = var.controller_customer_id
+      # ACCESS_ACCOUNT                 = var.aviatrix_azure_access_account_name
+      # SUBSCRIPTION_ID                = data.azurerm_client_config.current.subscription_id
+      # DIRECTORY_ID                   = data.azurerm_client_config.current.tenant_id
+      # CLIENT_ID                      = data.azurerm_client_config.current.client_id
+      # CLIENT_SECRET                  = var.azure_application_key
+    }
+  }
+}
 
 # Deploy CoPilot Resources
 
