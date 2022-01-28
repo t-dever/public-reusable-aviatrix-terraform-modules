@@ -31,7 +31,6 @@ variable "controller_username" {
 
 variable "controller_password" {
   description = "The controllers password."
-  default     = ""
   type        = string
   sensitive   = true
 }
@@ -52,11 +51,6 @@ variable "copilot_private_ip" {
 
 variable "resource_group_name" {
   description = "The name of the controller resource group"
-  type        = string
-}
-
-variable "resource_group_location" {
-  description = "The name of the controller resource group location"
   type        = string
 }
 

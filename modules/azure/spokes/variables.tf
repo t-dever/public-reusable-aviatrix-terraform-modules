@@ -7,7 +7,6 @@ variable "controller_username" {
 
 variable "controller_password" {
   description = "The controllers password."
-  default     = ""
   type        = string
   sensitive   = true
 }

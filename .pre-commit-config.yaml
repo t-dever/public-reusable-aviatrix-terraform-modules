@@ -51,4 +51,4 @@ repos:
         always_run: true
         args:
           - >
-            --args= -e azure-keyvault-ensure-secret-expiry,azure-network-retention-policy-set,azure-keyvault-no-purge,azure-compute-disable-password-authentication
+            --args= -e azure-keyvault-ensure-secret-expiry,azure-network-retention-policy-set,azure-keyvault-no-purge,azure-compute-disable-password-authentication,azure-storage-default-action-deny

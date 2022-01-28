@@ -81,6 +81,7 @@ resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
 }
 
 resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
+  #checkov:skip=CKV_AZURE_77:Allow all internet UDP to copilot. May restrict this further in later updates.
   depends_on = [
     data.azurerm_network_security_group.controller_security_group,
   ]
