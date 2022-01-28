@@ -44,7 +44,7 @@ No modules.
 | <a name="input_backup_region"></a> [backup\_region](#input\_backup\_region) | The region where the storage account is stored. | `string` | `""` | no |
 | <a name="input_backup_storage_name"></a> [backup\_storage\_name](#input\_backup\_storage\_name) | The name of the storage account to store backups for the aviatrix controller. | `string` | `""` | no |
 | <a name="input_client_secret"></a> [client\_secret](#input\_client\_secret) | The Client secret for the account to be added | `string` | n/a | yes |
-| <a name="input_controller_password"></a> [controller\_password](#input\_controller\_password) | The controllers password. | `string` | `""` | no |
+| <a name="input_controller_password"></a> [controller\_password](#input\_controller\_password) | The controllers password. | `string` | n/a | yes |
 | <a name="input_controller_private_ip"></a> [controller\_private\_ip](#input\_controller\_private\_ip) | The controllers private IP address. | `string` | `"1.2.3.4"` | no |
 | <a name="input_controller_public_ip"></a> [controller\_public\_ip](#input\_controller\_public\_ip) | The controllers public IP address. | `string` | `"1.2.3.4"` | no |
 | <a name="input_controller_subnet_id"></a> [controller\_subnet\_id](#input\_controller\_subnet\_id) | The controller subnet id. | `string` | n/a | yes |
@@ -57,7 +57,6 @@ No modules.
 | <a name="input_enable_rsyslog_to_copilot"></a> [enable\_rsyslog\_to\_copilot](#input\_enable\_rsyslog\_to\_copilot) | Enables rsyslog logging to CoPilot. | `bool` | `false` | no |
 | <a name="input_enable_security_group_management"></a> [enable\_security\_group\_management](#input\_enable\_security\_group\_management) | Enables security group management. | `bool` | `true` | no |
 | <a name="input_netflow_port"></a> [netflow\_port](#input\_netflow\_port) | The port used for netflow data. | `string` | `"31283"` | no |
-| <a name="input_resource_group_location"></a> [resource\_group\_location](#input\_resource\_group\_location) | The name of the controller resource group location | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the controller resource group | `string` | n/a | yes |
 | <a name="input_rsyslog_port"></a> [rsyslog\_port](#input\_rsyslog\_port) | The port used for rsyslog data. | `string` | `"5000"` | no |
 | <a name="input_rsyslog_protocol"></a> [rsyslog\_protocol](#input\_rsyslog\_protocol) | The protocol used for rsyslog. | `string` | `"UDP"` | no |
