@@ -150,10 +150,10 @@ variable "egress_enabled" {
 }
 
 locals {
-  is_checkpoint              = length(regexall("check", lower(var.firewall_image))) > 0    # Check if fw image contains checkpoint.
-  is_palo                    = length(regexall("palo", lower(var.firewall_image))) > 0     # Check if fw image contains palo.
+  # is_checkpoint              = length(regexall("check", lower(var.firewall_image))) > 0    # Check if fw image contains checkpoint.
+  # is_palo                    = length(regexall("palo", lower(var.firewall_image))) > 0     # Check if fw image contains palo.
+  # is_aviatrix                = length(regexall("aviatrix", lower(var.firewall_image))) > 0 # Check if fw image contains aviatrix.
   is_fortinet                = length(regexall("fortinet", lower(var.firewall_image))) > 0 # Check if fw image contains fortinet.
-  is_aviatrix                = length(regexall("aviatrix", lower(var.firewall_image))) > 0 # Check if fw image contains aviatrix.
   cidrbits                   = tonumber(split("/", var.vnet_address_prefix)[1])
   transit_gateway_newbits    = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
   transit_gateway_ha_newbits = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits

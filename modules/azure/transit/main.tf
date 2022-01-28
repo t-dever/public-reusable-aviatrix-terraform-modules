@@ -283,6 +283,7 @@ data "external" "fortinet_bootstrap_2" {
 }
 
 # Vendor Integration if firewall vendor is fortinet.
+# tflint-ignore: terraform_unused_declarations
 data "aviatrix_firenet_vendor_integration" "vendor_integration_1" {
   count         = var.firenet_enabled && local.is_fortinet ? 1 : 0
   vpc_id        = aviatrix_firewall_instance.firewall_instance_1[0].vpc_id
@@ -294,6 +295,7 @@ data "aviatrix_firenet_vendor_integration" "vendor_integration_1" {
   save          = true
 }
 
+# tflint-ignore: terraform_unused_declarations
 data "aviatrix_firenet_vendor_integration" "vendor_integration_2" {
   count         = var.firenet_enabled && local.is_fortinet && var.firewall_ha ? 1 : 0
   vpc_id        = aviatrix_firewall_instance.firewall_instance_2[0].vpc_id
