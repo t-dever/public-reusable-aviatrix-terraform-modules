@@ -104,3 +104,10 @@ variable "key_vault_id" {
   sensitive   = true
   default     = ""
 }
+
+variable "ssh_public_key" {
+  description = "The public key to be used for the controller and copilot"
+  type = string
+  sensitive = true
+  default = ""
+}

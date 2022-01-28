@@ -67,7 +67,6 @@ resource "azurerm_storage_account" "backup_storage_account" {
   enable_https_traffic_only = true
 }
 
-
 resource "azurerm_storage_container" "controller_backup_container" {
   name                  = "controller-backup"
   storage_account_name  = azurerm_storage_account.backup_storage_account.name
@@ -120,6 +119,23 @@ resource "azurerm_role_assignment" "key_vault_user" {
   scope                = azurerm_key_vault.key_vault.id
   role_definition_name = "Key Vault Secrets Officer"
   principal_id         = var.user_principal_id
+}
+
+resource "azurerm_key_vault_key" "generated_ssh_private_key" {
+  count        = var.generate_private_ssh_key ? 1 : 0
+  name         = "generated-private-ssh-key"
+  key_vault_id = azurerm_key_vault.key_vault.id
+  key_type     = "RSA"
+  key_size     = 4096
+
+  key_opts = [
+    "decrypt",
+    "encrypt",
+    "sign",
+    "unwrapKey",
+    "verify",
+    "wrapKey",
+  ]
 }
 
 resource "time_sleep" "wait_1_minute" {

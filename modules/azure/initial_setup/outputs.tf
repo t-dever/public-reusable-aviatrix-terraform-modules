@@ -53,3 +53,9 @@ output "log_analytics_region" {
   value       = data.azurerm_resource_group.resource_group.location
   description = "The log analytics regions/location"
 }
+
+output "public_key_openssh" {
+  description = "The public key created for the private key."
+  value       = azurerm_key_vault_key.generated_ssh_private_key.public_key_openssh
+  sensitive   = true
+}

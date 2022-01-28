@@ -69,6 +69,7 @@ resource "azurerm_network_interface" "azure_controller_nic" {
 }
 
 resource "tls_private_key" "generate_private_key" {
+  count = var.ssh_public_key == "" : 1 : 0
   algorithm = "RSA"
   rsa_bits  = 2048
 }
@@ -88,10 +89,12 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   admin_username                  = "adminUser"
   disable_password_authentication = true
   allow_extension_operations      = false
+
   admin_ssh_key {
     username   = "adminUser"
-    public_key = tls_private_key.generate_private_key.public_key_openssh
+    public_key = var.ssh_public_key == "" ? tls_private_key.generate_private_key.public_key_openssh : var.ssh_public_key
   }
+
   tags = {
     "deploymentTime" : timestamp()
   }
@@ -190,9 +193,13 @@ resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
   priority                        = var.enable_spot_instances ? "Spot" : null
   eviction_policy                 = var.enable_spot_instances ? "Deallocate" : null
   admin_username                  = "adminUser"
-  admin_password                  = random_password.generate_controller_secret.result
-  disable_password_authentication = false
+  disable_password_authentication = true
   allow_extension_operations      = false
+
+  admin_ssh_key {
+    username   = "adminUser"
+    public_key = var.ssh_public_key == "" ? tls_private_key.generate_private_key.public_key_openssh : var.ssh_public_key
+  }
 
   source_image_reference {
     publisher = "aviatrix-systems"
