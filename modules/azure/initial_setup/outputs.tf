@@ -56,6 +56,6 @@ output "log_analytics_region" {
 
 output "public_key_openssh" {
   description = "The public key created for the private key."
-  value       = azurerm_key_vault_key.generated_ssh_private_key.public_key_openssh
+  value       = azurerm_key_vault_key.generated_ssh_private_key[0].public_key_openssh
   sensitive   = true
 }
