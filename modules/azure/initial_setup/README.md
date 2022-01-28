@@ -93,6 +93,7 @@ No modules.
 | [azurerm_role_assignment.storage_account_pipeline_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.storage_account_user_blob_owner](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.storage_account_user_contributor](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/role_assignment) | resource |
+| [azurerm_storage_account.backup_storage_account](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/storage_account) | resource |
 | [azurerm_storage_container.controller_backup_container](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/resources/storage_container) | resource |
 | [time_sleep.wait_1_minute](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/2.80.0/docs/data-sources/client_config) | data source |
@@ -119,6 +120,8 @@ No modules.
 | <a name="output_log_analytics_region"></a> [log\_analytics\_region](#output\_log\_analytics\_region) | The log analytics regions/location |
 | <a name="output_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#output\_log\_analytics\_workspace\_id) | The log analytics workspace id |
 | <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | The resource group name |
+| <a name="output_storage_account_backup_container_name"></a> [storage\_account\_backup\_container\_name](#output\_storage\_account\_backup\_container\_name) | The name of the container where backups will be stored. |
+| <a name="output_storage_account_backup_name"></a> [storage\_account\_backup\_name](#output\_storage\_account\_backup\_name) | The storage account name |
 | <a name="output_storage_account_id"></a> [storage\_account\_id](#output\_storage\_account\_id) | The storage account ID |
 | <a name="output_storage_account_name"></a> [storage\_account\_name](#output\_storage\_account\_name) | The storage account name |
 <!-- END_TF_DOCS -->

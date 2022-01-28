@@ -56,9 +56,21 @@ data "azurerm_storage_account" "storage_account" {
 #   bypass             = ["AzureServices"]
 # }
 
+resource "azurerm_storage_account" "backup_storage_account" {
+  name                      = replace("${var.resource_prefix}backupsa", "-", "")
+  resource_group_name       = data.azurerm_resource_group.resource_group.name
+  location                  = data.azurerm_resource_group.resource_group.location
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  min_tls_version           = "TLS1_2"
+  allow_blob_public_access  = false
+  enable_https_traffic_only = true
+}
+
+
 resource "azurerm_storage_container" "controller_backup_container" {
   name                  = "controller-backup"
-  storage_account_name  = data.azurerm_storage_account.storage_account.name
+  storage_account_name  = azurerm_storage_account.backup_storage_account.name
   container_access_type = "private"
 }
 

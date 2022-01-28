@@ -45,10 +45,11 @@ repos:
           "--skip-check", "CKV_AZURE_110", # skip "Ensure that key vault enables purge protection"
           "--skip-check", "CKV_AZURE_42", # skip "Ensure the key vault is recoverable"
           "--skip-check", "CKV_AZURE_12", # skip "Ensure that Network Security Group Flow Log retention period is 'greater than 90 days'"
+          "--skip-check", "CKV_AZURE_35", # skip "Ensure default network access rule for Storage Accounts is set to deny"
         ]
 
       - id: terraform_tfsec
         always_run: true
         args:
           - >
-            --args= -e azure-keyvault-ensure-secret-expiry,azure-network-retention-policy-set,azure-keyvault-no-purge,azure-compute-disable-password-authentication
+            --args= -e azure-keyvault-ensure-secret-expiry,azure-network-retention-policy-set,azure-keyvault-no-purge,azure-compute-disable-password-authentication,azure-storage-default-action-deny
