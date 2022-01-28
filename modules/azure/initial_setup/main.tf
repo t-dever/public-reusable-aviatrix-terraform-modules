@@ -121,6 +121,12 @@ resource "azurerm_role_assignment" "key_vault_user" {
   principal_id         = var.user_principal_id
 }
 
+resource "azurerm_role_assignment" "key_vault_key_service_principal" {
+  scope                = azurerm_key_vault.key_vault.id
+  role_definition_name = "Key Vault Crypto Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
 resource "azurerm_key_vault_key" "generated_ssh_private_key" {
   count        = var.generate_private_ssh_key ? 1 : 0
   name         = "generated-private-ssh-key"
