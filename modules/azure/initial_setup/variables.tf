@@ -31,4 +31,5 @@ variable "allowed_public_ips" {
   description = "A list of allowed public IP's access to key vault and storage accounts."
   type        = list(string)
   default     = []
+  sensitive   = true
 }
