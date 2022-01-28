@@ -87,7 +87,6 @@ No modules.
 |------|------|
 | [aviatrix_segmentation_security_domain.spoke_segmentation_security_domain](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/segmentation_security_domain) | resource |
 | [aviatrix_segmentation_security_domain_association.segmentation_security_domain_association](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/segmentation_security_domain_association) | resource |
-| [aviatrix_segmentation_security_domain_connection_policy.segmentation_security_domain_connection_policy](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/segmentation_security_domain_connection_policy) | resource |
 | [aviatrix_spoke_gateway.azure_spoke_gateway](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/spoke_gateway) | resource |
 | [aviatrix_spoke_transit_attachment.attach_spoke](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/spoke_transit_attachment) | resource |
 | [aviatrix_transit_firenet_policy.spoke_transit_firenet_policy](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/transit_firenet_policy) | resource |
@@ -120,7 +119,6 @@ No modules.
 | <a name="input_key_vault_id"></a> [key\_vault\_id](#input\_key\_vault\_id) | The key vault id where the virtual machine secret will be stored. | `string` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | The location used for deployment of resources. | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The resource group name to be created. | `string` | `"test-resource-group"` | no |
-| <a name="input_segmentation_domain_connection_policies"></a> [segmentation\_domain\_connection\_policies](#input\_segmentation\_domain\_connection\_policies) | The segementation domain connection policies to associate to the spoke. | `list(string)` | n/a | yes |
 | <a name="input_segmentation_domain_name"></a> [segmentation\_domain\_name](#input\_segmentation\_domain\_name) | The segmentation domain name | `string` | n/a | yes |
 | <a name="input_spoke_gateway_name"></a> [spoke\_gateway\_name](#input\_spoke\_gateway\_name) | The name used for the spoke gateway resource | `string` | n/a | yes |
 | <a name="input_spoke_gw_size"></a> [spoke\_gw\_size](#input\_spoke\_gw\_size) | The size of the transit gateways | `string` | `"Standard_B1ms"` | no |
