@@ -128,6 +128,9 @@ resource "azurerm_role_assignment" "key_vault_key_service_principal" {
 }
 
 resource "azurerm_key_vault_key" "generated_ssh_private_key" {
+  depends_on = [
+    azurerm_role_assignment.key_vault_key_service_principal
+  ]
   count        = var.generate_private_ssh_key ? 1 : 0
   name         = "generated-private-ssh-key"
   key_vault_id = azurerm_key_vault.key_vault.id
