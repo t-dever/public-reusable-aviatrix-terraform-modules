@@ -33,9 +33,9 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_ip_address"></a> [ip\_address](#input\_ip\_address) | n/a | `string` | `"127.0.0.1"` | no |
-| <a name="input_password"></a> [password](#input\_password) | n/a | `any` | n/a | yes |
-| <a name="input_username"></a> [username](#input\_username) | n/a | `any` | n/a | yes |
+| <a name="input_palo_ip_address"></a> [palo\_ip\_address](#input\_palo\_ip\_address) | The IP Address of the Palo Alto Firewall. | `string` | n/a | yes |
+| <a name="input_palo_password"></a> [palo\_password](#input\_palo\_password) | The Palo Alto Firewall password. | `string` | n/a | yes |
+| <a name="input_palo_username"></a> [palo\_username](#input\_palo\_username) | The Palo Alto Firewall username. | `string` | n/a | yes |
 
 ## Outputs
 
