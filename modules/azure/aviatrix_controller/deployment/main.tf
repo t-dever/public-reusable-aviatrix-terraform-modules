@@ -69,7 +69,7 @@ resource "azurerm_network_interface" "azure_controller_nic" {
 }
 
 resource "tls_private_key" "generate_private_key" {
-  count = var.ssh_public_key == "" ? 1 : 0
+  count     = var.ssh_public_key == "" ? 1 : 0
   algorithm = "RSA"
   rsa_bits  = 2048
 }

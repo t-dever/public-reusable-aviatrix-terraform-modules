@@ -23,6 +23,6 @@ variable "controller_user_public_ip_address" {
 
 variable "generate_private_ssh_key" {
   description = "Generate a private SSH key and store it in the key vault."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
