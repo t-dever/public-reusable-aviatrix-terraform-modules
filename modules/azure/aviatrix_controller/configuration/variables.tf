@@ -73,8 +73,8 @@ variable "controller_subnet_id" {
 
 variable "enable_security_group_management" {
   description = "Enables security group management."
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "enable_netflow_to_copilot" {
