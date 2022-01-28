@@ -5,8 +5,8 @@ terraform {
       version = ">=2.92.0"
     }
     aviatrix = {
-      source  = "AviatrixSystems/aviatrix"
-      version = "2.21.0-6.6.ga"
+      source = "AviatrixSystems/aviatrix"
+      version = ">=2.20.3"
     }
   }
 }
