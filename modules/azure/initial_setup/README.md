@@ -106,8 +106,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_build_agent_ip_address"></a> [build\_agent\_ip\_address](#input\_build\_agent\_ip\_address) | The Public IP Address of the build agent to add to the NSG allow rule | `string` | `"1.1.1.1"` | no |
-| <a name="input_controller_user_public_ip_address"></a> [controller\_user\_public\_ip\_address](#input\_controller\_user\_public\_ip\_address) | The public IP address of the user that is logging into the controller | `string` | n/a | yes |
+| <a name="input_allowed_public_ips"></a> [allowed\_public\_ips](#input\_allowed\_public\_ips) | A list of allowed public IP's access to key vault and storage accounts. | `list(string)` | `[]` | no |
 | <a name="input_generate_private_ssh_key"></a> [generate\_private\_ssh\_key](#input\_generate\_private\_ssh\_key) | Generate a private SSH key and store it in the key vault. | `bool` | `false` | no |
 | <a name="input_resource_prefix"></a> [resource\_prefix](#input\_resource\_prefix) | The prefix to the resource group that will be used for all created resources | `string` | n/a | yes |
 | <a name="input_user_principal_id"></a> [user\_principal\_id](#input\_user\_principal\_id) | The ID of the user that needs to access the key vault via Azure Portal GUI. This is used to give key vault secrets officer role | `string` | n/a | yes |

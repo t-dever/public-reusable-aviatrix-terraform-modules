@@ -74,11 +74,10 @@ resource "azurerm_key_vault" "key_vault" {
   purge_protection_enabled    = false
   enable_rbac_authorization   = true
   sku_name                    = "standard"
-  soft_delete_enabled         = true
   network_acls {
     default_action = "Deny"
     bypass         = "AzureServices"
-    ip_rules       = [var.build_agent_ip_address, var.controller_user_public_ip_address]
+    ip_rules       = var.allowed_public_ips
   }
 }
 
