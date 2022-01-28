@@ -8,19 +8,6 @@ variable "user_principal_id" {
   type        = string
 }
 
-# variable "build_agent_ip_address" {
-#   description = "The Public IP Address of the build agent to add to the NSG allow rule"
-#   type        = string
-#   sensitive   = true
-#   default     = "1.1.1.1"
-# }
-
-# variable "controller_user_public_ip_address" {
-#   description = "The public IP address of the user that is logging into the controller"
-#   type        = string
-#   sensitive   = true
-# }
-
 variable "generate_private_ssh_key" {
   description = "Generate a private SSH key and store it in the key vault."
   type        = bool
