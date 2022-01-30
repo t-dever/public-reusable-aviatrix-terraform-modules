@@ -25,20 +25,20 @@ data "azurerm_network_security_group" "controller_security_group" {
   resource_group_name = var.resource_group_name
 }
 
-resource "azurerm_network_security_rule" "allow_user_to_controller_nsg" {
+resource "azurerm_network_security_rule" "allow_inbound_public_ips_to_controller_nsg" {
   depends_on = [
     data.azurerm_network_security_group.controller_security_group,
     aviatrix_account.azure_account,
     aviatrix_controller_security_group_management_config.security_group_management
   ]
-  name                        = "AllowUserHttpsInboundToController"
+  name                        = "AllowPublicIpsHttpsInboundToController"
   priority                    = 100
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "*"
   source_port_range           = "*"
   destination_port_range      = "*"
-  source_address_prefix       = var.controller_user_public_ip_address
+  source_address_prefixes     = var.allowed_public_ips
   destination_address_prefix  = "*"
   resource_group_name         = var.resource_group_name
   network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
