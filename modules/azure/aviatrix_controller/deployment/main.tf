@@ -63,7 +63,7 @@ resource "azurerm_network_interface" "azure_controller_nic" {
     name                          = "${var.aviatrix_controller_name}-nic-ip"
     subnet_id                     = azurerm_subnet.azure_controller_subnet.id
     private_ip_address_allocation = "Static"
-    private_ip_address            = cidrhost(azurerm_subnet.azure_controller_subnet.address_prefix, 4)
+    private_ip_address            = local.controller_private_ip
     public_ip_address_id          = azurerm_public_ip.azure_controller_public_ip.id
   }
 }
@@ -178,7 +178,7 @@ resource "azurerm_network_interface" "azure_copilot_nic" {
     name                          = "${var.copilot_name}-nic-ip"
     subnet_id                     = azurerm_subnet.azure_controller_subnet.id
     private_ip_address_allocation = "Static"
-    private_ip_address            = cidrhost(azurerm_subnet.azure_controller_subnet.address_prefix, 5)
+    private_ip_address            = local.copilot_private_ip
     public_ip_address_id          = azurerm_public_ip.azure_copilot_public_ip[0].id
   }
 }

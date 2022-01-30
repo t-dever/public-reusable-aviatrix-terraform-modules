@@ -111,3 +111,15 @@ variable "ssh_public_key" {
   sensitive   = true
   default     = ""
 }
+
+variable "allowed_public_ips" {
+  description = "A list of allowed public IP's access to key vault and storage accounts."
+  type        = list(string)
+  default     = []
+  sensitive   = true
+}
+
+locals {
+  controller_private_ip = cidrhost(var.controller_subnet_address_prefix, 4)
+  copilot_private_ip = cidrhost(var.controller_subnet_address_prefix, 5)
+}
