@@ -117,7 +117,6 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   enable_segmentation              = true
   enable_transit_firenet           = var.firenet_enabled ? true : false
   enable_vpc_dns_server            = false
-  enable_active_mesh               = true
   insane_mode                      = var.insane_mode ? true : false
   insane_mode_az                   = var.insane_mode ? "az-1" : null
   ha_insane_mode_az                = var.insane_mode && var.transit_gateway_ha ? "az-2" : null
