@@ -23,6 +23,7 @@ resource "azurerm_virtual_network" "azure_spoke_vnet" {
 }
 
 resource "azurerm_subnet" "spoke_gw_subnet" {
+  count                = var.insane_mode ? 0 : 1
   name                 = "spoke-gateway-mgmt-subnet"
   virtual_network_name = azurerm_virtual_network.azure_spoke_vnet.name
   resource_group_name  = azurerm_resource_group.azure_spoke_resource_group.name
