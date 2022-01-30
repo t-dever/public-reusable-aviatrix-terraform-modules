@@ -109,6 +109,18 @@ variable "insane_mode" {
   default     = false
 }
 
+variable "spoke_gateway_az_zone" {
+  type        = string
+  description = "The availability zone for the primary spoke gateway"
+  default     = "az-1"
+}
+
+variable "spoke_gateway_ha_az_zone" {
+  type        = string
+  description = "The availability zone for the ha spoke gateway"
+  default     = "az-2"
+}
+
 locals {
   cidrbits                   = tonumber(split("/", var.vnet_address_prefix)[1])
   spoke_gateway_newbits      = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits

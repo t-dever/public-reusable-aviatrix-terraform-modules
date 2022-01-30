@@ -70,6 +70,18 @@ variable "transit_gateway_ha" {
   default     = false
 }
 
+variable "transit_gateway_az_zone" {
+  type        = string
+  description = "The availability zone for the primary transit gateway"
+  default     = "az-1"
+}
+
+variable "transit_gateway_ha_az_zone" {
+  type        = string
+  description = "The availability zone for the ha transit gateway"
+  default     = "az-2"
+}
+
 variable "enable_transit_gateway_scheduled_shutdown" {
   type        = bool
   description = "Enable automatic shutdown on transit gateway."

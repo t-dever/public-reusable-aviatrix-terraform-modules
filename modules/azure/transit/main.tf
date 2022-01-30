@@ -94,7 +94,7 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
     azurerm_public_ip.transit_hagw_public_ip
   ]
   lifecycle {
-    ignore_changes = [tags]
+    ignore_changes = [tags,zone,insane_mode_az]
   }
   cloud_type                       = 8
   account_name                     = var.aviatrix_azure_account
@@ -106,9 +106,9 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   allocate_new_eip                 = false
   eip                              = azurerm_public_ip.transit_public_ip.ip_address
   azure_eip_name_resource_group    = "${azurerm_public_ip.transit_public_ip.name}:${azurerm_virtual_network.azure_transit_vnet.resource_group_name}"
-  zone                             = "az-1"
+  zone                             = var.transit_gateway_az_zone
   ha_subnet                        = var.transit_gateway_ha && var.insane_mode ? local.transit_gateway_ha_subnet : var.transit_gateway_ha ? azurerm_subnet.transit_gw_ha_subnet[0].address_prefixes[0] : null
-  ha_zone                          = var.transit_gateway_ha ? "az-2" : null
+  ha_zone                          = var.transit_gateway_ha ? var.transit_gateway_ha_az_zone : null
   ha_gw_size                       = var.transit_gateway_ha ? var.transit_gw_size : null
   ha_eip                           = var.transit_gateway_ha ? azurerm_public_ip.transit_hagw_public_ip[0].ip_address : null
   ha_azure_eip_name_resource_group = var.transit_gateway_ha ? "${azurerm_public_ip.transit_hagw_public_ip[0].name}:${azurerm_virtual_network.azure_transit_vnet.resource_group_name}" : null
@@ -118,8 +118,8 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   enable_transit_firenet           = var.firenet_enabled ? true : false
   enable_vpc_dns_server            = false
   insane_mode                      = var.insane_mode ? true : false
-  insane_mode_az                   = var.insane_mode ? "az-1" : null
-  ha_insane_mode_az                = var.insane_mode && var.transit_gateway_ha ? "az-2" : null
+  insane_mode_az                   = var.insane_mode ? var.transit_gateway_az_zone : null
+  ha_insane_mode_az                = var.insane_mode && var.transit_gateway_ha ? var.transit_gateway_ha_az_zone : null
 }
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
