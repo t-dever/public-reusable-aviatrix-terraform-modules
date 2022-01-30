@@ -117,8 +117,6 @@ resource "aviatrix_spoke_gateway" "spoke_gateway" {
   ha_eip                           = var.spoke_gateway_ha ? azurerm_public_ip.spoke_gw_ha_public_ip[0].ip_address : null
   ha_azure_eip_name_resource_group = var.spoke_gateway_ha ? "${azurerm_public_ip.spoke_gw_ha_public_ip[0].name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}" : null
   insane_mode                      = var.insane_mode ? true : false
-  # insane_mode_az                   = var.insane_mode ? var.spoke_gateway_az_zone : null
-  # ha_insane_mode_az                = var.insane_mode && var.spoke_gateway_ha ? var.spoke_gateway_ha_az_zone : null
   manage_transit_gateway_attachment = false
   enable_vpc_dns_server            = false
 }
