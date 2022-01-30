@@ -106,7 +106,7 @@ resource "aviatrix_spoke_gateway" "spoke_gateway" {
   vpc_id                            = "${azurerm_virtual_network.azure_spoke_vnet.name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}"
   vpc_reg                           = var.location
   gw_size                           = var.spoke_gw_size
-  subnet                            = azurerm_subnet.spoke_gw_subnet.address_prefix
+  subnet                            = var.insane_mode ? local.spoke_gateway_subnet : azurerm_subnet.spoke_gw_subnet[0].address_prefix
   allocate_new_eip                  = false
   eip                               = azurerm_public_ip.spoke_gw_public_ip.ip_address
   azure_eip_name_resource_group     = "${azurerm_public_ip.spoke_gw_public_ip.name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}"
