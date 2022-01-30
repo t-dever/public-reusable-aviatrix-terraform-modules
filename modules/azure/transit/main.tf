@@ -94,7 +94,7 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
     azurerm_public_ip.transit_hagw_public_ip
   ]
   lifecycle {
-    ignore_changes = [tags,zone,insane_mode_az]
+    ignore_changes = [tags]
   }
   cloud_type                       = 8
   account_name                     = var.aviatrix_azure_account

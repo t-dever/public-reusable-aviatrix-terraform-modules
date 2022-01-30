@@ -97,7 +97,7 @@ resource "aviatrix_spoke_gateway" "spoke_gateway" {
     azurerm_public_ip.spoke_gw_ha_public_ip
   ]
   lifecycle {
-    ignore_changes = [tags,zone,insane_mode_az]
+    ignore_changes = [tags]
   }
   cloud_type                        = 8
   account_name                      = var.aviatrix_azure_account
