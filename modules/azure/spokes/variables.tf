@@ -114,7 +114,7 @@ locals {
   spoke_gateway_newbits      = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
   spoke_gateway_ha_newbits   = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
   virtual_machine_newbits    = var.virtual_machines_subnet_size - local.cidrbits
-  subnets                    = cidrsubnets(var.vnet_address_prefix, local.spoke_gateway_newbits, local.spoke_gateway_ha_newbits, local.virtual_machines_subnet_size)
+  subnets                    = cidrsubnets(var.vnet_address_prefix, local.spoke_gateway_newbits, local.spoke_gateway_ha_newbits, local.virtual_machine_newbits)
   spoke_gateway_subnet       = local.subnets[0]
   spoke_gateway_ha_subnet    = local.subnets[1]
   virtual_machine_subnet     = local.subnets[2]
