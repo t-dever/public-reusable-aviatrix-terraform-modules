@@ -119,16 +119,6 @@ resource "aviatrix_segmentation_security_domain_association" "segmentation_secur
   attachment_name      = aviatrix_spoke_gateway.azure_spoke_gateway.gw_name
 }
 
-resource "aviatrix_segmentation_security_domain_connection_policy" "segmentation_security_domain_connection_policy" {
-  depends_on = [
-    aviatrix_segmentation_security_domain.spoke_segmentation_security_domain,
-    aviatrix_segmentation_security_domain_association.segmentation_security_domain_association
-  ]
-  for_each      = toset(var.segmentation_domain_connection_policies)
-  domain_name_1 = var.segmentation_domain_name
-  domain_name_2 = each.value
-}
-
 resource "aviatrix_transit_firenet_policy" "spoke_transit_firenet_policy" {
   count = var.firenet_inspection ? 1 : 0
   depends_on = [
