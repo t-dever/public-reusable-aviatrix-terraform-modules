@@ -95,13 +95,6 @@ variable "key_vault_id" {
   default     = "default"
 }
 
-variable "user_public_for_mgmt" {
-  description = "The public IP address of the user that is logging into the controller"
-  type        = string
-  sensitive   = true
-  default     = "1.1.1.1"
-}
-
 variable "firenet_enabled" {
   description = "Enables firenet on the aviatrix transit gateway"
   type        = bool
@@ -147,6 +140,13 @@ variable "egress_enabled" {
   type        = bool
   default     = false
   description = "Allow traffic to the internet through firewall"
+}
+
+variable "allowed_public_ips" {
+  description = "A list of allowed public IP's access to firewalls."
+  type        = list(string)
+  default     = []
+  sensitive   = true
 }
 
 locals {

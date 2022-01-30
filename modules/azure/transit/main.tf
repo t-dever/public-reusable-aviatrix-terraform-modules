@@ -44,18 +44,15 @@ resource "azurerm_network_security_group" "firewall_mgmt_nsg" {
 }
 
 resource "azurerm_network_security_rule" "allow_user_and_controller_inbound_to_firewall_mgmt" {
-  count                  = var.firenet_enabled ? 1 : 0
-  name                   = "allowUserAndControllerInboundToFirewall"
-  priority               = 100
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "*"
-  source_port_range      = "*"
-  destination_port_range = "*"
-  source_address_prefixes = [
-    var.user_public_for_mgmt,
-    var.controller_public_ip
-  ]
+  count                       = var.firenet_enabled ? 1 : 0
+  name                        = "allowUserAndControllerInboundToFirewall"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefixes     = concat(var.allowed_public_ips, [var.controller_public_ip])
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.azure_transit_resource_group.name
   network_security_group_name = azurerm_network_security_group.firewall_mgmt_nsg[0].name
