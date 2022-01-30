@@ -118,8 +118,8 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   enable_transit_firenet           = var.firenet_enabled ? true : false
   enable_vpc_dns_server            = false
   insane_mode                      = var.insane_mode ? true : false
-  insane_mode_az                   = var.insane_mode ? var.transit_gateway_az_zone : null
-  ha_insane_mode_az                = var.insane_mode && var.transit_gateway_ha ? var.transit_gateway_ha_az_zone : null
+  # insane_mode_az                   = var.insane_mode ? var.transit_gateway_az_zone : null
+  # ha_insane_mode_az                = var.insane_mode && var.transit_gateway_ha ? var.transit_gateway_ha_az_zone : null
 }
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
