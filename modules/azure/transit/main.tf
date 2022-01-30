@@ -103,6 +103,7 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   vpc_reg                          = var.location
   gw_size                          = var.transit_gw_size
   subnet                           = var.insane_mode ? local.transit_gateway_subnet : azurerm_subnet.transit_gw_subnet[0].address_prefixes[0]
+  allocate_new_eip                 = false
   eip                              = azurerm_public_ip.transit_public_ip.ip_address
   azure_eip_name_resource_group    = "${azurerm_public_ip.transit_public_ip.name}:${azurerm_virtual_network.azure_transit_vnet.resource_group_name}"
   zone                             = "az-1"
@@ -112,7 +113,6 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   ha_eip                           = var.transit_gateway_ha ? azurerm_public_ip.transit_hagw_public_ip[0].ip_address : null
   ha_azure_eip_name_resource_group = var.transit_gateway_ha ? "${azurerm_public_ip.transit_hagw_public_ip[0].name}:${azurerm_virtual_network.azure_transit_vnet.resource_group_name}" : null
   connected_transit                = true
-  allocate_new_eip                 = false
   enable_advertise_transit_cidr    = true
   enable_segmentation              = true
   enable_transit_firenet           = var.firenet_enabled ? true : false

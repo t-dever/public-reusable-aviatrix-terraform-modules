@@ -22,24 +22,26 @@ resource "azurerm_virtual_network" "azure_spoke_vnet" {
   address_space       = [var.vnet_address_prefix]
 }
 
-resource "azurerm_subnet" "azure_spoke_gateway_subnet" {
-  depends_on = [
-    azurerm_virtual_network.azure_spoke_vnet
-  ]
-  name                 = "gateway-subnet"
+resource "azurerm_subnet" "spoke_gw_subnet" {
+  name                 = "spoke-gateway-mgmt-subnet"
   virtual_network_name = azurerm_virtual_network.azure_spoke_vnet.name
   resource_group_name  = azurerm_resource_group.azure_spoke_resource_group.name
-  address_prefixes     = [var.gateway_subnet_address_prefix]
+  address_prefixes     = [local.spoke_gateway_subnet]
 }
 
-resource "azurerm_subnet" "azure_virtual_machines_subnet" {
-  depends_on = [
-    azurerm_virtual_network.azure_spoke_vnet
-  ]
+resource "azurerm_subnet" "spoke_gw_ha_subnet" {
+  count                = var.spoke_gateway_ha && var.insane_mode ? 0 : var.spoke_gateway_ha ? 1 : 0
+  name                 = "spoke-gateway-ha-mgmt-subnet"
+  virtual_network_name = azurerm_virtual_network.azure_spoke_vnet.name
+  resource_group_name  = azurerm_resource_group.azure_spoke_resource_group.name
+  address_prefixes     = [local.spoke_gateway_ha_subnet]
+}
+
+resource "azurerm_subnet" "virtual_machines_subnet" {
   name                 = "virtual-machines"
   virtual_network_name = azurerm_virtual_network.azure_spoke_vnet.name
   resource_group_name  = azurerm_resource_group.azure_spoke_resource_group.name
-  address_prefixes     = [var.virtual_machines_subnet_address_prefix]
+  address_prefixes     = [local.virtual_machine_subnet]
 }
 
 resource "azurerm_route_table" "virtual_machine_route_table" {
@@ -57,14 +59,14 @@ resource "azurerm_route_table" "virtual_machine_route_table" {
 }
 
 resource "azurerm_subnet_route_table_association" "virtual_machine_rtb_association" {
-  subnet_id      = azurerm_subnet.azure_virtual_machines_subnet.id
+  subnet_id      = azurerm_subnet.virtual_machines_subnet.id
   route_table_id = azurerm_route_table.virtual_machine_route_table.id
 }
 
 ############### STOP - VIRTUAL NETWORK ###############
 
 ############### START - SPOKE GATEWAY ###############
-resource "azurerm_public_ip" "azure_gateway_public_ip" {
+resource "azurerm_public_ip" "spoke_gw_public_ip" {
   lifecycle {
     ignore_changes = [tags]
   }
@@ -72,13 +74,27 @@ resource "azurerm_public_ip" "azure_gateway_public_ip" {
   location                = azurerm_resource_group.azure_spoke_resource_group.location
   resource_group_name     = azurerm_resource_group.azure_spoke_resource_group.name
   allocation_method       = "Static"
-  idle_timeout_in_minutes = 4
   sku                     = "Standard"
+  idle_timeout_in_minutes = 4
 }
 
-resource "aviatrix_spoke_gateway" "azure_spoke_gateway" {
+resource "azurerm_public_ip" "spoke_gw_ha_public_ip" {
+  lifecycle {
+    ignore_changes = [tags]
+  }
+  count                   = var.spoke_gateway_ha ? 1 : 0
+  name                    = "${var.spoke_gateway_name}-ha-public-ip"
+  location                = azurerm_resource_group.azure_spoke_resource_group.location
+  resource_group_name     = azurerm_resource_group.azure_spoke_resource_group.name
+  allocation_method       = "Static"
+  sku                     = "Standard"
+  idle_timeout_in_minutes = 4
+}
+
+resource "aviatrix_spoke_gateway" "spoke_gateway" {
   depends_on = [
-    azurerm_public_ip.azure_gateway_public_ip
+    azurerm_public_ip.spoke_gw_public_ip,
+    azurerm_public_ip.spoke_gw_ha_public_ip
   ]
   lifecycle {
     ignore_changes = [tags]
@@ -89,18 +105,25 @@ resource "aviatrix_spoke_gateway" "azure_spoke_gateway" {
   vpc_id                            = "${azurerm_virtual_network.azure_spoke_vnet.name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}"
   vpc_reg                           = var.location
   gw_size                           = var.spoke_gw_size
-  subnet                            = azurerm_subnet.azure_spoke_gateway_subnet.address_prefix
+  subnet                            = azurerm_subnet.spoke_gw_subnet.address_prefix
   allocate_new_eip                  = false
-  eip                               = azurerm_public_ip.azure_gateway_public_ip.ip_address
-  azure_eip_name_resource_group     = "${azurerm_public_ip.azure_gateway_public_ip.name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}"
+  eip                               = azurerm_public_ip.spoke_gw_public_ip.ip_address
+  azure_eip_name_resource_group     = "${azurerm_public_ip.spoke_gw_public_ip.name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}"
+  zone                             = "az-1"
+  ha_subnet                        = var.spoke_gateway_ha && var.insane_mode ? local.spoke_gateway_ha_subnet : var.spoke_gateway_ha ? azurerm_subnet.spoke_gw_ha_subnet[0].address_prefixes[0] : null
+  ha_zone                          = var.spoke_gateway_ha ? "az-2" : null
+  ha_gw_size                       = var.spoke_gateway_ha ? var.spoke_gw_size : null
+  ha_eip                           = var.spoke_gateway_ha ? azurerm_public_ip.spoke_gw_ha_public_ip[0].ip_address : null
+  ha_azure_eip_name_resource_group = var.spoke_gateway_ha ? "${azurerm_public_ip.spoke_gw_ha_public_ip[0].name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}" : null
+  insane_mode                      = var.insane_mode ? true : false
+  insane_mode_az                   = var.insane_mode ? "az-1" : null
+  ha_insane_mode_az                = var.insane_mode && var.spoke_gateway_ha ? "az-2" : null
   manage_transit_gateway_attachment = false
+  enable_vpc_dns_server            = false
 }
 
 resource "aviatrix_spoke_transit_attachment" "attach_spoke" {
-  depends_on = [
-    aviatrix_spoke_gateway.azure_spoke_gateway
-  ]
-  spoke_gw_name   = aviatrix_spoke_gateway.azure_spoke_gateway.gw_name
+  spoke_gw_name   = aviatrix_spoke_gateway.spoke_gateway.gw_name
   transit_gw_name = var.transit_gateway_name
 }
 
@@ -115,22 +138,22 @@ resource "aviatrix_segmentation_security_domain_association" "segmentation_secur
   ]
   transit_gateway_name = var.transit_gateway_name
   security_domain_name = var.segmentation_domain_name
-  attachment_name      = aviatrix_spoke_gateway.azure_spoke_gateway.gw_name
+  attachment_name      = aviatrix_spoke_gateway.spoke_gateway.gw_name
 }
 
 resource "aviatrix_transit_firenet_policy" "spoke_transit_firenet_policy" {
   count = var.firenet_inspection ? 1 : 0
   depends_on = [
-    aviatrix_spoke_gateway.azure_spoke_gateway,
+    aviatrix_spoke_gateway.spoke_gateway,
     aviatrix_spoke_transit_attachment.attach_spoke
   ]
   transit_firenet_gateway_name = var.transit_gateway_name
-  inspected_resource_name      = "SPOKE:${aviatrix_spoke_gateway.azure_spoke_gateway.gw_name}"
+  inspected_resource_name      = "SPOKE:${aviatrix_spoke_gateway.spoke_gateway.gw_name}"
 }
 
 data "azurerm_virtual_machine" "gateway_vm_data" {
   depends_on = [
-    aviatrix_spoke_gateway.azure_spoke_gateway
+    aviatrix_spoke_gateway.spoke_gateway
   ]
   name                = "av-gw-${var.spoke_gateway_name}"
   resource_group_name = azurerm_resource_group.azure_spoke_resource_group.name
@@ -174,7 +197,7 @@ resource "azurerm_network_interface" "virtual_machine1_nic1" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.azure_virtual_machines_subnet.id
+    subnet_id                     = azurerm_subnet.virtual_machines_subnet.id
     private_ip_address_allocation = "Dynamic"
   }
 }
