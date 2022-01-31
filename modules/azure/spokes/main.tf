@@ -110,15 +110,15 @@ resource "aviatrix_spoke_gateway" "spoke_gateway" {
   allocate_new_eip                  = false
   eip                               = azurerm_public_ip.spoke_gw_public_ip.ip_address
   azure_eip_name_resource_group     = "${azurerm_public_ip.spoke_gw_public_ip.name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}"
-  zone                             = var.spoke_gateway_az_zone
-  ha_subnet                        = var.spoke_gateway_ha && var.insane_mode ? local.spoke_gateway_ha_subnet : var.spoke_gateway_ha ? azurerm_subnet.spoke_gw_ha_subnet[0].address_prefixes[0] : null
-  ha_zone                          = var.spoke_gateway_ha ? var.spoke_gateway_ha_az_zone : null
-  ha_gw_size                       = var.spoke_gateway_ha ? var.spoke_gw_size : null
-  ha_eip                           = var.spoke_gateway_ha ? azurerm_public_ip.spoke_gw_ha_public_ip[0].ip_address : null
-  ha_azure_eip_name_resource_group = var.spoke_gateway_ha ? "${azurerm_public_ip.spoke_gw_ha_public_ip[0].name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}" : null
-  insane_mode                      = var.insane_mode ? true : false
+  zone                              = var.spoke_gateway_az_zone
+  ha_subnet                         = var.spoke_gateway_ha && var.insane_mode ? local.spoke_gateway_ha_subnet : var.spoke_gateway_ha ? azurerm_subnet.spoke_gw_ha_subnet[0].address_prefixes[0] : null
+  ha_zone                           = var.spoke_gateway_ha ? var.spoke_gateway_ha_az_zone : null
+  ha_gw_size                        = var.spoke_gateway_ha ? var.spoke_gw_size : null
+  ha_eip                            = var.spoke_gateway_ha ? azurerm_public_ip.spoke_gw_ha_public_ip[0].ip_address : null
+  ha_azure_eip_name_resource_group  = var.spoke_gateway_ha ? "${azurerm_public_ip.spoke_gw_ha_public_ip[0].name}:${azurerm_virtual_network.azure_spoke_vnet.resource_group_name}" : null
+  insane_mode                       = var.insane_mode ? true : false
   manage_transit_gateway_attachment = false
-  enable_vpc_dns_server            = false
+  enable_vpc_dns_server             = false
 }
 
 resource "aviatrix_spoke_transit_attachment" "attach_spoke" {
