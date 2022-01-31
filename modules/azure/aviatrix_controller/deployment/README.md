@@ -129,6 +129,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_admin_email"></a> [admin\_email](#input\_admin\_email) | The email address used for the aviatrix controller registration. | `string` | n/a | yes |
+| <a name="input_allowed_public_ips"></a> [allowed\_public\_ips](#input\_allowed\_public\_ips) | A list of allowed public IP's access to key vault and storage accounts. | `list(string)` | `[]` | no |
 | <a name="input_aviatrix_controller_name"></a> [aviatrix\_controller\_name](#input\_aviatrix\_controller\_name) | The name of the azure virtual machine resource. | `string` | n/a | yes |
 | <a name="input_aviatrix_controller_username"></a> [aviatrix\_controller\_username](#input\_aviatrix\_controller\_username) | The username to be applied to the aviatrix controller for admin access. | `string` | `"admin"` | no |
 | <a name="input_controller_customer_id"></a> [controller\_customer\_id](#input\_controller\_customer\_id) | The customer id for the aviatrix controller | `string` | n/a | yes |

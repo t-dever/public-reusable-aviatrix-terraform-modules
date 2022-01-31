@@ -74,14 +74,14 @@ No modules.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_aviatrix"></a> [aviatrix](#requirement\_aviatrix) | >=2.20.3 |
+| <a name="requirement_aviatrix"></a> [aviatrix](#requirement\_aviatrix) | 2.21.0-6.6.ga |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 2.89.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aviatrix"></a> [aviatrix](#provider\_aviatrix) | >=2.20.3 |
+| <a name="provider_aviatrix"></a> [aviatrix](#provider\_aviatrix) | 2.21.0-6.6.ga |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 2.89.0 |
 | <a name="provider_external"></a> [external](#provider\_external) | n/a |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
@@ -94,12 +94,12 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aviatrix_firenet.firenet](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/firenet) | resource |
-| [aviatrix_firewall_instance.firewall_instance_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/firewall_instance) | resource |
-| [aviatrix_firewall_instance.firewall_instance_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/firewall_instance) | resource |
-| [aviatrix_firewall_instance_association.firewall_instance_association_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/firewall_instance_association) | resource |
-| [aviatrix_firewall_instance_association.firewall_instance_association_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/firewall_instance_association) | resource |
-| [aviatrix_transit_gateway.azure_transit_gateway](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/resources/transit_gateway) | resource |
+| [aviatrix_firenet.firenet](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/firenet) | resource |
+| [aviatrix_firewall_instance.firewall_instance_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/firewall_instance) | resource |
+| [aviatrix_firewall_instance.firewall_instance_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/firewall_instance) | resource |
+| [aviatrix_firewall_instance_association.firewall_instance_association_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/firewall_instance_association) | resource |
+| [aviatrix_firewall_instance_association.firewall_instance_association_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/firewall_instance_association) | resource |
+| [aviatrix_transit_gateway.azure_transit_gateway](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/resources/transit_gateway) | resource |
 | [azurerm_dev_test_global_vm_shutdown_schedule.transit_shutdown](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
 | [azurerm_dev_test_global_vm_shutdown_schedule.transit_shutdown_1](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
 | [azurerm_key_vault_secret.firewall_secret](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/key_vault_secret) | resource |
@@ -114,9 +114,9 @@ No modules.
 | [azurerm_subnet_network_security_group_association.firewall_mgmt_nsg_association](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/subnet_network_security_group_association) | resource |
 | [azurerm_virtual_network.azure_transit_vnet](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/resources/virtual_network) | resource |
 | [random_password.generate_firewall_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
-| [aviatrix_firenet_vendor_integration.vendor_integration_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/data-sources/firenet_vendor_integration) | data source |
-| [aviatrix_firenet_vendor_integration.vendor_integration_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/data-sources/firenet_vendor_integration) | data source |
-| [aviatrix_transit_gateway.transit_gw_data](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/latest/docs/data-sources/transit_gateway) | data source |
+| [aviatrix_firenet_vendor_integration.vendor_integration_1](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/data-sources/firenet_vendor_integration) | data source |
+| [aviatrix_firenet_vendor_integration.vendor_integration_2](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/data-sources/firenet_vendor_integration) | data source |
+| [aviatrix_transit_gateway.transit_gw_data](https://registry.terraform.io/providers/AviatrixSystems/aviatrix/2.21.0-6.6.ga/docs/data-sources/transit_gateway) | data source |
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/2.89.0/docs/data-sources/client_config) | data source |
 | [external_external.fortinet_bootstrap_1](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
 | [external_external.fortinet_bootstrap_2](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
@@ -125,6 +125,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_allowed_public_ips"></a> [allowed\_public\_ips](#input\_allowed\_public\_ips) | A list of allowed public IP's access to firewalls. | `list(string)` | `[]` | no |
 | <a name="input_aviatrix_azure_account"></a> [aviatrix\_azure\_account](#input\_aviatrix\_azure\_account) | The account used to manage the transit gateway | `string` | `"test-account"` | no |
 | <a name="input_controller_password"></a> [controller\_password](#input\_controller\_password) | The controllers password. | `string` | n/a | yes |
 | <a name="input_controller_public_ip"></a> [controller\_public\_ip](#input\_controller\_public\_ip) | The controllers public IP address. | `string` | `"1.2.3.4"` | no |
@@ -144,10 +145,11 @@ No modules.
 | <a name="input_primary_subnet_size"></a> [primary\_subnet\_size](#input\_primary\_subnet\_size) | The cidr for the subnet used for virtual machines or other devices. | `number` | `28` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The resource group name to be created. | `string` | `"test-resource-group"` | no |
 | <a name="input_secondary_ha_subnet_size"></a> [secondary\_ha\_subnet\_size](#input\_secondary\_ha\_subnet\_size) | The cidr for the subnet used for virtual machines or other devices for HA subnet. | `number` | `28` | no |
+| <a name="input_transit_gateway_az_zone"></a> [transit\_gateway\_az\_zone](#input\_transit\_gateway\_az\_zone) | The availability zone for the primary transit gateway | `string` | `"az-1"` | no |
 | <a name="input_transit_gateway_ha"></a> [transit\_gateway\_ha](#input\_transit\_gateway\_ha) | Enable High Availability (HA) for transit gateways | `bool` | `false` | no |
+| <a name="input_transit_gateway_ha_az_zone"></a> [transit\_gateway\_ha\_az\_zone](#input\_transit\_gateway\_ha\_az\_zone) | The availability zone for the ha transit gateway | `string` | `"az-2"` | no |
 | <a name="input_transit_gateway_name"></a> [transit\_gateway\_name](#input\_transit\_gateway\_name) | The name used for the transit gateway resource | `string` | n/a | yes |
 | <a name="input_transit_gw_size"></a> [transit\_gw\_size](#input\_transit\_gw\_size) | The size of the transit gateways | `string` | `"Standard_B2ms"` | no |
-| <a name="input_user_public_for_mgmt"></a> [user\_public\_for\_mgmt](#input\_user\_public\_for\_mgmt) | The public IP address of the user that is logging into the controller | `string` | `"1.1.1.1"` | no |
 | <a name="input_vnet_address_prefix"></a> [vnet\_address\_prefix](#input\_vnet\_address\_prefix) | The address prefix used in the vnet | `string` | `"10.0.0.0/23"` | no |
 | <a name="input_vnet_name"></a> [vnet\_name](#input\_vnet\_name) | The name for the Virtual Network | `string` | n/a | yes |
 
