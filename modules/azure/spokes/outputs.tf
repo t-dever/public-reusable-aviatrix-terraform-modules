@@ -14,7 +14,7 @@ output "spoke_address_prefix" {
 }
 
 output "spoke_gateway_name" {
-  value       = aviatrix_spoke_gateway.azure_spoke_gateway.gw_name
+  value       = aviatrix_spoke_gateway.spoke_gateway.gw_name
   description = "The spoke gateway name"
 }
 

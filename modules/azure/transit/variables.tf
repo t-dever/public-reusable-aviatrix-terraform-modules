@@ -70,6 +70,18 @@ variable "transit_gateway_ha" {
   default     = false
 }
 
+variable "transit_gateway_az_zone" {
+  type        = string
+  description = "The availability zone for the primary transit gateway"
+  default     = "az-1"
+}
+
+variable "transit_gateway_ha_az_zone" {
+  type        = string
+  description = "The availability zone for the ha transit gateway"
+  default     = "az-2"
+}
+
 variable "enable_transit_gateway_scheduled_shutdown" {
   type        = bool
   description = "Enable automatic shutdown on transit gateway."
@@ -93,13 +105,6 @@ variable "key_vault_id" {
   type        = string
   sensitive   = true
   default     = "default"
-}
-
-variable "user_public_for_mgmt" {
-  description = "The public IP address of the user that is logging into the controller"
-  type        = string
-  sensitive   = true
-  default     = "1.1.1.1"
 }
 
 variable "firenet_enabled" {
@@ -147,6 +152,13 @@ variable "egress_enabled" {
   type        = bool
   default     = false
   description = "Allow traffic to the internet through firewall"
+}
+
+variable "allowed_public_ips" {
+  description = "A list of allowed public IP's access to firewalls."
+  type        = list(string)
+  default     = []
+  sensitive   = true
 }
 
 locals {

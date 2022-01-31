@@ -54,9 +54,10 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "controller_user_public_ip_address" {
-  description = "The public IP address of the user that is logging into the controller"
-  type        = string
+variable "allowed_public_ips" {
+  description = "A list of allowed public IP's access to key vault and storage accounts."
+  type        = list(string)
+  default     = []
   sensitive   = true
 }
 

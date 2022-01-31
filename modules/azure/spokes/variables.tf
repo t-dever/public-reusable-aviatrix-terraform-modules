@@ -44,11 +44,6 @@ variable "vnet_address_prefix" {
   type        = string
 }
 
-variable "gateway_subnet_address_prefix" {
-  description = "The address prefix for gateway subnet in vnet."
-  type        = string
-}
-
 variable "spoke_gateway_name" {
   type        = string
   description = "The name used for the spoke gateway resource"
@@ -59,15 +54,22 @@ variable "test_vm_name" {
   description = "The name used for the test virtual machine resource"
 }
 
+variable "spoke_gateway_ha" {
+  type        = bool
+  description = "Enable High Availability (HA) for spoke gateways"
+  default     = false
+}
+
 variable "spoke_gw_size" {
   type        = string
-  description = "The size of the transit gateways"
+  description = "The size of the spoke gateways"
   default     = "Standard_B1ms"
 }
 
-variable "virtual_machines_subnet_address_prefix" {
-  description = "The address prefix for virtual machines subnet in vnet."
-  type        = string
+variable "virtual_machines_subnet_size" {
+  description = "The cidr size for virtual machines subnet in vnet."
+  type        = number
+  default     = 28
 }
 
 variable "aviatrix_azure_account" {
@@ -94,4 +96,33 @@ variable "firenet_inspection" {
 variable "segmentation_domain_name" {
   description = "The segmentation domain name"
   type        = string
+}
+
+variable "insane_mode" {
+  type        = bool
+  description = "Enable insane mode for transit gateway."
+  default     = false
+}
+
+variable "spoke_gateway_az_zone" {
+  type        = string
+  description = "The availability zone for the primary spoke gateway"
+  default     = "az-1"
+}
+
+variable "spoke_gateway_ha_az_zone" {
+  type        = string
+  description = "The availability zone for the ha spoke gateway"
+  default     = "az-2"
+}
+
+locals {
+  cidrbits                 = tonumber(split("/", var.vnet_address_prefix)[1])
+  spoke_gateway_newbits    = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
+  spoke_gateway_ha_newbits = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
+  virtual_machine_newbits  = var.virtual_machines_subnet_size - local.cidrbits
+  subnets                  = cidrsubnets(var.vnet_address_prefix, local.spoke_gateway_newbits, local.spoke_gateway_ha_newbits, local.virtual_machine_newbits)
+  spoke_gateway_subnet     = local.subnets[0]
+  spoke_gateway_ha_subnet  = local.subnets[1]
+  virtual_machine_subnet   = local.subnets[2]
 }

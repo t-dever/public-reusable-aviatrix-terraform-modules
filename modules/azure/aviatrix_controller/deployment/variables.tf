@@ -111,3 +111,8 @@ variable "ssh_public_key" {
   sensitive   = true
   default     = ""
 }
+
+locals {
+  controller_private_ip = cidrhost(var.controller_subnet_address_prefix, 4)
+  copilot_private_ip    = cidrhost(var.controller_subnet_address_prefix, 5)
+}

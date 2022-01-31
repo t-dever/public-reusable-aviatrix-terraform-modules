@@ -13,6 +13,7 @@ resource "azurerm_virtual_network" "azure_transit_vnet" {
 }
 
 resource "azurerm_subnet" "transit_gw_subnet" {
+  count                = var.insane_mode ? 0 : 1
   name                 = "transit-gateway-mgmt-subnet"
   virtual_network_name = azurerm_virtual_network.azure_transit_vnet.name
   resource_group_name  = azurerm_resource_group.azure_transit_resource_group.name
@@ -20,7 +21,7 @@ resource "azurerm_subnet" "transit_gw_subnet" {
 }
 
 resource "azurerm_subnet" "transit_gw_ha_subnet" {
-  count                = var.transit_gateway_ha ? 1 : 0
+  count                = var.transit_gateway_ha && var.insane_mode ? 0 : var.transit_gateway_ha ? 1 : 0
   name                 = "transit-gateway-ha-mgmt-subnet"
   virtual_network_name = azurerm_virtual_network.azure_transit_vnet.name
   resource_group_name  = azurerm_resource_group.azure_transit_resource_group.name
@@ -43,18 +44,15 @@ resource "azurerm_network_security_group" "firewall_mgmt_nsg" {
 }
 
 resource "azurerm_network_security_rule" "allow_user_and_controller_inbound_to_firewall_mgmt" {
-  count                  = var.firenet_enabled ? 1 : 0
-  name                   = "allowUserAndControllerInboundToFirewall"
-  priority               = 100
-  direction              = "Inbound"
-  access                 = "Allow"
-  protocol               = "*"
-  source_port_range      = "*"
-  destination_port_range = "*"
-  source_address_prefixes = [
-    var.user_public_for_mgmt,
-    var.controller_public_ip
-  ]
+  count                       = var.firenet_enabled ? 1 : 0
+  name                        = "allowUserAndControllerInboundToFirewall"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefixes     = concat(var.allowed_public_ips, [var.controller_public_ip])
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.azure_transit_resource_group.name
   network_security_group_name = azurerm_network_security_group.firewall_mgmt_nsg[0].name
@@ -104,22 +102,22 @@ resource "aviatrix_transit_gateway" "azure_transit_gateway" {
   vpc_id                           = "${azurerm_virtual_network.azure_transit_vnet.name}:${azurerm_virtual_network.azure_transit_vnet.resource_group_name}"
   vpc_reg                          = var.location
   gw_size                          = var.transit_gw_size
-  subnet                           = azurerm_subnet.transit_gw_subnet.address_prefixes[0]
+  subnet                           = var.insane_mode ? local.transit_gateway_subnet : azurerm_subnet.transit_gw_subnet[0].address_prefixes[0]
+  allocate_new_eip                 = false
   eip                              = azurerm_public_ip.transit_public_ip.ip_address
   azure_eip_name_resource_group    = "${azurerm_public_ip.transit_public_ip.name}:${azurerm_virtual_network.azure_transit_vnet.resource_group_name}"
-  zone                             = "az-1"
-  ha_subnet                        = var.transit_gateway_ha ? azurerm_subnet.transit_gw_ha_subnet[0].address_prefixes[0] : null
-  ha_zone                          = var.transit_gateway_ha ? "az-2" : null
+  zone                             = var.transit_gateway_az_zone
+  ha_subnet                        = var.transit_gateway_ha && var.insane_mode ? local.transit_gateway_ha_subnet : var.transit_gateway_ha ? azurerm_subnet.transit_gw_ha_subnet[0].address_prefixes[0] : null
+  ha_zone                          = var.transit_gateway_ha ? var.transit_gateway_ha_az_zone : null
   ha_gw_size                       = var.transit_gateway_ha ? var.transit_gw_size : null
   ha_eip                           = var.transit_gateway_ha ? azurerm_public_ip.transit_hagw_public_ip[0].ip_address : null
   ha_azure_eip_name_resource_group = var.transit_gateway_ha ? "${azurerm_public_ip.transit_hagw_public_ip[0].name}:${azurerm_virtual_network.azure_transit_vnet.resource_group_name}" : null
   connected_transit                = true
-  allocate_new_eip                 = false
   enable_advertise_transit_cidr    = true
   enable_segmentation              = true
   enable_transit_firenet           = var.firenet_enabled ? true : false
   enable_vpc_dns_server            = false
-  enable_active_mesh               = true
+  insane_mode                      = var.insane_mode ? true : false
 }
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
@@ -180,7 +178,7 @@ resource "aviatrix_firenet" "firenet" {
 }
 
 # LIMITATION: In firewall deployment we can't perform a count "x" due to the arm template deployment using the same deployment name
-#             This will cause a failure when attempting to deploy 2 or more instances at the same time. (Potentially look into creating scale set for autoscaling capabilities)
+#             This will cause a failure when attempting to deploy 2 or more instances at the same time. TODO: (Potentially look into creating scale set for autoscaling capabilities)
 
 data "aviatrix_transit_gateway" "transit_gw_data" {
   gw_name = aviatrix_transit_gateway.azure_transit_gateway.gw_name
@@ -197,7 +195,7 @@ resource "aviatrix_firewall_instance" "firewall_instance_1" {
   zone                   = "az-1"
   username               = local.is_checkpoint ? "admin" : var.firewall_username
   password               = random_password.generate_firewall_secret[0].result
-  management_subnet      = local.is_palo ? azurerm_subnet.transit_gw_subnet.address_prefix : null
+  management_subnet      = local.is_palo ? azurerm_subnet.transit_gw_subnet[0].address_prefix : null
   egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[0].address_prefix
   user_data              = local.is_fortinet ? local.fortinet_bootstrap : null
 }
@@ -216,7 +214,7 @@ resource "aviatrix_firewall_instance" "firewall_instance_2" {
   zone                   = "az-2"
   username               = local.is_checkpoint ? "admin" : var.firewall_username
   password               = random_password.generate_firewall_secret[0].result
-  management_subnet      = local.is_palo ? azurerm_subnet.transit_gw_subnet.address_prefix : null
+  management_subnet      = local.is_palo ? azurerm_subnet.transit_gw_subnet[0].address_prefix : null
   egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[0].address_prefix
   user_data              = local.is_fortinet ? local.fortinet_bootstrap : null
 }
