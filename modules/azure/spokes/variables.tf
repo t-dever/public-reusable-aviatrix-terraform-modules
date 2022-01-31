@@ -44,11 +44,6 @@ variable "vnet_address_prefix" {
   type        = string
 }
 
-# variable "gateway_subnet_address_prefix" {
-#   description = "The address prefix for gateway subnet in vnet."
-#   type        = string
-# }
-
 variable "spoke_gateway_name" {
   type        = string
   description = "The name used for the spoke gateway resource"
