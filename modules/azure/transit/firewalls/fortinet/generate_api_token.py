@@ -29,7 +29,7 @@ def generateApiToken(remote_conn):
             formatted_output = decode_output.splitlines()
             if formatted_output:
                 test_output = {
-                    "test": f"{formatted_output}"
+                    "api_key": f"{formatted_output}"
                 }
                 # api_key = {
                 #     "api_key": formatted_output[3].split()[-1]
