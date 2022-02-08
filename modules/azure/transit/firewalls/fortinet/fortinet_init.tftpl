@@ -15,14 +15,6 @@ config system accprofile
         set netgrp read-write
     next
 end
-config router static
-    edit 4
-        set dst 168.63.129.16 255.255.255.255
-        set gateway ${lan_gateway}
-        set device "port2"
-        set comment "To Azure Load Balancer"
-    next
-end
 config system api-user
     edit aviatrix_controller
     set accprofile "admin-api"

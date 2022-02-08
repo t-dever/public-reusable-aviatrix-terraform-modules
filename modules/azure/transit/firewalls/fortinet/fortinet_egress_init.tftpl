@@ -16,12 +16,6 @@ config system accprofile
     next
 end
 config router static
-    edit 4
-        set dst 168.63.129.16 255.255.255.255
-        set gateway ${lan_gateway}
-        set device "port2"
-        set comment "To Azure Load Balancer"
-    next
     edit 5
         set dst 0.0.0.0 0.0.0.0
         set gateway ${wan_gateway}
