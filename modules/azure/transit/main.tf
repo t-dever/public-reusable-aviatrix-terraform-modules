@@ -265,46 +265,41 @@ data "external" "fortinet_bootstrap_1" {
   }
 }
 
-# data "external" "fortinet_bootstrap_2" {
-#   count = var.firenet_enabled && local.is_fortinet && var.firewall_ha ? 1 : 0
-#   depends_on = [
-#     aviatrix_firewall_instance.firewall_instance_2,
-#     aviatrix_firenet.firenet,
-#     aviatrix_firewall_instance_association.firewall_instance_association_2
-#   ]
-#   program = ["python", "${path.root}/firewalls/fortinet/generate_api_token.py"]
-#   query = {
-#     fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance_2[0].public_ip}"
-#     fortigate_username = "${var.firewall_username}"
-#     fortigate_password = "${random_password.generate_firewall_secret[0].result}"
-#   }
-# }
+data "external" "fortinet_bootstrap_2" {
+  count = var.firenet_enabled && local.is_fortinet && var.firewall_ha ? 1 : 0
+  depends_on = [
+    aviatrix_firewall_instance.firewall_instance_2,
+    aviatrix_firenet.firenet,
+    aviatrix_firewall_instance_association.firewall_instance_association_2
+  ]
+  program = ["python", "${path.root}/firewalls/fortinet/generate_api_token.py"]
+  query = {
+    fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance_2[0].public_ip}"
+    fortigate_username = "${var.firewall_username}"
+    fortigate_password = "${random_password.generate_firewall_secret[0].result}"
+  }
+}
 
-# Vendor Integration if firewall vendor is fortinet.
 # tflint-ignore: terraform_unused_declarations
-# data "aviatrix_firenet_vendor_integration" "vendor_integration_1" {
-#   count         = var.firenet_enabled && local.is_fortinet ? 1 : 0
-#   vpc_id        = aviatrix_firewall_instance.firewall_instance_1[0].vpc_id
-#   instance_id   = aviatrix_firewall_instance.firewall_instance_1[0].instance_id
-#   vendor_type   = "Fortinet FortiGate"
-#   public_ip     = aviatrix_firewall_instance.firewall_instance_1[0].public_ip
-#   firewall_name = aviatrix_firewall_instance.firewall_instance_1[0].firewall_name
-#   api_token     = sensitive(data.external.fortinet_bootstrap_1[0].result.api_key)
-#   save          = true
-# }
+data "aviatrix_firenet_vendor_integration" "vendor_integration_1" {
+  count         = var.firenet_enabled && local.is_fortinet ? 1 : 0
+  vpc_id        = aviatrix_firewall_instance.firewall_instance_1[0].vpc_id
+  instance_id   = aviatrix_firewall_instance.firewall_instance_1[0].instance_id
+  vendor_type   = "Fortinet FortiGate"
+  public_ip     = aviatrix_firewall_instance.firewall_instance_1[0].public_ip
+  firewall_name = aviatrix_firewall_instance.firewall_instance_1[0].firewall_name
+  api_token     = sensitive(data.external.fortinet_bootstrap_1[0].result.api_key)
+  save          = true
+}
 
-# # tflint-ignore: terraform_unused_declarations
-# data "aviatrix_firenet_vendor_integration" "vendor_integration_2" {
-#   count         = var.firenet_enabled && local.is_fortinet && var.firewall_ha ? 1 : 0
-#   vpc_id        = aviatrix_firewall_instance.firewall_instance_2[0].vpc_id
-#   instance_id   = aviatrix_firewall_instance.firewall_instance_2[0].instance_id
-#   vendor_type   = "Fortinet FortiGate"
-#   public_ip     = aviatrix_firewall_instance.firewall_instance_2[0].public_ip
-#   firewall_name = aviatrix_firewall_instance.firewall_instance_2[0].firewall_name
-#   api_token     = sensitive(data.external.fortinet_bootstrap_2[0].result.api_key)
-#   save          = true
-# }
-
-output "name" {
-  value = data.external.fortinet_bootstrap_1[0].result.api_key
+# tflint-ignore: terraform_unused_declarations
+data "aviatrix_firenet_vendor_integration" "vendor_integration_2" {
+  count         = var.firenet_enabled && local.is_fortinet && var.firewall_ha ? 1 : 0
+  vpc_id        = aviatrix_firewall_instance.firewall_instance_2[0].vpc_id
+  instance_id   = aviatrix_firewall_instance.firewall_instance_2[0].instance_id
+  vendor_type   = "Fortinet FortiGate"
+  public_ip     = aviatrix_firewall_instance.firewall_instance_2[0].public_ip
+  firewall_name = aviatrix_firewall_instance.firewall_instance_2[0].firewall_name
+  api_token     = sensitive(data.external.fortinet_bootstrap_2[0].result.api_key)
+  save          = true
 }

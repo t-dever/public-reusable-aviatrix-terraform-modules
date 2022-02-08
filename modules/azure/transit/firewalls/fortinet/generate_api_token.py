@@ -12,10 +12,6 @@ fortigate_hostname = input_json['fortigate_hostname']
 fortigate_username = input_json['fortigate_username']
 fortigate_password = input_json['fortigate_password']
 
-# fortigate_hostname = os.getenv('FORTIGATE_HOSTNAME')
-# fortigate_username = os.getenv('FORTIGATE_USERNAME')
-# fortigate_password = os.getenv('FORTIGATE_PASSWORD')
-
 sleepyTime = 1
 receiveTime = 100000
 
@@ -30,15 +26,9 @@ def generateApiToken(remote_conn):
             formatted_output = decode_output.splitlines()
             for line in formatted_output:
                 if 'API key' in line:
-                    
-            # if len(formatted_output) >= 3:
-                # discovered_key = formatted_output[3].split()[-1]
-                # discovered_key = formatted_output[3]
-                # logging.warning(discovered_key)
                     api_key = {
                         "api_key": f"{line.split(' ')[-1]}"
                     }
-                # json_key = json.dumps(test_output, indent=4)
                     json_key = json.dumps(api_key, indent=4)
                     print(json_key)
                     return api_key
