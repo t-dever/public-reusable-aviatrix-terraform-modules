@@ -265,20 +265,20 @@ data "external" "fortinet_bootstrap_1" {
   }
 }
 
-data "external" "fortinet_bootstrap_2" {
-  count = var.firenet_enabled && local.is_fortinet && var.firewall_ha ? 1 : 0
-  depends_on = [
-    aviatrix_firewall_instance.firewall_instance_2,
-    aviatrix_firenet.firenet,
-    aviatrix_firewall_instance_association.firewall_instance_association_2
-  ]
-  program = ["python", "${path.root}/firewalls/fortinet/generate_api_token.py"]
-  query = {
-    fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance_2[0].public_ip}"
-    fortigate_username = "${var.firewall_username}"
-    fortigate_password = "${random_password.generate_firewall_secret[0].result}"
-  }
-}
+# data "external" "fortinet_bootstrap_2" {
+#   count = var.firenet_enabled && local.is_fortinet && var.firewall_ha ? 1 : 0
+#   depends_on = [
+#     aviatrix_firewall_instance.firewall_instance_2,
+#     aviatrix_firenet.firenet,
+#     aviatrix_firewall_instance_association.firewall_instance_association_2
+#   ]
+#   program = ["python", "${path.root}/firewalls/fortinet/generate_api_token.py"]
+#   query = {
+#     fortigate_hostname = "${aviatrix_firewall_instance.firewall_instance_2[0].public_ip}"
+#     fortigate_username = "${var.firewall_username}"
+#     fortigate_password = "${random_password.generate_firewall_secret[0].result}"
+#   }
+# }
 
 # Vendor Integration if firewall vendor is fortinet.
 # tflint-ignore: terraform_unused_declarations
