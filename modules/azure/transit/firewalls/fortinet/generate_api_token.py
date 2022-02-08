@@ -4,16 +4,16 @@ import json
 import paramiko
 import time
 
-# input = sys.stdin.read()
-# input_json = json.loads(input)
+input = sys.stdin.read()
+input_json = json.loads(input)
 
-# fortigate_hostname = input_json['fortigate_hostname']
-# fortigate_username = input_json['fortigate_username']
-# fortigate_password = input_json['fortigate_password']
+fortigate_hostname = input_json['fortigate_hostname']
+fortigate_username = input_json['fortigate_username']
+fortigate_password = input_json['fortigate_password']
 
-fortigate_hostname = os.getenv('FORTIGATE_HOSTNAME')
-fortigate_username = os.getenv('FORTIGATE_USERNAME')
-fortigate_password = os.getenv('FORTIGATE_PASSWORD')
+# fortigate_hostname = os.getenv('FORTIGATE_HOSTNAME')
+# fortigate_username = os.getenv('FORTIGATE_USERNAME')
+# fortigate_password = os.getenv('FORTIGATE_PASSWORD')
 
 sleepyTime = 1
 receiveTime = 100000
