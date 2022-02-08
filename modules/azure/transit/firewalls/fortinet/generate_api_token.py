@@ -33,7 +33,7 @@ def generateApiToken(remote_conn):
                 # discovered_key = formatted_output[3]
                 # logging.warning(discovered_key)
             api_key = {
-                "api_key": f"{formatted_output} AND {type(formatted_output)}"
+                "api_key": f"{formatted_output[3]} AND {formatted_output[3].split(' ')[-1]}"
             }
                 # json_key = json.dumps(test_output, indent=4)
             json_key = json.dumps(api_key, indent=4)
