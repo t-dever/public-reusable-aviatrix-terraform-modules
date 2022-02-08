@@ -22,6 +22,7 @@ def generateApiToken(remote_conn):
         if output:
             decode_output = output.decode("utf-8")
             formatted_output = decode_output.splitlines()
+            print(formatted_output)
             api_key = {
                 "api_key": formatted_output[3].split()[-1]
             }
