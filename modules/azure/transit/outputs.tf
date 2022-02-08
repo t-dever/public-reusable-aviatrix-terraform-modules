@@ -39,13 +39,13 @@ output "firewall_password" {
 output "firewall_1_api_key" {
   value       = var.firenet_enabled ? data.external.fortinet_bootstrap_1[0].result.api_key : null
   description = "The API Key for fortinet firewall 1."
-  sensitive   = true
+  # sensitive   = true
 }
 
 output "firewall_2_api_key" {
   value       = var.firenet_enabled ? data.external.fortinet_bootstrap_2[0].result.api_key : null
   description = "The API Key for fortinet firewall 2."
-  sensitive   = true
+  # sensitive   = true
 }
 
 output "firenet_enabled" {

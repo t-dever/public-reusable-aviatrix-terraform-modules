@@ -3,6 +3,7 @@ import sys
 import json
 import paramiko
 import time
+import logging
 
 input = sys.stdin.read()
 input_json = json.loads(input)
@@ -30,6 +31,7 @@ def generateApiToken(remote_conn):
             if len(formatted_output) >= 3:
                 # discovered_key = formatted_output[3].split()[-1]
                 discovered_key = formatted_output[3]
+                logging.warning(discovered_key)
                 api_key = {
                     "api_key": discovered_key
                     # "api_key": f"{formatted_output}"
