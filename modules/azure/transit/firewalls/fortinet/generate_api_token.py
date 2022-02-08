@@ -15,7 +15,7 @@ fortigate_password = input_json['fortigate_password']
 # fortigate_username = os.getenv('FORTIGATE_USERNAME')
 # fortigate_password = os.getenv('FORTIGATE_PASSWORD')
 
-sleepyTime = 0.5
+sleepyTime = 1
 receiveTime = 100000
 
 
