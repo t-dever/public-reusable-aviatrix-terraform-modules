@@ -42,11 +42,11 @@ output "firewall_1_api_key" {
   # sensitive   = true
 }
 
-output "firewall_2_api_key" {
-  value       = var.firenet_enabled ? data.external.fortinet_bootstrap_2[0].result.api_key : null
-  description = "The API Key for fortinet firewall 2."
-  # sensitive   = true
-}
+# output "firewall_2_api_key" {
+#   value       = var.firenet_enabled ? data.external.fortinet_bootstrap_2[0].result.api_key : null
+#   description = "The API Key for fortinet firewall 2."
+#   # sensitive   = true
+# }
 
 output "firenet_enabled" {
   description = "Outputs true if firenet is enabled, used to auto add spokes to firewall policy for inspection"
