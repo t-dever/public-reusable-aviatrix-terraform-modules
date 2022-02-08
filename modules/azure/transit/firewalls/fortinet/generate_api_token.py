@@ -28,12 +28,16 @@ def generateApiToken(remote_conn):
             decode_output = output.decode("utf-8")
             formatted_output = decode_output.splitlines()
             if formatted_output:
-                api_key = {
-                    "api_key": formatted_output[3].split()[-1]
+                test_output = {
+                    "test": f"{formatted_output}"
                 }
-                json_key = json.dumps(api_key, indent=4)
+                # api_key = {
+                #     "api_key": formatted_output[3].split()[-1]
+                # }
+                json_key = json.dumps(test_output, indent=4)
+                # json_key = json.dumps(api_key, indent=4)
                 print(json_key)
-                return api_key
+                # return api_key
     except KeyError as e:
         error = {"error": str(e)}
         json.dumps(error, indent=4)
