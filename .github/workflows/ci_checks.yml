@@ -17,7 +17,7 @@ jobs:
         find-dir: modules
         output-file: README.md
         output-method: inject
-        git-push: "true"
+        git-push: true
 
   format:
     runs-on: ubuntu-latest
