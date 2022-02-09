@@ -142,9 +142,7 @@ No modules.
 | <a name="input_insane_mode"></a> [insane\_mode](#input\_insane\_mode) | Enable insane mode for transit gateway. | `bool` | `false` | no |
 | <a name="input_key_vault_id"></a> [key\_vault\_id](#input\_key\_vault\_id) | The key vault id used to store the firewall password | `string` | `"default"` | no |
 | <a name="input_location"></a> [location](#input\_location) | Location of the resource group | `string` | `"South Central US"` | no |
-| <a name="input_primary_subnet_size"></a> [primary\_subnet\_size](#input\_primary\_subnet\_size) | The cidr for the subnet used for virtual machines or other devices. | `number` | `28` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The resource group name to be created. | `string` | `"test-resource-group"` | no |
-| <a name="input_secondary_ha_subnet_size"></a> [secondary\_ha\_subnet\_size](#input\_secondary\_ha\_subnet\_size) | The cidr for the subnet used for virtual machines or other devices for HA subnet. | `number` | `28` | no |
 | <a name="input_transit_gateway_az_zone"></a> [transit\_gateway\_az\_zone](#input\_transit\_gateway\_az\_zone) | The availability zone for the primary transit gateway | `string` | `"az-1"` | no |
 | <a name="input_transit_gateway_ha"></a> [transit\_gateway\_ha](#input\_transit\_gateway\_ha) | Enable High Availability (HA) for transit gateways | `bool` | `false` | no |
 | <a name="input_transit_gateway_ha_az_zone"></a> [transit\_gateway\_ha\_az\_zone](#input\_transit\_gateway\_ha\_az\_zone) | The availability zone for the ha transit gateway | `string` | `"az-2"` | no |
