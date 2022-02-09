@@ -41,18 +41,6 @@ variable "vnet_address_prefix" {
   default     = "10.0.0.0/23"
 }
 
-variable "primary_subnet_size" {
-  description = "The cidr for the subnet used for virtual machines or other devices."
-  type        = number
-  default     = 28
-}
-
-variable "secondary_ha_subnet_size" {
-  description = "The cidr for the subnet used for virtual machines or other devices for HA subnet."
-  type        = number
-  default     = 28
-}
-
 variable "transit_gateway_name" {
   type        = string
   description = "The name used for the transit gateway resource"
@@ -172,9 +160,7 @@ locals {
   firewall_newbits            = 28 - local.cidrbits
   transit_gateway_subnet      = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, local.netnum - 2)
   transit_gateway_ha_subnet   = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, local.netnum - 1)
-  firewall_subnet             = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, 0)
-  firewall_lan_gateway_subnet = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, 1)
+  firewall_subnet             = cidrsubnet(var.vnet_address_prefix, local.firewall_newbits, 0)
   firewall_wan_gateway        = cidrhost(local.firewall_subnet, 1)
   fortinet_bootstrap          = local.is_fortinet && var.egress_enabled ? templatefile("${path.module}/firewalls/fortinet/fortinet_egress_init.tftpl", { wan_gateway = local.firewall_wan_gateway }) : templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl")
-
 }
