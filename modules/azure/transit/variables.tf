@@ -151,16 +151,16 @@ variable "allowed_public_ips" {
 
 locals {
   # is_aviatrix                = length(regexall("aviatrix", lower(var.firewall_image))) > 0 # Check if fw image contains aviatrix.
-  is_checkpoint               = length(regexall("check", lower(var.firewall_image))) > 0    # Check if fw image contains checkpoint.
-  is_palo                     = length(regexall("palo", lower(var.firewall_image))) > 0     # Check if fw image contains palo.
-  is_fortinet                 = length(regexall("fortinet", lower(var.firewall_image))) > 0 # Check if fw image contains fortinet.
-  cidrbits                    = tonumber(split("/", var.vnet_address_prefix)[1])
-  transit_gateway_newbits     = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
-  netnum                      = pow(2, local.transit_gateway_newbits)
-  firewall_newbits            = 28 - local.cidrbits
-  transit_gateway_subnet      = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, local.netnum - 2)
-  transit_gateway_ha_subnet   = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, local.netnum - 1)
-  firewall_subnet             = cidrsubnet(var.vnet_address_prefix, local.firewall_newbits, 0)
-  firewall_wan_gateway        = cidrhost(local.firewall_subnet, 1)
-  fortinet_bootstrap          = local.is_fortinet && var.egress_enabled ? templatefile("${path.module}/firewalls/fortinet/fortinet_egress_init.tftpl", { wan_gateway = local.firewall_wan_gateway }) : templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl")
+  is_checkpoint             = length(regexall("check", lower(var.firewall_image))) > 0    # Check if fw image contains checkpoint.
+  is_palo                   = length(regexall("palo", lower(var.firewall_image))) > 0     # Check if fw image contains palo.
+  is_fortinet               = length(regexall("fortinet", lower(var.firewall_image))) > 0 # Check if fw image contains fortinet.
+  cidrbits                  = tonumber(split("/", var.vnet_address_prefix)[1])
+  transit_gateway_newbits   = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
+  netnum                    = pow(2, local.transit_gateway_newbits)
+  firewall_newbits          = 28 - local.cidrbits
+  transit_gateway_subnet    = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, local.netnum - 2)
+  transit_gateway_ha_subnet = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, local.netnum - 1)
+  firewall_subnet           = cidrsubnet(var.vnet_address_prefix, local.firewall_newbits, 0)
+  firewall_wan_gateway      = cidrhost(local.firewall_subnet, 1)
+  fortinet_bootstrap        = local.is_fortinet && var.egress_enabled ? templatefile("${path.module}/firewalls/fortinet/fortinet_egress_init.tftpl", { wan_gateway = local.firewall_wan_gateway }) : templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl")
 }
