@@ -280,7 +280,6 @@ data "external" "fortinet_bootstrap_2" {
   }
 }
 
-# Vendor Integration if firewall vendor is fortinet.
 # tflint-ignore: terraform_unused_declarations
 data "aviatrix_firenet_vendor_integration" "vendor_integration_1" {
   count         = var.firenet_enabled && local.is_fortinet ? 1 : 0

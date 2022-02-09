@@ -41,18 +41,6 @@ variable "vnet_address_prefix" {
   default     = "10.0.0.0/23"
 }
 
-variable "primary_subnet_size" {
-  description = "The cidr for the subnet used for virtual machines or other devices."
-  type        = number
-  default     = 28
-}
-
-variable "secondary_ha_subnet_size" {
-  description = "The cidr for the subnet used for virtual machines or other devices for HA subnet."
-  type        = number
-  default     = 28
-}
-
 variable "transit_gateway_name" {
   type        = string
   description = "The name used for the transit gateway resource"
@@ -163,21 +151,16 @@ variable "allowed_public_ips" {
 
 locals {
   # is_aviatrix                = length(regexall("aviatrix", lower(var.firewall_image))) > 0 # Check if fw image contains aviatrix.
-  is_checkpoint              = length(regexall("check", lower(var.firewall_image))) > 0    # Check if fw image contains checkpoint.
-  is_palo                    = length(regexall("palo", lower(var.firewall_image))) > 0     # Check if fw image contains palo.
-  is_fortinet                = length(regexall("fortinet", lower(var.firewall_image))) > 0 # Check if fw image contains fortinet.
-  cidrbits                   = tonumber(split("/", var.vnet_address_prefix)[1])
-  transit_gateway_newbits    = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
-  transit_gateway_ha_newbits = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
-  firewall_newbits           = 28 - local.cidrbits
-  primary_newbits            = var.primary_subnet_size - local.cidrbits
-  secondary_newbits          = var.secondary_ha_subnet_size - local.cidrbits
-  subnets                    = cidrsubnets(var.vnet_address_prefix, local.transit_gateway_newbits, local.transit_gateway_ha_newbits, local.firewall_newbits, local.primary_newbits, local.secondary_newbits)
-  transit_gateway_subnet     = local.subnets[0]
-  transit_gateway_ha_subnet  = local.subnets[1]
-  firewall_subnet            = local.subnets[2]
-  firewall_lan_gateway       = cidrhost(local.subnets[4], 1)
-  firewall_wan_gateway       = cidrhost(local.firewall_subnet, 1)
-  fortinet_bootstrap         = local.is_fortinet && var.egress_enabled ? templatefile("${path.module}/firewalls/fortinet/fortinet_egress_init.tftpl", { lan_gateway = local.firewall_lan_gateway, wan_gateway = local.firewall_wan_gateway }) : templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { lan_gateway = local.firewall_lan_gateway })
+  is_checkpoint             = length(regexall("check", lower(var.firewall_image))) > 0    # Check if fw image contains checkpoint.
+  is_palo                   = length(regexall("palo", lower(var.firewall_image))) > 0     # Check if fw image contains palo.
+  is_fortinet               = length(regexall("fortinet", lower(var.firewall_image))) > 0 # Check if fw image contains fortinet.
+  cidrbits                  = tonumber(split("/", var.vnet_address_prefix)[1])
+  transit_gateway_newbits   = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
+  netnum                    = pow(2, local.transit_gateway_newbits)
+  firewall_newbits          = 28 - local.cidrbits
+  transit_gateway_subnet    = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, local.netnum - 2)
+  transit_gateway_ha_subnet = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, local.netnum - 1)
+  firewall_subnet           = cidrsubnet(var.vnet_address_prefix, local.firewall_newbits, 0)
+  firewall_wan_gateway      = cidrhost(local.firewall_subnet, 1)
+  fortinet_bootstrap        = local.is_fortinet && var.egress_enabled ? templatefile("${path.module}/firewalls/fortinet/fortinet_egress_init.tftpl", { wan_gateway = local.firewall_wan_gateway }) : templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl")
 }
-

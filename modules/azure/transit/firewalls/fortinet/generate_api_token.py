@@ -1,7 +1,9 @@
+import os
 import sys
 import json
 import paramiko
 import time
+import logging
 
 input = sys.stdin.read()
 input_json = json.loads(input)
@@ -10,7 +12,7 @@ fortigate_hostname = input_json['fortigate_hostname']
 fortigate_username = input_json['fortigate_username']
 fortigate_password = input_json['fortigate_password']
 
-sleepyTime = 0.5
+sleepyTime = 1
 receiveTime = 100000
 
 
@@ -22,12 +24,16 @@ def generateApiToken(remote_conn):
         if output:
             decode_output = output.decode("utf-8")
             formatted_output = decode_output.splitlines()
-            api_key = {
-                "api_key": formatted_output[3].split()[-1]
-            }
-            json_key = json.dumps(api_key, indent=4)
-            print(json_key)
-            return api_key
+            for line in formatted_output:
+                if 'API key' in line:
+                    api_key = {
+                        "api_key": f"{line.split(' ')[-1]}"
+                    }
+                    json_key = json.dumps(api_key, indent=4)
+                    print(json_key)
+                    return api_key
+                else:
+                    continue
     except KeyError as e:
         error = {"error": str(e)}
         json.dumps(error, indent=4)
