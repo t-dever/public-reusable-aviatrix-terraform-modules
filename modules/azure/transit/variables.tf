@@ -170,15 +170,10 @@ locals {
   transit_gateway_newbits    = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
   netnum                     = pow(2, local.transit_gateway_newbits)
   firewall_newbits           = 28 - local.cidrbits
-  # primary_newbits            = var.primary_subnet_size - local.cidrbits
-  # secondary_newbits          = var.secondary_ha_subnet_size - local.cidrbits
-  # subnets                    = var.insane_mode ? cidrsubnets(var.vnet_address_prefix, local.firewall_newbits, local.primary_newbits, local.secondary_newbits, local.transit_gateway_newbits, local.transit_gateway_newbits) : cidrsubnets(var.vnet_address_prefix, local.transit_gateway_newbits, local.transit_gateway_newbits, local.firewall_newbits, local.primary_newbits, local.secondary_newbits)
   transit_gateway_subnet     = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, local.netnum - 2)
   transit_gateway_ha_subnet  = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, local.netnum - 1)
   firewall_subnet            = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, 0)
   firewall_lan_gateway_subnet = cidrsubnet(var.vnet_address_prefix, local.transit_gateway_newbits, 1)
-  # firewall_lan_gateway       = cidrhost(local.subnets[4], 1)
-  firewall_lan_gateway       = cidrhost(local.firewall_lan_gateway_subnet,1)
   firewall_wan_gateway       = cidrhost(local.firewall_subnet, 1)
   fortinet_bootstrap         = local.is_fortinet && var.egress_enabled ? templatefile("${path.module}/firewalls/fortinet/fortinet_egress_init.tftpl", { lan_gateway = local.firewall_lan_gateway, wan_gateway = local.firewall_wan_gateway }) : templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl", { lan_gateway = local.firewall_lan_gateway })
 
