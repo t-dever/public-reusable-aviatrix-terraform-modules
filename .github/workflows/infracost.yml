@@ -34,7 +34,7 @@ jobs:
         api-key: ${{ secrets.INFRACOST_API_KEY }}
 
     - name: Run Infracost
-      run: infracost breakdown --path modules/azure/aviatrix_controller/deployment --format json --out-file=/tmp/infracost.json --terraform-plan-flags="-var-file=default.tfvars" "-var=ssh_public_key=${{ secrets.PUBLIC_SSH_KEY }}"
+      run: infracost breakdown --path modules/azure/aviatrix_controller/deployment --format json --out-file=/tmp/infracost.json --terraform-plan-flags="-var-file=default.tfvars -var=ssh_public_key=${{ secrets.PUBLIC_SSH_KEY }}"
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
