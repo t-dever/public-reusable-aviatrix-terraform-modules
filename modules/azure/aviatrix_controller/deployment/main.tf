@@ -170,6 +170,7 @@ resource "azurerm_public_ip" "azure_copilot_public_ip" {
 }
 
 resource "azurerm_network_interface" "azure_copilot_nic" {
+  count                   = var.deploy_copilot ? 1 : 0
   name                = "${var.copilot_name}-nic"
   location            = azurerm_resource_group.resource_group.location
   resource_group_name = azurerm_resource_group.resource_group.name
@@ -184,6 +185,7 @@ resource "azurerm_network_interface" "azure_copilot_nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
+  count                   = var.deploy_copilot ? 1 : 0
   name                            = var.copilot_name
   location                        = azurerm_resource_group.resource_group.location
   resource_group_name             = azurerm_resource_group.resource_group.name
