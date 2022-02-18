@@ -225,7 +225,7 @@ resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "copilot_shutdown" {
   count              = var.deploy_copilot && var.enable_scheduled_shutdown ? 1 : 0
-  virtual_machine_id = azurerm_linux_virtual_machine.aviatrix_copilot_vm.id
+  virtual_machine_id = azurerm_linux_virtual_machine.aviatrix_copilot_vm[0].id
   location           = azurerm_resource_group.resource_group.location
   enabled            = true
 
