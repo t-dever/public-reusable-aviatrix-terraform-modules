@@ -144,7 +144,7 @@ No modules.
 | <a name="input_location"></a> [location](#input\_location) | Location of the resource group | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The resource group name to be created. | `string` | n/a | yes |
 | <a name="input_ssh_public_key"></a> [ssh\_public\_key](#input\_ssh\_public\_key) | The public key to be used for the controller and copilot | `string` | `""` | no |
-| <a name="input_store_credentials_in_key_vault"></a> [store\_credentials\_in\_key\_vault](#input\_store\_credentials\_in\_key\_vault) | Elect to store the generated admin credentials in the key vault | `bool` | `true` | no |
+| <a name="input_store_credentials_in_key_vault"></a> [store\_credentials\_in\_key\_vault](#input\_store\_credentials\_in\_key\_vault) | Elect to store the generated admin credentials in the key vault | `bool` | `false` | no |
 | <a name="input_vnet_address_prefix"></a> [vnet\_address\_prefix](#input\_vnet\_address\_prefix) | The address prefix used for the vnet e.g. 10.0.0.0/22 | `string` | `"10.0.0.0/23"` | no |
 | <a name="input_vnet_name"></a> [vnet\_name](#input\_vnet\_name) | The name for the Virtual Network | `string` | n/a | yes |
 
