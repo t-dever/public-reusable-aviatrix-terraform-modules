@@ -6,7 +6,6 @@ variable "location" {
 variable "resource_group_name" {
   description = "The resource group name to be created."
   type        = string
-  default     = "test-resource-group"
 }
 
 variable "vnet_name" {
@@ -29,6 +28,7 @@ variable "controller_subnet_address_prefix" {
 variable "aviatrix_controller_name" {
   description = "The name of the azure virtual machine resource."
   type        = string
+  default     = "aviatrix-controller-vm"
 }
 
 variable "aviatrix_controller_username" {
@@ -45,9 +45,9 @@ variable "controller_vm_size" {
 }
 
 variable "controller_version" {
-  default     = "UserConnect-6.5.2613"
   description = "The version used for the controller"
   type        = string
+  default     = "UserConnect-6.5.2613"
 }
 
 variable "controller_customer_id" {
