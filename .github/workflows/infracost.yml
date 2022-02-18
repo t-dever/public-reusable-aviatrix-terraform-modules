@@ -1,3 +1,4 @@
+name: Generate infracost estimates
 on:
   pull_request:
     paths:
