@@ -35,6 +35,11 @@ jobs:
 
     - name: Run Infracost
       run: infracost breakdown --format json --out-file=/tmp/infracost.json --config-file infracost.yml
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
     - name: Post the comment
       uses: infracost/actions/comment@v1
