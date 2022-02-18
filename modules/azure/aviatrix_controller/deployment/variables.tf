@@ -95,7 +95,7 @@ variable "enable_spot_instances" {
 variable "store_credentials_in_key_vault" {
   description = "Elect to store the generated admin credentials in the key vault"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "key_vault_id" {
