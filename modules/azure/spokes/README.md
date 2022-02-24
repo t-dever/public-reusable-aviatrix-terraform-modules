@@ -113,6 +113,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aviatrix_azure_account"></a> [aviatrix\_azure\_account](#input\_aviatrix\_azure\_account) | The name of the account configured in the Aviatrix Controller. | `string` | n/a | yes |
+| <a name="input_aviatrix_vnet_address_prefix"></a> [aviatrix\_vnet\_address\_prefix](#input\_aviatrix\_vnet\_address\_prefix) | The address prefix used for the virtual network gateways. | `string` | n/a | yes |
 | <a name="input_controller_password"></a> [controller\_password](#input\_controller\_password) | The controllers password. | `string` | n/a | yes |
 | <a name="input_controller_public_ip"></a> [controller\_public\_ip](#input\_controller\_public\_ip) | The controllers public IP address. | `string` | `"1.2.3.4"` | no |
 | <a name="input_controller_username"></a> [controller\_username](#input\_controller\_username) | The controllers username. | `string` | `"admin"` | no |
@@ -130,17 +131,18 @@ No modules.
 | <a name="input_storage_account_name"></a> [storage\_account\_name](#input\_storage\_account\_name) | The name of the storage account. | `string` | n/a | yes |
 | <a name="input_test_vm_name"></a> [test\_vm\_name](#input\_test\_vm\_name) | The name used for the test virtual machine resource | `string` | n/a | yes |
 | <a name="input_transit_gateway_name"></a> [transit\_gateway\_name](#input\_transit\_gateway\_name) | The transit gateway name the spoke will be peered with. | `string` | n/a | yes |
+| <a name="input_user_vnet_address_prefix"></a> [user\_vnet\_address\_prefix](#input\_user\_vnet\_address\_prefix) | The address prefix used for the virtual network user subnets. | `string` | n/a | yes |
 | <a name="input_virtual_machines_subnet_size"></a> [virtual\_machines\_subnet\_size](#input\_virtual\_machines\_subnet\_size) | The cidr size for virtual machines subnet in vnet. | `number` | `28` | no |
-| <a name="input_vnet_address_prefix"></a> [vnet\_address\_prefix](#input\_vnet\_address\_prefix) | The address prefix used for the virtual network. | `string` | n/a | yes |
 | <a name="input_vnet_name"></a> [vnet\_name](#input\_vnet\_name) | The name for the Virtual Network | `string` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_spoke_address_prefix"></a> [spoke\_address\_prefix](#output\_spoke\_address\_prefix) | The spoke vnet address space |
+| <a name="output_aviatrix_spoke_address_prefix"></a> [aviatrix\_spoke\_address\_prefix](#output\_aviatrix\_spoke\_address\_prefix) | The spoke vnet address space for aviatrix gateway subnets. |
 | <a name="output_spoke_gateway_name"></a> [spoke\_gateway\_name](#output\_spoke\_gateway\_name) | The spoke gateway name |
 | <a name="output_spoke_resource_group_name"></a> [spoke\_resource\_group\_name](#output\_spoke\_resource\_group\_name) | The spoke resource group name |
 | <a name="output_spoke_segmentation_domain_name"></a> [spoke\_segmentation\_domain\_name](#output\_spoke\_segmentation\_domain\_name) | The name of the segmentation domain created for the spoke. |
 | <a name="output_spoke_vnet_name"></a> [spoke\_vnet\_name](#output\_spoke\_vnet\_name) | The spoke vnet name |
+| <a name="output_user_spoke_address_prefix"></a> [user\_spoke\_address\_prefix](#output\_user\_spoke\_address\_prefix) | The spoke vnet address space for user subnets. |
 <!-- END_TF_DOCS -->
