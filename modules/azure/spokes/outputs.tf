@@ -8,9 +8,14 @@ output "spoke_vnet_name" {
   description = "The spoke vnet name"
 }
 
-output "spoke_address_prefix" {
+output "aviatrix_spoke_address_prefix" {
   value       = azurerm_virtual_network.azure_spoke_vnet.address_space[0]
-  description = "The spoke vnet address space"
+  description = "The spoke vnet address space for aviatrix gateway subnets."
+}
+
+output "user_spoke_address_prefix" {
+  value       = azurerm_virtual_network.azure_spoke_vnet.address_space[1]
+  description = "The spoke vnet address space for user subnets."
 }
 
 output "spoke_gateway_name" {
