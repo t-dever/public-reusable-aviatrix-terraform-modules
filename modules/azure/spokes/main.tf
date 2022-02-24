@@ -19,7 +19,7 @@ resource "azurerm_virtual_network" "azure_spoke_vnet" {
   name                = var.vnet_name
   location            = azurerm_resource_group.azure_spoke_resource_group.location
   resource_group_name = azurerm_resource_group.azure_spoke_resource_group.name
-  address_space       = [var.vnet_address_prefix]
+  address_space       = [var.aviatrix_vnet_address_prefix, var.user_vnet_address_prefix]
 }
 
 resource "azurerm_subnet" "spoke_gw_subnet" {

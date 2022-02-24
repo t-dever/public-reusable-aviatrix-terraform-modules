@@ -39,8 +39,13 @@ variable "vnet_name" {
   description = "The name for the Virtual Network"
 }
 
-variable "vnet_address_prefix" {
-  description = "The address prefix used for the virtual network."
+variable "aviatrix_vnet_address_prefix" {
+  description = "The address prefix used for the virtual network gateways."
+  type        = string
+}
+
+variable "user_vnet_address_prefix" {
+  description = "The address prefix used for the virtual network user subnets."
   type        = string
 }
 
@@ -117,12 +122,14 @@ variable "spoke_gateway_ha_az_zone" {
 }
 
 locals {
-  cidrbits                 = tonumber(split("/", var.vnet_address_prefix)[1])
-  spoke_gateway_newbits    = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
-  spoke_gateway_ha_newbits = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
-  virtual_machine_newbits  = var.virtual_machines_subnet_size - local.cidrbits
-  subnets                  = cidrsubnets(var.vnet_address_prefix, local.spoke_gateway_newbits, local.spoke_gateway_ha_newbits, local.virtual_machine_newbits)
-  spoke_gateway_subnet     = local.subnets[0]
-  spoke_gateway_ha_subnet  = local.subnets[1]
-  virtual_machine_subnet   = local.subnets[2]
+  aviatrix_cidrbits        = tonumber(split("/", var.aviatrix_vnet_address_prefix)[1])
+  spoke_gateway_newbits    = var.insane_mode ? 26 - local.aviatrix_cidrbits : 28 - local.aviatrix_cidrbits
+  spoke_gateway_ha_newbits = var.insane_mode ? 26 - local.aviatrix_cidrbits : 28 - local.aviatrix_cidrbits
+  user_cidrbits            = tonumber(split("/", var.user_vnet_address_prefix)[1])
+  virtual_machine_newbits  = var.virtual_machines_subnet_size - local.user_cidrbits
+  aviatrix_subnets         = cidrsubnets(var.aviatrix_vnet_address_prefix, local.spoke_gateway_newbits, local.spoke_gateway_ha_newbits)
+  spoke_gateway_subnet     = local.aviatrix_subnets[0]
+  spoke_gateway_ha_subnet  = local.aviatrix_subnets[1]
+  user_subnets             = cidrsubnets(var.user_vnet_address_prefix, local.virtual_machine_newbits)
+  virtual_machine_subnet   = local.user_subnets[0]
 }
