@@ -74,7 +74,7 @@ resource "null_resource" "commit_configuration" {
     panos_security_policy.allow_all
   ]
   provisioner "local-exec" {
-    command = "python ${path.module}/commit.py"
+    command = "python3 ${path.module}/commit.py"
     environment = {
       IP_ADDRESS = var.palo_ip_address
       USERNAME   = var.palo_username
