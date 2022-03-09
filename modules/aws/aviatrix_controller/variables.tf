@@ -162,7 +162,6 @@ variable "aviatrix_copilot_root_volume_type" {
   default     = "gp2"
 }
 
-
 variable "aviatrix_copilot_additional_volumes" {
   description = "Additonal volumes to add to CoPilot."
   type = map(object({

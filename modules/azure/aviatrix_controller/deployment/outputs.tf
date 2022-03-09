@@ -10,12 +10,12 @@ output "controller_resource_group_name" {
 
 output "controller_admin_username" {
   value       = var.aviatrix_controller_username
-  description = "The controller admin password"
+  description = "The controller admin username."
   sensitive   = true
 }
 
 output "controller_admin_password" {
-  value       = random_password.generate_controller_secret[0].result
+  value       = var.aviatrix_controller_password == "" ? random_password.generate_aviatrix_controller_admin_secret[0].result : var.aviatrix_controller_password
   description = "The controller admin password"
   sensitive   = true
 }
@@ -33,13 +33,13 @@ output "controller_private_ip" {
 }
 
 output "copilot_public_ip" {
-  value       = var.deploy_copilot ? azurerm_linux_virtual_machine.aviatrix_copilot_vm[0].public_ip_address : null
+  value       = var.aviatrix_deploy_copilot ? azurerm_linux_virtual_machine.aviatrix_copilot_vm[0].public_ip_address : null
   description = "The Public IP Address of the Aviatrix CoPilot Instance."
   sensitive   = true
 }
 
 output "copilot_private_ip" {
-  value       = var.deploy_copilot ? azurerm_linux_virtual_machine.aviatrix_copilot_vm[0].private_ip_address : null
+  value       = var.aviatrix_deploy_copilot ? azurerm_linux_virtual_machine.aviatrix_copilot_vm[0].private_ip_address : null
   description = "The Private IP Address of the Aviatrix CoPilot Instance"
   sensitive   = true
 }
