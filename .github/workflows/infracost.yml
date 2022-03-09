@@ -18,16 +18,6 @@ jobs:
       with:
         terraform_wrapper: false
 
-    # - name: Terraform init
-    #   run: terraform init
-
-    # - name: Terraform plan
-    #   run: terraform plan -out tfplan.binary -var-file="default.tfvars" -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -var="avx_aviatrix_customer_id=${{ secrets.AVX_CUSTOMER_ID }}" -var="avx_account_email=${{ secrets.ADMIN_EMAIL }}" -var="avx_controller_admin_email=${{ secrets.ADMIN_EMAIL }}"
-
-
-    # - name: Terraform show
-    #   run: terraform show -json tfplan.binary > plan.json
-
     - name: Setup Infracost
       uses: infracost/actions/setup@v1
       with:
