@@ -15,7 +15,7 @@ output "controller_admin_username" {
 }
 
 output "controller_admin_password" {
-  value       = random_password.generate_controller_secret.result
+  value       = random_password.generate_controller_secret[0].result
   description = "The controller admin password"
   sensitive   = true
 }
@@ -33,13 +33,13 @@ output "controller_private_ip" {
 }
 
 output "copilot_public_ip" {
-  value       = var.deploy_copilot ? azurerm_linux_virtual_machine.aviatrix_copilot_vm.public_ip_address : null
+  value       = var.deploy_copilot ? azurerm_linux_virtual_machine.aviatrix_copilot_vm[0].public_ip_address : null
   description = "The Public IP Address of the Aviatrix CoPilot Instance."
   sensitive   = true
 }
 
 output "copilot_private_ip" {
-  value       = var.deploy_copilot ? azurerm_linux_virtual_machine.aviatrix_copilot_vm.private_ip_address : null
+  value       = var.deploy_copilot ? azurerm_linux_virtual_machine.aviatrix_copilot_vm[0].private_ip_address : null
   description = "The Private IP Address of the Aviatrix CoPilot Instance"
   sensitive   = true
 }

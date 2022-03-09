@@ -6,7 +6,6 @@ variable "location" {
 variable "resource_group_name" {
   description = "The resource group name to be created."
   type        = string
-  default     = "test-resource-group"
 }
 
 variable "vnet_name" {
@@ -29,6 +28,7 @@ variable "controller_subnet_address_prefix" {
 variable "aviatrix_controller_name" {
   description = "The name of the azure virtual machine resource."
   type        = string
+  default     = "aviatrix-controller-vm"
 }
 
 variable "aviatrix_controller_username" {
@@ -45,14 +45,33 @@ variable "controller_vm_size" {
 }
 
 variable "controller_version" {
-  default     = "UserConnect-6.5.2613"
   description = "The version used for the controller"
   type        = string
+  default     = "UserConnect-6.5.2613"
 }
 
 variable "controller_customer_id" {
   description = "The customer id for the aviatrix controller"
   type        = string
+  sensitive   = true
+}
+
+variable "controller_public_ssh_key" {
+  type        = string
+  description = "Use a public SSH key for authentication to Aviatrix Controller"
+  default     = ""
+}
+
+variable "controller_virtual_machine_admin_username" {
+  type        = string
+  description = "Admin Username for the controller virtual machine."
+  default     = "aviatrix"
+}
+
+variable "controller_virtual_machine_admin_password" {
+  type        = string
+  description = "Admin Password for the controller virtual machine."
+  default     = ""
   sensitive   = true
 }
 
@@ -72,6 +91,25 @@ variable "copilot_name" {
   description = "The name of the CoPilot VM."
   type        = string
   default     = "Standard_D8as_v4"
+}
+
+variable "copilot_virtual_machine_admin_username" {
+  type        = string
+  description = "Admin Username for the copilot virtual machine."
+  default     = "aviatrix"
+}
+
+variable "copilot_virtual_machine_admin_password" {
+  type        = string
+  description = "Admin Password for the copilot virtual machine."
+  default     = ""
+  sensitive   = true
+}
+
+variable "copilot_public_ssh_key" {
+  type        = string
+  description = "Use a public SSH key for local. authentication to Aviatrix Copilot."
+  default     = ""
 }
 
 variable "copilot_vm_size" {
@@ -95,18 +133,11 @@ variable "enable_spot_instances" {
 variable "store_credentials_in_key_vault" {
   description = "Elect to store the generated admin credentials in the key vault"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "key_vault_id" {
   description = "The key vault ID where to store the admin credentials"
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-variable "ssh_public_key" {
-  description = "The public key to be used for the controller and copilot"
   type        = string
   sensitive   = true
   default     = ""

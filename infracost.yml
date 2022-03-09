@@ -1,0 +1,5 @@
+version: 0.1
+
+projects:
+  - path: modules/azure/aviatrix_controller/deployment
+    terraform_plan_flags: -var-file=default.tfvars

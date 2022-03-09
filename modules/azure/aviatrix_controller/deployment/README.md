@@ -97,7 +97,6 @@ No modules.
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >=2.92.0 |
 | <a name="provider_null"></a> [null](#provider\_null) | n/a |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 3.1.0 |
 
 ## Modules
 
@@ -122,29 +121,33 @@ No modules.
 | [azurerm_virtual_network.azure_controller_vnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
 | [null_resource.initial_config](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [random_password.generate_controller_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
-| [tls_private_key.generate_private_key](https://registry.terraform.io/providers/hashicorp/tls/3.1.0/docs/resources/private_key) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_admin_email"></a> [admin\_email](#input\_admin\_email) | The email address used for the aviatrix controller registration. | `string` | n/a | yes |
-| <a name="input_aviatrix_controller_name"></a> [aviatrix\_controller\_name](#input\_aviatrix\_controller\_name) | The name of the azure virtual machine resource. | `string` | n/a | yes |
+| <a name="input_aviatrix_controller_name"></a> [aviatrix\_controller\_name](#input\_aviatrix\_controller\_name) | The name of the azure virtual machine resource. | `string` | `"aviatrix-controller-vm"` | no |
 | <a name="input_aviatrix_controller_username"></a> [aviatrix\_controller\_username](#input\_aviatrix\_controller\_username) | The username to be applied to the aviatrix controller for admin access. | `string` | `"admin"` | no |
 | <a name="input_controller_customer_id"></a> [controller\_customer\_id](#input\_controller\_customer\_id) | The customer id for the aviatrix controller | `string` | n/a | yes |
+| <a name="input_controller_public_ssh_key"></a> [controller\_public\_ssh\_key](#input\_controller\_public\_ssh\_key) | Use a public SSH key for authentication to Aviatrix Controller | `string` | `""` | no |
 | <a name="input_controller_subnet_address_prefix"></a> [controller\_subnet\_address\_prefix](#input\_controller\_subnet\_address\_prefix) | The subnet address prefix that's used for the controller and copilot VMs. e.g. 10.0.0.0/24 | `string` | `"10.0.0.0/24"` | no |
 | <a name="input_controller_version"></a> [controller\_version](#input\_controller\_version) | The version used for the controller | `string` | `"UserConnect-6.5.2613"` | no |
+| <a name="input_controller_virtual_machine_admin_password"></a> [controller\_virtual\_machine\_admin\_password](#input\_controller\_virtual\_machine\_admin\_password) | Admin Password for the controller virtual machine. | `string` | `""` | no |
+| <a name="input_controller_virtual_machine_admin_username"></a> [controller\_virtual\_machine\_admin\_username](#input\_controller\_virtual\_machine\_admin\_username) | Admin Username for the controller virtual machine. | `string` | `"aviatrix"` | no |
 | <a name="input_controller_vm_size"></a> [controller\_vm\_size](#input\_controller\_vm\_size) | The size for the controller VM. | `string` | `"Standard_A4_v2"` | no |
 | <a name="input_copilot_name"></a> [copilot\_name](#input\_copilot\_name) | The name of the CoPilot VM. | `string` | `"Standard_D8as_v4"` | no |
+| <a name="input_copilot_public_ssh_key"></a> [copilot\_public\_ssh\_key](#input\_copilot\_public\_ssh\_key) | Use a public SSH key for local. authentication to Aviatrix Copilot. | `string` | `""` | no |
+| <a name="input_copilot_virtual_machine_admin_password"></a> [copilot\_virtual\_machine\_admin\_password](#input\_copilot\_virtual\_machine\_admin\_password) | Admin Password for the copilot virtual machine. | `string` | `""` | no |
+| <a name="input_copilot_virtual_machine_admin_username"></a> [copilot\_virtual\_machine\_admin\_username](#input\_copilot\_virtual\_machine\_admin\_username) | Admin Username for the copilot virtual machine. | `string` | `"aviatrix"` | no |
 | <a name="input_copilot_vm_size"></a> [copilot\_vm\_size](#input\_copilot\_vm\_size) | The size for the CoPilot VM. | `string` | `"Standard_D8as_v4"` | no |
 | <a name="input_deploy_copilot"></a> [deploy\_copilot](#input\_deploy\_copilot) | Deploy Aviatrix CoPilot? | `bool` | `false` | no |
 | <a name="input_enable_scheduled_shutdown"></a> [enable\_scheduled\_shutdown](#input\_enable\_scheduled\_shutdown) | Enable automatic shutdown on controller and copilot gateway. | `bool` | `true` | no |
 | <a name="input_enable_spot_instances"></a> [enable\_spot\_instances](#input\_enable\_spot\_instances) | Make the controller and copilot spot instances for best effort or development workloads. | `bool` | `true` | no |
 | <a name="input_key_vault_id"></a> [key\_vault\_id](#input\_key\_vault\_id) | The key vault ID where to store the admin credentials | `string` | `""` | no |
 | <a name="input_location"></a> [location](#input\_location) | Location of the resource group | `string` | n/a | yes |
-| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The resource group name to be created. | `string` | `"test-resource-group"` | no |
-| <a name="input_ssh_public_key"></a> [ssh\_public\_key](#input\_ssh\_public\_key) | The public key to be used for the controller and copilot | `string` | `""` | no |
-| <a name="input_store_credentials_in_key_vault"></a> [store\_credentials\_in\_key\_vault](#input\_store\_credentials\_in\_key\_vault) | Elect to store the generated admin credentials in the key vault | `bool` | `true` | no |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The resource group name to be created. | `string` | n/a | yes |
+| <a name="input_store_credentials_in_key_vault"></a> [store\_credentials\_in\_key\_vault](#input\_store\_credentials\_in\_key\_vault) | Elect to store the generated admin credentials in the key vault | `bool` | `false` | no |
 | <a name="input_vnet_address_prefix"></a> [vnet\_address\_prefix](#input\_vnet\_address\_prefix) | The address prefix used for the vnet e.g. 10.0.0.0/22 | `string` | `"10.0.0.0/23"` | no |
 | <a name="input_vnet_name"></a> [vnet\_name](#input\_vnet\_name) | The name for the Virtual Network | `string` | n/a | yes |
 
