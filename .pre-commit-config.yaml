@@ -28,6 +28,7 @@ repos:
           - --args=--enable-rule=terraform_documented_outputs # Ensures 'description' is applied for all outputs
           - --args=--enable-rule=terraform_documented_variables # Ensures 'description' is applied for variables
           - --args=--enable-rule=terraform_unused_declarations # Ensures unused variables are not applied
+          - --args=--disable-rule=terraform_module_pinned_source # Disable enforcing module source pinning
 
       - id: checkov
         always_run: true
@@ -53,4 +54,4 @@ repos:
         always_run: true
         args:
           - >
-            --args= -e azure-keyvault-ensure-secret-expiry,azure-network-retention-policy-set,azure-keyvault-no-purge,azure-compute-disable-password-authentication,general-secrets-sensitive-in-variable,azure-storage-default-action-deny,aws-vpc-no-public-egress-sgr,aws-iam-no-policy-wildcards,terraform_module_pinned_source
+            --args= -e azure-keyvault-ensure-secret-expiry,azure-network-retention-policy-set,azure-keyvault-no-purge,azure-compute-disable-password-authentication,general-secrets-sensitive-in-variable,azure-storage-default-action-deny,aws-vpc-no-public-egress-sgr,aws-iam-no-policy-wildcards
