@@ -326,7 +326,7 @@ resource "aws_iam_role_policy_attachment" "aviatrix_role_ec2_attach" {
 }
 
 # Attach App Role to App Policy
-resource "aws_iam_role_policy_attachment" aviatrix_role_app_attach {
+resource "aws_iam_role_policy_attachment" "aviatrix_role_app_attach" {
   role       = aws_iam_role.aviatrix_role_app.name
   policy_arn = aws_iam_policy.aviatrix_app_policy.arn
 }
