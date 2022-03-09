@@ -132,7 +132,7 @@ No modules.
 | <a name="input_controller_customer_id"></a> [controller\_customer\_id](#input\_controller\_customer\_id) | The customer id for the aviatrix controller | `string` | n/a | yes |
 | <a name="input_controller_public_ssh_key"></a> [controller\_public\_ssh\_key](#input\_controller\_public\_ssh\_key) | Use a public SSH key for authentication to Aviatrix Controller | `string` | `""` | no |
 | <a name="input_controller_subnet_address_prefix"></a> [controller\_subnet\_address\_prefix](#input\_controller\_subnet\_address\_prefix) | The subnet address prefix that's used for the controller and copilot VMs. e.g. 10.0.0.0/24 | `string` | `"10.0.0.0/24"` | no |
-| <a name="input_controller_version"></a> [controller\_version](#input\_controller\_version) | The version used for the controller | `string` | `"UserConnect-6.5.2613"` | no |
+| <a name="input_controller_version"></a> [controller\_version](#input\_controller\_version) | The version used for the controller | `string` | `"6.6"` | no |
 | <a name="input_controller_virtual_machine_admin_password"></a> [controller\_virtual\_machine\_admin\_password](#input\_controller\_virtual\_machine\_admin\_password) | Admin Password for the controller virtual machine. | `string` | `""` | no |
 | <a name="input_controller_virtual_machine_admin_username"></a> [controller\_virtual\_machine\_admin\_username](#input\_controller\_virtual\_machine\_admin\_username) | Admin Username for the controller virtual machine. | `string` | `"aviatrix"` | no |
 | <a name="input_controller_vm_size"></a> [controller\_vm\_size](#input\_controller\_vm\_size) | The size for the controller VM. | `string` | `"Standard_A4_v2"` | no |
