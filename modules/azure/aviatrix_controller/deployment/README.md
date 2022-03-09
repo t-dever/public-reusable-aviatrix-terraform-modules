@@ -109,39 +109,51 @@ No modules.
 |------|------|
 | [azurerm_dev_test_global_vm_shutdown_schedule.controller_shutdown](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
 | [azurerm_dev_test_global_vm_shutdown_schedule.copilot_shutdown](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
-| [azurerm_key_vault_secret.aviatrix_admin_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
+| [azurerm_key_vault_secret.aviatrix_controller_admin_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 | [azurerm_key_vault_secret.aviatrix_controller_public_ip_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
+| [azurerm_key_vault_secret.aviatrix_controller_virtual_machine_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
+| [azurerm_key_vault_secret.aviatrix_copilot_virtual_machine_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 | [azurerm_linux_virtual_machine.aviatrix_controller_vm](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine) | resource |
 | [azurerm_linux_virtual_machine.aviatrix_copilot_vm](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine) | resource |
 | [azurerm_network_interface.azure_controller_nic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface) | resource |
 | [azurerm_network_interface.azure_copilot_nic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface) | resource |
+| [azurerm_network_security_group.aviatrix_controller_security_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group) | resource |
+| [azurerm_network_security_rule.allow_controller_inbound_to_copilot](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
+| [azurerm_network_security_rule.allow_copilot_inbound_to_controller](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
+| [azurerm_network_security_rule.allow_inbound_public_ips_to_controller_nsg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
 | [azurerm_public_ip.azure_controller_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
 | [azurerm_public_ip.azure_copilot_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
 | [azurerm_resource_group.resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_subnet.azure_controller_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
+| [azurerm_subnet_network_security_group_association.azure_controller_nsg_association](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_network_security_group_association) | resource |
 | [azurerm_virtual_network.azure_controller_vnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
-| [random_password.generate_controller_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [random_password.generate_aviatrix_controller_admin_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [random_password.generate_aviatrix_controller_virtual_machine_admin_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [random_password.generate_aviatrix_copilot_virtual_machine_admin_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_admin_email"></a> [admin\_email](#input\_admin\_email) | The email address used for the aviatrix controller registration. | `string` | n/a | yes |
+| <a name="input_allowed_ips"></a> [allowed\_ips](#input\_allowed\_ips) | List of allowed ips to be added as ingress rule for security group. | `list(string)` | `[]` | no |
+| <a name="input_aviatrix_controller_admin_email"></a> [aviatrix\_controller\_admin\_email](#input\_aviatrix\_controller\_admin\_email) | The email address used for the aviatrix controller registration. | `string` | n/a | yes |
+| <a name="input_aviatrix_controller_customer_id"></a> [aviatrix\_controller\_customer\_id](#input\_aviatrix\_controller\_customer\_id) | The customer id for the aviatrix controller | `string` | n/a | yes |
+| <a name="input_aviatrix_controller_instance_size"></a> [aviatrix\_controller\_instance\_size](#input\_aviatrix\_controller\_instance\_size) | Aviatrix Controller instance size. | `string` | `"Standard_D2as_v4"` | no |
 | <a name="input_aviatrix_controller_name"></a> [aviatrix\_controller\_name](#input\_aviatrix\_controller\_name) | The name of the azure virtual machine resource. | `string` | `"aviatrix-controller-vm"` | no |
+| <a name="input_aviatrix_controller_password"></a> [aviatrix\_controller\_password](#input\_aviatrix\_controller\_password) | The password to be applied to the aviatrix controller admin account. | `string` | `""` | no |
+| <a name="input_aviatrix_controller_public_ssh_key"></a> [aviatrix\_controller\_public\_ssh\_key](#input\_aviatrix\_controller\_public\_ssh\_key) | Use a public SSH key for authentication to Aviatrix Controller | `string` | `""` | no |
+| <a name="input_aviatrix_controller_security_group_name"></a> [aviatrix\_controller\_security\_group\_name](#input\_aviatrix\_controller\_security\_group\_name) | The name of the security group for the Aviatrix Controller. | `string` | `"aviatrix-controller-security-group"` | no |
 | <a name="input_aviatrix_controller_username"></a> [aviatrix\_controller\_username](#input\_aviatrix\_controller\_username) | The username to be applied to the aviatrix controller for admin access. | `string` | `"admin"` | no |
-| <a name="input_controller_customer_id"></a> [controller\_customer\_id](#input\_controller\_customer\_id) | The customer id for the aviatrix controller | `string` | n/a | yes |
-| <a name="input_controller_public_ssh_key"></a> [controller\_public\_ssh\_key](#input\_controller\_public\_ssh\_key) | Use a public SSH key for authentication to Aviatrix Controller | `string` | `""` | no |
+| <a name="input_aviatrix_controller_version"></a> [aviatrix\_controller\_version](#input\_aviatrix\_controller\_version) | The version used for the controller | `string` | `"6.6"` | no |
+| <a name="input_aviatrix_controller_virtual_machine_admin_password"></a> [aviatrix\_controller\_virtual\_machine\_admin\_password](#input\_aviatrix\_controller\_virtual\_machine\_admin\_password) | Admin Password for the controller virtual machine. | `string` | `""` | no |
+| <a name="input_aviatrix_controller_virtual_machine_admin_username"></a> [aviatrix\_controller\_virtual\_machine\_admin\_username](#input\_aviatrix\_controller\_virtual\_machine\_admin\_username) | Admin Username for the controller virtual machine. | `string` | `"aviatrix"` | no |
+| <a name="input_aviatrix_copilot_instance_size"></a> [aviatrix\_copilot\_instance\_size](#input\_aviatrix\_copilot\_instance\_size) | The size for the CoPilot VM. | `string` | `"Standard_D8as_v4"` | no |
+| <a name="input_aviatrix_copilot_name"></a> [aviatrix\_copilot\_name](#input\_aviatrix\_copilot\_name) | The name of the CoPilot VM. | `string` | `"aviatrix-copilot-vm"` | no |
+| <a name="input_aviatrix_copilot_public_ssh_key"></a> [aviatrix\_copilot\_public\_ssh\_key](#input\_aviatrix\_copilot\_public\_ssh\_key) | Use a public SSH key for local. authentication to Aviatrix Copilot. | `string` | `""` | no |
+| <a name="input_aviatrix_copilot_virtual_machine_admin_password"></a> [aviatrix\_copilot\_virtual\_machine\_admin\_password](#input\_aviatrix\_copilot\_virtual\_machine\_admin\_password) | Admin Password for the copilot virtual machine. | `string` | `""` | no |
+| <a name="input_aviatrix_copilot_virtual_machine_admin_username"></a> [aviatrix\_copilot\_virtual\_machine\_admin\_username](#input\_aviatrix\_copilot\_virtual\_machine\_admin\_username) | Admin Username for the copilot virtual machine. | `string` | `"aviatrix"` | no |
+| <a name="input_aviatrix_deploy_copilot"></a> [aviatrix\_deploy\_copilot](#input\_aviatrix\_deploy\_copilot) | Deploy Aviatrix CoPilot? | `bool` | `false` | no |
 | <a name="input_controller_subnet_address_prefix"></a> [controller\_subnet\_address\_prefix](#input\_controller\_subnet\_address\_prefix) | The subnet address prefix that's used for the controller and copilot VMs. e.g. 10.0.0.0/24 | `string` | `"10.0.0.0/24"` | no |
-| <a name="input_controller_version"></a> [controller\_version](#input\_controller\_version) | The version used for the controller | `string` | `"6.6"` | no |
-| <a name="input_controller_virtual_machine_admin_password"></a> [controller\_virtual\_machine\_admin\_password](#input\_controller\_virtual\_machine\_admin\_password) | Admin Password for the controller virtual machine. | `string` | `""` | no |
-| <a name="input_controller_virtual_machine_admin_username"></a> [controller\_virtual\_machine\_admin\_username](#input\_controller\_virtual\_machine\_admin\_username) | Admin Username for the controller virtual machine. | `string` | `"aviatrix"` | no |
-| <a name="input_controller_vm_size"></a> [controller\_vm\_size](#input\_controller\_vm\_size) | The size for the controller VM. | `string` | `"Standard_D2as_v4"` | no |
-| <a name="input_copilot_name"></a> [copilot\_name](#input\_copilot\_name) | The name of the CoPilot VM. | `string` | `"aviatrix-copilot-vm"` | no |
-| <a name="input_copilot_public_ssh_key"></a> [copilot\_public\_ssh\_key](#input\_copilot\_public\_ssh\_key) | Use a public SSH key for local. authentication to Aviatrix Copilot. | `string` | `""` | no |
-| <a name="input_copilot_virtual_machine_admin_password"></a> [copilot\_virtual\_machine\_admin\_password](#input\_copilot\_virtual\_machine\_admin\_password) | Admin Password for the copilot virtual machine. | `string` | `""` | no |
-| <a name="input_copilot_virtual_machine_admin_username"></a> [copilot\_virtual\_machine\_admin\_username](#input\_copilot\_virtual\_machine\_admin\_username) | Admin Username for the copilot virtual machine. | `string` | `"aviatrix"` | no |
-| <a name="input_copilot_vm_size"></a> [copilot\_vm\_size](#input\_copilot\_vm\_size) | The size for the CoPilot VM. | `string` | `"Standard_D8as_v4"` | no |
-| <a name="input_deploy_copilot"></a> [deploy\_copilot](#input\_deploy\_copilot) | Deploy Aviatrix CoPilot? | `bool` | `false` | no |
 | <a name="input_enable_scheduled_shutdown"></a> [enable\_scheduled\_shutdown](#input\_enable\_scheduled\_shutdown) | Enable automatic shutdown on controller and copilot gateway. | `bool` | `true` | no |
 | <a name="input_enable_spot_instances"></a> [enable\_spot\_instances](#input\_enable\_spot\_instances) | Make the controller and copilot spot instances for best effort or development workloads. | `bool` | `true` | no |
 | <a name="input_key_vault_id"></a> [key\_vault\_id](#input\_key\_vault\_id) | The key vault ID where to store the admin credentials | `string` | `""` | no |
@@ -156,7 +168,7 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_controller_admin_password"></a> [controller\_admin\_password](#output\_controller\_admin\_password) | The controller admin password |
-| <a name="output_controller_admin_username"></a> [controller\_admin\_username](#output\_controller\_admin\_username) | The controller admin password |
+| <a name="output_controller_admin_username"></a> [controller\_admin\_username](#output\_controller\_admin\_username) | The controller admin username. |
 | <a name="output_controller_private_ip"></a> [controller\_private\_ip](#output\_controller\_private\_ip) | The Private IP Address of the Aviatrix Controller |
 | <a name="output_controller_public_ip"></a> [controller\_public\_ip](#output\_controller\_public\_ip) | The Public IP Address of the Aviatrix Controller |
 | <a name="output_controller_resource_group_name"></a> [controller\_resource\_group\_name](#output\_controller\_resource\_group\_name) | The resource group name of the controller |
