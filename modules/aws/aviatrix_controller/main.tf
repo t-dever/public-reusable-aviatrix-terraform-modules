@@ -189,14 +189,14 @@ module "aviatrix_controller_initialize" {
   depends_on = [
     aws_instance.aviatrix_controller_instance
   ]
-  source = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=features/aviatrix/controllerInitialize"
-  aviatrix_controller_public_ip = aws_eip.aviatrix_controller_eip.public_ip
-  aviatrix_controller_private_ip = data.aws_network_interface.aviatrix_controller_network_interface.private_ip
-  aviatrix_controller_password = random_password.aviatrix_controller_password.result
-  aviatrix_controller_admin_email = var.aviatrix_controller_admin_email
-  aviatrix_controller_version = var.aviatrix_controller_version
-  aviatrix_controller_customer_id = var.aviatrix_controller_customer_id
-  aviatrix_aws_primary_account_name = var.aviatrix_aws_primary_account_name
+  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=features/aviatrix/controllerInitialize"
+  aviatrix_controller_public_ip       = aws_eip.aviatrix_controller_eip.public_ip
+  aviatrix_controller_private_ip      = data.aws_network_interface.aviatrix_controller_network_interface.private_ip
+  aviatrix_controller_password        = random_password.aviatrix_controller_password.result
+  aviatrix_controller_admin_email     = var.aviatrix_controller_admin_email
+  aviatrix_controller_version         = var.aviatrix_controller_version
+  aviatrix_controller_customer_id     = var.aviatrix_controller_customer_id
+  aviatrix_aws_primary_account_name   = var.aviatrix_aws_primary_account_name
   aviatrix_aws_primary_account_number = data.aws_caller_identity.current.account_id
 }
 
