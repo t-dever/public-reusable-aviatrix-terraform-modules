@@ -68,12 +68,6 @@ resource "azurerm_network_interface" "azure_controller_nic" {
   }
 }
 
-resource "tls_private_key" "generate_private_key" {
-  count     = length(var.ssh_public_key) >= 0 ? 0 : 1
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
-
 resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   lifecycle {
     ignore_changes = [tags]
@@ -84,15 +78,19 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   network_interface_ids           = ["${azurerm_network_interface.azure_controller_nic.id}"]
   computer_name                   = "avx-controller"
   size                            = var.controller_vm_size
+  disable_password_authentication = var.controller_public_ssh_key == "" ? false : true
+  admin_username                  = var.controller_virtual_machine_admin_username
+  admin_password                  = length(var.controller_public_ssh_key) > 0 ? null : var.controller_virtual_machine_admin_password == "" ? random_password.generate_controller_secret[0].result : var.controller_virtual_machine_admin_password
   priority                        = var.enable_spot_instances ? "Spot" : null
   eviction_policy                 = var.enable_spot_instances ? "Deallocate" : null
-  admin_username                  = "adminUser"
-  disable_password_authentication = true
   allow_extension_operations      = false
 
-  admin_ssh_key {
-    username   = "adminUser"
-    public_key = length(var.ssh_public_key) >= 0 ? var.ssh_public_key : tls_private_key.generate_private_key[0].public_key_openssh
+  dynamic "admin_ssh_key" {
+    for_each = var.controller_public_ssh_key == "" ? [] : [true]
+    content {
+      public_key = var.controller_public_ssh_key
+      username   = var.controller_virtual_machine_admin_username
+    }
   }
 
   tags = {
@@ -144,15 +142,10 @@ resource "null_resource" "initial_config" {
     environment = {
       AVIATRIX_CONTROLLER_PUBLIC_IP  = azurerm_public_ip.azure_controller_public_ip.ip_address
       AVIATRIX_CONTROLLER_PRIVATE_IP = azurerm_network_interface.azure_controller_nic.private_ip_address
-      AVIATRIX_CONTROLLER_PASSWORD   = random_password.generate_controller_secret.result
+      AVIATRIX_CONTROLLER_PASSWORD   = var.controller_virtual_machine_admin_password == "" ? random_password.generate_controller_secret[0].result : var.controller_virtual_machine_admin_password
       ADMIN_EMAIL                    = var.admin_email
       CONTROLLER_VERSION             = var.controller_version
       CUSTOMER_ID                    = var.controller_customer_id
-      # ACCESS_ACCOUNT                 = var.aviatrix_azure_access_account_name
-      # SUBSCRIPTION_ID                = data.azurerm_client_config.current.subscription_id
-      # DIRECTORY_ID                   = data.azurerm_client_config.current.tenant_id
-      # CLIENT_ID                      = data.azurerm_client_config.current.client_id
-      # CLIENT_SECRET                  = var.azure_application_key
     }
   }
 }

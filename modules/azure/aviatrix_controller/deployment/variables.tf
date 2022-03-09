@@ -56,6 +56,25 @@ variable "controller_customer_id" {
   sensitive   = true
 }
 
+variable "controller_public_ssh_key" {
+  type        = string
+  description = "Use a public SSH key for authentication to Aviatrix Controller"
+  default     = ""
+}
+
+variable "controller_virtual_machine_admin_username" {
+  type        = string
+  description = "Admin Username for the controller virtual machine."
+  default     = "aviatrix"
+}
+
+variable "controller_virtual_machine_admin_password" {
+  type        = string
+  description = "Admin Password for the controller virtual machine."
+  default     = ""
+  sensitive   = true
+}
+
 variable "admin_email" {
   description = "The email address used for the aviatrix controller registration."
   type        = string
@@ -105,12 +124,6 @@ variable "key_vault_id" {
   default     = ""
 }
 
-variable "ssh_public_key" {
-  description = "The public key to be used for the controller and copilot"
-  type        = string
-  sensitive   = true
-  default     = ""
-}
 
 locals {
   controller_private_ip = cidrhost(var.controller_subnet_address_prefix, 4)
