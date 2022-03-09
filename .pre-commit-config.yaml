@@ -53,4 +53,4 @@ repos:
         always_run: true
         args:
           - >
-            --args= -e azure-keyvault-ensure-secret-expiry,azure-network-retention-policy-set,azure-keyvault-no-purge,azure-compute-disable-password-authentication,general-secrets-sensitive-in-variable,azure-storage-default-action-deny,aws-vpc-no-public-egress-sgr,aws-iam-no-policy-wildcards
+            --args= -e azure-keyvault-ensure-secret-expiry,azure-network-retention-policy-set,azure-keyvault-no-purge,azure-compute-disable-password-authentication,general-secrets-sensitive-in-variable,azure-storage-default-action-deny,aws-vpc-no-public-egress-sgr,aws-iam-no-policy-wildcards,terraform_module_pinned_source
