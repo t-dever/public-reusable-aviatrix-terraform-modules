@@ -1,3 +1,4 @@
+# Create Resource Group Query
 resource "aws_resourcegroups_group" "aviatrix_resource_group" {
   name = "aviatrix"
 
