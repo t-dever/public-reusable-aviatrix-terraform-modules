@@ -160,11 +160,12 @@ variable "aviatrix_copilot_root_volume_type" {
 
 
 variable "aviatrix_copilot_additional_volumes" {
-  default = {}
+  description = "Additonal volumes to add to CoPilot."
   type = map(object({
     device_name = string,
     volume_id   = string,
   }))
+  default = {}
 }
 
 variable "tag_prefix" {
