@@ -93,6 +93,25 @@ variable "copilot_name" {
   default     = "Standard_D8as_v4"
 }
 
+variable "copilot_virtual_machine_admin_username" {
+  type        = string
+  description = "Admin Username for the copilot virtual machine."
+  default     = "aviatrix"
+}
+
+variable "copilot_virtual_machine_admin_password" {
+  type        = string
+  description = "Admin Password for the copilot virtual machine."
+  default     = ""
+  sensitive   = true
+}
+
+variable "copilot_public_ssh_key" {
+  type        = string
+  description = "Use a public SSH key for local. authentication to Aviatrix Copilot."
+  default     = ""
+}
+
 variable "copilot_vm_size" {
   description = "The size for the CoPilot VM."
   type        = string
@@ -123,7 +142,6 @@ variable "key_vault_id" {
   sensitive   = true
   default     = ""
 }
-
 
 locals {
   controller_private_ip = cidrhost(var.controller_subnet_address_prefix, 4)

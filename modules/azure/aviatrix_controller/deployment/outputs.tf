@@ -15,7 +15,7 @@ output "controller_admin_username" {
 }
 
 output "controller_admin_password" {
-  value       = random_password.generate_controller_secret.result
+  value       = random_password.generate_controller_secret[0].result
   description = "The controller admin password"
   sensitive   = true
 }

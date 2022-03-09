@@ -4,6 +4,7 @@ resource "azurerm_resource_group" "resource_group" {
 }
 
 resource "random_password" "generate_controller_secret" {
+  count            = var.controller_virtual_machine_admin_password == "" ? 1 : 0
   length           = 24
   min_upper        = 2
   min_numeric      = 2
@@ -15,7 +16,7 @@ resource "random_password" "generate_controller_secret" {
 resource "azurerm_key_vault_secret" "aviatrix_admin_secret" {
   count        = var.store_credentials_in_key_vault ? 1 : 0
   name         = "controller-admin-pw"
-  value        = random_password.generate_controller_secret.result
+  value        = random_password.generate_controller_secret[0].result
   key_vault_id = var.key_vault_id
   content_type = "aviatrix controller admin password username admin"
 }
@@ -187,13 +188,18 @@ resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
   size                            = var.copilot_vm_size
   priority                        = var.enable_spot_instances ? "Spot" : null
   eviction_policy                 = var.enable_spot_instances ? "Deallocate" : null
-  admin_username                  = "adminUser"
-  disable_password_authentication = true
+  disable_password_authentication = var.copilot_public_ssh_key == "" ? false : true
+  admin_username                  = var.copilot_virtual_machine_admin_username
+  admin_password                  = length(var.copilot_public_ssh_key) > 0 ? null : var.copilot_virtual_machine_admin_password == "" ? random_password.generate_controller_secret[0].result : var.copilot_virtual_machine_admin_password
   allow_extension_operations      = false
 
-  admin_ssh_key {
-    username   = "adminUser"
-    public_key = length(var.ssh_public_key) >= 0 ? var.ssh_public_key : tls_private_key.generate_private_key[0].public_key_openssh
+
+  dynamic "admin_ssh_key" {
+    for_each = var.copilot_public_ssh_key == "" ? [] : [true]
+    content {
+      public_key = var.copilot_public_ssh_key
+      username   = var.copilot_virtual_machine_admin_username
+    }
   }
 
   source_image_reference {
