@@ -12,7 +12,7 @@ class ControllerSetup():
         self.admin_email = os.getenv('ADMIN_EMAIL')
         self.customer_id = os.getenv('CUSTOMER_ID')
         self.controller_version = os.getenv('CONTROLLER_VERSION')
-        self.controller_version_short = os.getenv('CONTROLLER_VERSION').split('-')[1][0:3]
+        # self.controller_version_short = os.getenv('CONTROLLER_VERSION').split('-')[1][0:3]
         self.controller_username = "admin"
         self.controller_initial_password = os.getenv('AVIATRIX_CONTROLLER_PRIVATE_IP')
         self.controller_new_password = os.getenv('AVIATRIX_CONTROLLER_PASSWORD')

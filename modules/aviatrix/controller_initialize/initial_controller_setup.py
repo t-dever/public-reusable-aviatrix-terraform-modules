@@ -14,8 +14,6 @@ class ControllerSetup():
         self.admin_email = os.getenv('ADMIN_EMAIL')
         self.customer_id = os.getenv('CUSTOMER_ID')
         self.controller_version = os.getenv('CONTROLLER_VERSION')
-        self.controller_version_short = os.getenv(
-            'CONTROLLER_VERSION').split('-')[1][0:3]
         self.controller_username = "admin"
         self.controller_initial_password = os.getenv(
             'AVIATRIX_CONTROLLER_PRIVATE_IP')
@@ -203,7 +201,7 @@ class ControllerSetup():
                 payload = {
                     'action': 'upgrade',
                     'CID': self._get_cid(),
-                    'version': self.controller_version_short
+                    'version': self.controller_version
                 }
             response = requests.post(self.url, data=payload, verify=False)
             r = self._format_response(response)
@@ -229,11 +227,11 @@ class ControllerSetup():
             return False
 
     def perform_software_updates(self):
-        if self._is_software_up_to_date(self.controller_version_short):
+        if self._is_software_up_to_date(self.controller_version):
             return
         # If controller is being upgraded to 6.6 then do the initial software
         # update then upgrade from 6.5 to 6.6
-        elif self.controller_version_short == "6.6":
+        elif self.controller_version == "6.6":
             result = self.software_update("6.5", initial_upgrade=True)
             if result:
                 result = self.software_update("6.6", initial_upgrade=False)
@@ -242,7 +240,7 @@ class ControllerSetup():
         # If controller is not being upgraded to 6.6 then only do
         # initial_software_update
         else:
-            result = self.software_update(self.controller_version_short,
+            result = self.software_update(self.controller_version,
                                           initial_upgrade=True)
         if result:
             print("All Software Updates Succeeded.")
