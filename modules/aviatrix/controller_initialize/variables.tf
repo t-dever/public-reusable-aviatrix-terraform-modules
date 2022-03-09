@@ -24,7 +24,7 @@ variable "aviatrix_controller_version" {
   type        = string
   validation {
     condition     = can(regex("^[0-9].[0-9]", var.aviatrix_controller_version))
-    error_message = "The aviatrix_controller_version value must be number dot number; example 6.5"
+    error_message = "The aviatrix_controller_version value must be number dot number; example 6.5."
   }
 }
 
