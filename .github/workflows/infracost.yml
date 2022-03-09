@@ -24,12 +24,23 @@ jobs:
         api-key: ${{ secrets.INFRACOST_API_KEY }}
 
     - name: Run Infracost
-      run: infracost breakdown --path modules/azure/aviatrix_controller/deployment --format json --out-file=/tmp/infracost.json --terraform-plan-flags "-var-file=default.tfvars"
+      run: infracost breakdown --config-file=infracost.yml --format=json --out-file=/tmp/infracost.json
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+
+    # - name: Run Infracost
+    #   run: infracost breakdown --path modules/azure/aviatrix_controller/deployment --format json --out-file=/tmp/infracost.json --terraform-plan-flags "-var-file=default.tfvars"
+    #   env:
+    #     ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+    #     ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+    #     ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+    #     ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
     - name: Post the comment
       uses: infracost/actions/comment@v1

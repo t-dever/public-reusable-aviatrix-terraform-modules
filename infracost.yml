@@ -3,3 +3,14 @@ version: 0.1
 projects:
   - path: modules/azure/aviatrix_controller/deployment
     terraform_plan_flags: -var-file=default.tfvars
+    env:
+      ARM_CLIENT_ID: ${ARM_CLIENT_ID}
+      ARM_CLIENT_SECRET: ${ARM_CLIENT_SECRET}
+      ARM_SUBSCRIPTION_ID: ${ARM_SUBSCRIPTION_ID}
+      ARM_TENANT_ID: ${ARM_TENANT_ID}
+
+  - path: modules/aws/aviatrix_controller
+    env:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}
