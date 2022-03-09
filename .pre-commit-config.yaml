@@ -46,6 +46,7 @@ repos:
           "--skip-check", "CKV_AZURE_42", # skip "Ensure the key vault is recoverable"
           "--skip-check", "CKV_AZURE_12", # skip "Ensure that Network Security Group Flow Log retention period is 'greater than 90 days'"
           "--skip-check", "CKV_AZURE_35", # skip "Ensure default network access rule for Storage Accounts is set to deny"
+          "--skip-check", "CKV2_AWS_11", # skip "Ensure VPC flow logging is enabled in all VPCs"
         ]
 
       - id: terraform_tfsec

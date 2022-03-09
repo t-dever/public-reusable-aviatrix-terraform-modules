@@ -22,6 +22,10 @@ resource "aws_vpc" "vpc" {
   tags       = { "Name" = var.vpc_name }
 }
 
+resource "aws_default_security_group" "default_security_group" {
+  vpc_id = aws_vpc.vpc.id
+}
+
 resource "aws_subnet" "aviatrix_controller_subnet" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = var.aviatrix_controller_subnet.cidr_block
@@ -103,6 +107,7 @@ resource "aws_security_group" "aviatrix_controller_security_group" {
 }
 
 resource "aws_security_group_rule" "aviatrix_controller_security_group_ingress_rule" {
+  description       = "Allow User Assigned IP addresses inbound to Aviatrix Controller."
   type              = "ingress"
   from_port         = 443
   to_port           = 443
@@ -112,6 +117,7 @@ resource "aws_security_group_rule" "aviatrix_controller_security_group_ingress_r
 }
 
 resource "aws_security_group_rule" "aviatrix_controller_security_group_egress_rule" {
+  description       = "Allow default route outbound to internet."
   type              = "egress"
   from_port         = 0
   to_port           = 0
@@ -142,6 +148,12 @@ resource "aws_instance" "aviatrix_controller_instance" {
   key_name                = aws_key_pair.key_pair.key_name
   iam_instance_profile    = aws_iam_instance_profile.aviatrix_role_ec2_profile.name
   disable_api_termination = false
+  monitoring              = true
+  ebs_optimized           = true
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
 
   network_interface {
     network_interface_id = aws_network_interface.aviatrix_controller_network_interface.id
@@ -149,6 +161,7 @@ resource "aws_instance" "aviatrix_controller_instance" {
   }
 
   root_block_device {
+    encrypted   = true
     volume_size = var.aviatrix_controller_root_volume_size
     volume_type = var.aviatrix_controller_root_volume_type
   }
@@ -212,6 +225,13 @@ resource "aws_instance" "aviatrix_copilot_instance" {
   ami           = local.copilot_ami_id
   instance_type = var.aviatrix_copilot_instance_size
   key_name      = aws_key_pair.key_pair.key_name
+  monitoring    = true
+  ebs_optimized = true
+
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
 
   network_interface {
     network_interface_id = aws_network_interface.aviatrix_copilot_network_interface.id
@@ -219,6 +239,7 @@ resource "aws_instance" "aviatrix_copilot_instance" {
   }
 
   root_block_device {
+    encrypted   = true
     volume_size = var.aviatrix_copilot_root_volume_size
     volume_type = var.aviatrix_copilot_root_volume_type
   }
