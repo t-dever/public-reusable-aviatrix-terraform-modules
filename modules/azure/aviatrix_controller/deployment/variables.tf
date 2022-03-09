@@ -25,6 +25,18 @@ variable "controller_subnet_address_prefix" {
   default     = "10.0.0.0/24"
 }
 
+variable "aviatrix_controller_security_group_name" {
+  description = "The name of the security group for the Aviatrix Controller."
+  type        = string
+  default     = "aviatrix-controller-security-group"
+}
+
+variable "allowed_ips" {
+  description = "List of allowed ips to be added as ingress rule for security group."
+  type        = list(string)
+  default     = []
+}
+
 variable "aviatrix_controller_name" {
   description = "The name of the azure virtual machine resource."
   type        = string

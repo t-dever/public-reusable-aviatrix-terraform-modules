@@ -35,7 +35,7 @@ resource "random_password" "generate_aviatrix_copilot_virtual_machine_admin_secr
 
 resource "azurerm_key_vault_secret" "aviatrix_controller_admin_secret" {
   count        = var.store_credentials_in_key_vault ? 1 : 0
-  name         = "controller-admin-pw"
+  name         = "${var.aviatrix_controller_name}-admin-pw"
   value        = var.aviatrix_controller_password == "" ? random_password.generate_aviatrix_controller_admin_secret[0].result : var.aviatrix_controller_password
   key_vault_id = var.key_vault_id
   content_type = "aviatrix controller admin password username admin"
@@ -43,7 +43,7 @@ resource "azurerm_key_vault_secret" "aviatrix_controller_admin_secret" {
 
 resource "azurerm_key_vault_secret" "aviatrix_controller_virtual_machine_secret" {
   count        = var.store_credentials_in_key_vault && var.aviatrix_controller_public_ssh_key == "" ? 1 : 0
-  name         = "controller-virtual-machine-admin-pw"
+  name         = "${var.aviatrix_controller_name}-virtual-machine-admin-pw"
   value        = var.aviatrix_controller_virtual_machine_admin_password == "" ? random_password.generate_aviatrix_controller_virtual_machine_admin_secret[0].result : var.aviatrix_controller_virtual_machine_admin_password
   key_vault_id = var.key_vault_id
   content_type = "aviatrix virtual machine admin password for username ${var.aviatrix_controller_virtual_machine_admin_username}"
@@ -51,7 +51,7 @@ resource "azurerm_key_vault_secret" "aviatrix_controller_virtual_machine_secret"
 
 resource "azurerm_key_vault_secret" "aviatrix_copilot_virtual_machine_secret" {
   count        = var.store_credentials_in_key_vault && var.aviatrix_copilot_public_ssh_key == "" ? 1 : 0
-  name         = "copilot-virtual-machine-admin-pw"
+  name         = "${var.aviatrix_copilot_name}-virtual-machine-admin-pw"
   value        = var.aviatrix_copilot_virtual_machine_admin_password == "" ? random_password.generate_aviatrix_copilot_virtual_machine_admin_secret[0].result : var.aviatrix_copilot_virtual_machine_admin_password
   key_vault_id = var.key_vault_id
   content_type = "aviatrix virtual machine admin password username ${var.aviatrix_copilot_virtual_machine_admin_username}"
@@ -74,6 +74,81 @@ resource "azurerm_subnet" "azure_controller_subnet" {
   address_prefixes     = [var.controller_subnet_address_prefix]
 }
 
+resource "azurerm_network_security_group" "aviatrix_controller_security_group" {
+  name                = var.aviatrix_controller_security_group_name
+  location            = azurerm_resource_group.resource_group.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+}
+
+resource "azurerm_network_security_rule" "allow_inbound_public_ips_to_controller_nsg" {
+  count                       = length(var.allowed_ips) > 0 ? 1 : 0
+  name                        = "AllowPublicIpsHttpsInboundToController"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefixes     = var.allowed_ips
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.resource_group.name
+  network_security_group_name = azurerm_network_security_group.aviatrix_controller_security_group.name
+}
+
+resource "azurerm_network_security_rule" "allow_controller_inbound_to_copilot" {
+  count                       = var.aviatrix_deploy_copilot ? 1 : 0
+  name                        = "AllowControllerInboundToCopilot"
+  priority                    = 101
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = azurerm_linux_virtual_machine.aviatrix_controller_vm.public_ip_address
+  destination_address_prefix  = azurerm_linux_virtual_machine.aviatrix_copilot_vm[0].private_ip_address
+  resource_group_name         = azurerm_resource_group.resource_group.name
+  network_security_group_name = azurerm_network_security_group.aviatrix_controller_security_group.name
+}
+
+resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
+  count                       = var.aviatrix_deploy_copilot ? 1 : 0
+  name                        = "AllowCoPilotInboundToController"
+  priority                    = 102
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = azurerm_linux_virtual_machine.aviatrix_copilot_vm[0].public_ip_address
+  destination_address_prefix  = azurerm_linux_virtual_machine.aviatrix_controller_vm.private_ip_address
+  resource_group_name         = azurerm_resource_group.resource_group.name
+  network_security_group_name = azurerm_network_security_group.aviatrix_controller_security_group.name
+}
+
+# resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
+#   #checkov:skip=CKV_AZURE_77:Allow all internet UDP to copilot. May restrict this further in later updates.
+#   depends_on = [
+#     data.azurerm_network_security_group.controller_security_group,
+#   ]
+#   count                       = var.copilot_private_ip != "" ? 1 : 0
+#   name                        = "AllowNetflowInboundToCoPilot"
+#   priority                    = 103
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "Udp"
+#   source_port_range           = "*"
+#   destination_port_ranges     = [var.netflow_port, var.rsyslog_port]
+#   source_address_prefix       = "*"
+#   destination_address_prefix  = var.copilot_private_ip
+#   resource_group_name         = var.resource_group_name
+#   network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
+# }
+
+resource "azurerm_subnet_network_security_group_association" "azure_controller_nsg_association" {
+  subnet_id                 = azurerm_subnet.azure_controller_subnet.id
+  network_security_group_id = azurerm_network_security_group.aviatrix_controller_security_group.id
+}
+
 resource "azurerm_public_ip" "azure_controller_public_ip" {
   name                    = "${var.aviatrix_controller_name}-public-ip"
   location                = azurerm_resource_group.resource_group.location
@@ -85,7 +160,7 @@ resource "azurerm_public_ip" "azure_controller_public_ip" {
 
 resource "azurerm_key_vault_secret" "aviatrix_controller_public_ip_secret" {
   count        = var.store_credentials_in_key_vault ? 1 : 0
-  name         = "controller-public-ip"
+  name         = "${var.aviatrix_controller_name}-public-ip"
   value        = azurerm_public_ip.azure_controller_public_ip.ip_address
   key_vault_id = var.key_vault_id
   content_type = "aviatrix controller public ip address"
