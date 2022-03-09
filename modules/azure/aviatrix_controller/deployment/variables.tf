@@ -47,7 +47,11 @@ variable "controller_vm_size" {
 variable "controller_version" {
   description = "The version used for the controller"
   type        = string
-  default     = "UserConnect-6.5.2613"
+  default     = "6.6"
+  validation {
+    condition     = can(regex("^[0-9].[0-9]", var.controller_version))
+    error_message = "The aviatrix_controller_version value must be number dot number; example 6.5."
+  }
 }
 
 variable "controller_customer_id" {

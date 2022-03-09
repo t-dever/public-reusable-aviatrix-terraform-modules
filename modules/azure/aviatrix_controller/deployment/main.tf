@@ -145,26 +145,6 @@ module "aviatrix_controller_initialize" {
   aviatrix_controller_customer_id = var.controller_customer_id
 }
 
-# resource "null_resource" "initial_config" {
-#   depends_on = [
-#     azurerm_linux_virtual_machine.aviatrix_controller_vm
-#   ]
-#   triggers = {
-#     "id" = azurerm_linux_virtual_machine.aviatrix_controller_vm.id
-#   }
-#   provisioner "local-exec" {
-#     command = "python ${path.module}/initial_controller_setup.py"
-#     environment = {
-#       AVIATRIX_CONTROLLER_PUBLIC_IP  = azurerm_public_ip.azure_controller_public_ip.ip_address
-#       AVIATRIX_CONTROLLER_PRIVATE_IP = azurerm_network_interface.azure_controller_nic.private_ip_address
-#       AVIATRIX_CONTROLLER_PASSWORD   = var.controller_virtual_machine_admin_password == "" ? random_password.generate_controller_secret[0].result : var.controller_virtual_machine_admin_password
-#       ADMIN_EMAIL                    = var.admin_email
-#       CONTROLLER_VERSION             = var.controller_version
-#       CUSTOMER_ID                    = var.controller_customer_id
-#     }
-#   }
-# }
-
 # Deploy CoPilot Resources
 
 resource "azurerm_public_ip" "azure_copilot_public_ip" {
