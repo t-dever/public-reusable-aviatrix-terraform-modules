@@ -35,4 +35,4 @@ jobs:
       uses: infracost/actions/comment@v1
       with:
         path: /tmp/infracost.json
-        behavior: update
+        behavior: delete-and-new
