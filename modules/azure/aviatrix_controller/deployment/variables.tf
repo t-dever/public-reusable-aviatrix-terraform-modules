@@ -41,7 +41,7 @@ variable "aviatrix_controller_username" {
 variable "controller_vm_size" {
   description = "The size for the controller VM."
   type        = string
-  default     = "Standard_A4_v2"
+  default     = "Standard_D2as_v4"
 }
 
 variable "controller_version" {
@@ -94,7 +94,7 @@ variable "deploy_copilot" {
 variable "copilot_name" {
   description = "The name of the CoPilot VM."
   type        = string
-  default     = "Standard_D8as_v4"
+  default     = "aviatrix-copilot-vm"
 }
 
 variable "copilot_virtual_machine_admin_username" {
