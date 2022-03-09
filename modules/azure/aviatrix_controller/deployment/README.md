@@ -135,8 +135,8 @@ No modules.
 | <a name="input_controller_version"></a> [controller\_version](#input\_controller\_version) | The version used for the controller | `string` | `"6.6"` | no |
 | <a name="input_controller_virtual_machine_admin_password"></a> [controller\_virtual\_machine\_admin\_password](#input\_controller\_virtual\_machine\_admin\_password) | Admin Password for the controller virtual machine. | `string` | `""` | no |
 | <a name="input_controller_virtual_machine_admin_username"></a> [controller\_virtual\_machine\_admin\_username](#input\_controller\_virtual\_machine\_admin\_username) | Admin Username for the controller virtual machine. | `string` | `"aviatrix"` | no |
-| <a name="input_controller_vm_size"></a> [controller\_vm\_size](#input\_controller\_vm\_size) | The size for the controller VM. | `string` | `"Standard_A4_v2"` | no |
-| <a name="input_copilot_name"></a> [copilot\_name](#input\_copilot\_name) | The name of the CoPilot VM. | `string` | `"Standard_D8as_v4"` | no |
+| <a name="input_controller_vm_size"></a> [controller\_vm\_size](#input\_controller\_vm\_size) | The size for the controller VM. | `string` | `"Standard_D2as_v4"` | no |
+| <a name="input_copilot_name"></a> [copilot\_name](#input\_copilot\_name) | The name of the CoPilot VM. | `string` | `"aviatrix-copilot-vm"` | no |
 | <a name="input_copilot_public_ssh_key"></a> [copilot\_public\_ssh\_key](#input\_copilot\_public\_ssh\_key) | Use a public SSH key for local. authentication to Aviatrix Copilot. | `string` | `""` | no |
 | <a name="input_copilot_virtual_machine_admin_password"></a> [copilot\_virtual\_machine\_admin\_password](#input\_copilot\_virtual\_machine\_admin\_password) | Admin Password for the copilot virtual machine. | `string` | `""` | no |
 | <a name="input_copilot_virtual_machine_admin_username"></a> [copilot\_virtual\_machine\_admin\_username](#input\_copilot\_virtual\_machine\_admin\_username) | Admin Username for the copilot virtual machine. | `string` | `"aviatrix"` | no |
