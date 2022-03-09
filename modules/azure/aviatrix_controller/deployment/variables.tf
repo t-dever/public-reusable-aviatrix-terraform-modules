@@ -38,85 +38,92 @@ variable "aviatrix_controller_username" {
   default     = "admin"
 }
 
-variable "controller_vm_size" {
-  description = "The size for the controller VM."
+variable "aviatrix_controller_password" {
+  description = "The password to be applied to the aviatrix controller admin account."
+  type        = string
+  sensitive   = true
+  default = ""
+}
+
+variable "aviatrix_controller_instance_size" {
+  description = "Aviatrix Controller instance size."
   type        = string
   default     = "Standard_D2as_v4"
 }
 
-variable "controller_version" {
+variable "aviatrix_controller_version" {
   description = "The version used for the controller"
   type        = string
   default     = "6.6"
   validation {
-    condition     = can(regex("^[0-9].[0-9]", var.controller_version))
+    condition     = can(regex("^[0-9].[0-9]", var.aviatrix_controller_version))
     error_message = "The aviatrix_controller_version value must be number dot number; example 6.5."
   }
 }
 
-variable "controller_customer_id" {
+variable "aviatrix_controller_customer_id" {
   description = "The customer id for the aviatrix controller"
   type        = string
   sensitive   = true
 }
 
-variable "controller_public_ssh_key" {
+variable "aviatrix_controller_public_ssh_key" {
   type        = string
   description = "Use a public SSH key for authentication to Aviatrix Controller"
   default     = ""
 }
 
-variable "controller_virtual_machine_admin_username" {
+variable "aviatrix_controller_virtual_machine_admin_username" {
   type        = string
   description = "Admin Username for the controller virtual machine."
   default     = "aviatrix"
 }
 
-variable "controller_virtual_machine_admin_password" {
+variable "aviatrix_controller_virtual_machine_admin_password" {
   type        = string
   description = "Admin Password for the controller virtual machine."
   default     = ""
   sensitive   = true
 }
 
-variable "admin_email" {
+variable "aviatrix_controller_admin_email" {
   description = "The email address used for the aviatrix controller registration."
   type        = string
   sensitive   = true
 }
 
-variable "deploy_copilot" {
+variable "aviatrix_deploy_copilot" {
   description = "Deploy Aviatrix CoPilot?"
   type        = bool
   default     = false
 }
 
-variable "copilot_name" {
+variable "aviatrix_copilot_name" {
   description = "The name of the CoPilot VM."
   type        = string
   default     = "aviatrix-copilot-vm"
 }
 
-variable "copilot_virtual_machine_admin_username" {
+variable "aviatrix_copilot_virtual_machine_admin_username" {
   type        = string
   description = "Admin Username for the copilot virtual machine."
   default     = "aviatrix"
 }
 
-variable "copilot_virtual_machine_admin_password" {
+variable "aviatrix_copilot_virtual_machine_admin_password" {
   type        = string
   description = "Admin Password for the copilot virtual machine."
   default     = ""
   sensitive   = true
 }
 
-variable "copilot_public_ssh_key" {
+variable "aviatrix_copilot_public_ssh_key" {
   type        = string
   description = "Use a public SSH key for local. authentication to Aviatrix Copilot."
   default     = ""
 }
 
-variable "copilot_vm_size" {
+variable "aviatrix_copilot_instance_size" {
   description = "The size for the CoPilot VM."
   type        = string
   default     = "Standard_D8as_v4"
