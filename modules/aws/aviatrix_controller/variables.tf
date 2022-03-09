@@ -23,36 +23,36 @@ variable "vpc_address_space" {
 
 variable "aviatrix_controller_subnet" {
   description = "The aviatrix controller subnet to be created."
-  type        = object({
-    name       = string,
-    cidr_block = string,
+  type = object({
+    name              = string,
+    cidr_block        = string,
     availability_zone = string
   })
   default = {
-    name = "aviatrix-controller",
-    cidr_block = "10.0.0.0/26"
+    name              = "aviatrix-controller",
+    cidr_block        = "10.0.0.0/26"
     availability_zone = "us-east-1a"
   }
 }
 
 variable "aviatrix_copilot_subnet" {
   description = "The aviatrix copilot subnet to be created."
-  type        = object({
-    name       = string,
-    cidr_block = string,
+  type = object({
+    name              = string,
+    cidr_block        = string,
     availability_zone = string
   })
   default = {
-    name = "aviatrix-copilot",
-    cidr_block = "10.0.0.64/26"
+    name              = "aviatrix-copilot",
+    cidr_block        = "10.0.0.64/26"
     availability_zone = "us-east-1a"
   }
 }
 
 variable "additional_subnets" {
   description = "The subnets to be created."
-  type        = map(object({
-    cidr_block = string,
+  type = map(object({
+    cidr_block        = string,
     availability_zone = string
   }))
   default = {}
@@ -125,14 +125,14 @@ variable "aviatrix_controller_customer_id" {
 
 variable "aviatrix_aws_primary_account_name" {
   description = "The primary account name to be added to the aviatrix access accounts."
-  type = string
-  default = "aviatrix-aws-primary-account"
+  type        = string
+  default     = "aviatrix-aws-primary-account"
 }
 
 variable "aviatrix_copilot_name" {
   description = "Name of copilot that will be launched."
   type        = string
-  default = "aviatrix-copilot"
+  default     = "aviatrix-copilot"
 }
 
 variable "aviatrix_copilot_instance_size" {
@@ -169,8 +169,8 @@ variable "aviatrix_copilot_additional_volumes" {
 
 variable "tag_prefix" {
   description = "The prefix of tagged resource names."
-  type = string
-  default = "aviatrix"
+  type        = string
+  default     = "aviatrix"
 }
 
 variable "tags" {
