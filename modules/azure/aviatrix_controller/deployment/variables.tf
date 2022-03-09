@@ -54,7 +54,7 @@ variable "aviatrix_controller_password" {
   description = "The password to be applied to the aviatrix controller admin account."
   type        = string
   sensitive   = true
-  default = ""
+  default     = ""
 }
 
 variable "aviatrix_controller_instance_size" {
