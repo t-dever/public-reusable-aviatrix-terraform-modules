@@ -13,12 +13,13 @@
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 4.4.0 |
 | <a name="provider_http"></a> [http](#provider\_http) | n/a |
-| <a name="provider_null"></a> [null](#provider\_null) | 3.1.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
 
 ## Modules
 
-No modules.
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_aviatrix_controller_initialize"></a> [aviatrix\_controller\_initialize](#module\_aviatrix\_controller\_initialize) | git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize | features/aviatrix/controllerInitialize |
 
 ## Resources
 
@@ -56,7 +57,6 @@ No modules.
 | [aws_subnet.aviatrix_copilot_subnet](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/subnet) | resource |
 | [aws_volume_attachment.ebs_att](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/volume_attachment) | resource |
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/vpc) | resource |
-| [null_resource.initial_config](https://registry.terraform.io/providers/hashicorp/null/3.1.0/docs/resources/resource) | resource |
 | [random_password.aviatrix_controller_password](https://registry.terraform.io/providers/hashicorp/random/3.1.0/docs/resources/password) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/data-sources/caller_identity) | data source |
 | [aws_network_interface.aviatrix_controller_network_interface](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/data-sources/network_interface) | data source |
