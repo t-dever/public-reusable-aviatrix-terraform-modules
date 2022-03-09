@@ -185,26 +185,19 @@ data "aws_network_interface" "aviatrix_controller_network_interface" {
   id = aws_network_interface.aviatrix_controller_network_interface.id
 }
 
-resource "null_resource" "initial_config" {
+module "aviatrix_controller_initialize" {
   depends_on = [
     aws_instance.aviatrix_controller_instance
   ]
-  triggers = {
-    "id" = aws_instance.aviatrix_controller_instance.id
-  }
-  provisioner "local-exec" {
-    command = "python3 ${path.module}/initial_controller_setup.py"
-    environment = {
-      AVIATRIX_CONTROLLER_PUBLIC_IP  = aws_eip.aviatrix_controller_eip.public_ip
-      AVIATRIX_CONTROLLER_PRIVATE_IP = data.aws_network_interface.aviatrix_controller_network_interface.private_ip
-      AVIATRIX_CONTROLLER_PASSWORD   = random_password.aviatrix_controller_password.result
-      ADMIN_EMAIL                    = var.aviatrix_controller_admin_email
-      CONTROLLER_VERSION             = var.aviatrix_controller_version
-      CUSTOMER_ID                    = var.aviatrix_controller_customer_id
-      AWS_PRIMARY_ACCOUNT_NAME       = var.aviatrix_aws_primary_account_name
-      AWS_PRIMARY_ACCOUNT_NUMBER     = data.aws_caller_identity.current.account_id
-    }
-  }
+  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=features/aviatrix/controllerInitialize"
+  aviatrix_controller_public_ip       = aws_eip.aviatrix_controller_eip.public_ip
+  aviatrix_controller_private_ip      = data.aws_network_interface.aviatrix_controller_network_interface.private_ip
+  aviatrix_controller_password        = random_password.aviatrix_controller_password.result
+  aviatrix_controller_admin_email     = var.aviatrix_controller_admin_email
+  aviatrix_controller_version         = var.aviatrix_controller_version
+  aviatrix_controller_customer_id     = var.aviatrix_controller_customer_id
+  aviatrix_aws_primary_account_name   = var.aviatrix_aws_primary_account_name
+  aviatrix_aws_primary_account_number = data.aws_caller_identity.current.account_id
 }
 
 # Aviatrix Co-Pilot Deployment
