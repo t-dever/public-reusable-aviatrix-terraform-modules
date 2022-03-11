@@ -81,7 +81,7 @@ resource "aws_key_pair" "key_pair" {
   tags       = { "Name" = "${var.tag_prefix}-key-pair" }
 }
 
-# Aviatrix Controller Deployment
+# Generates random password Aviatrix Controller admin credentials
 resource "random_password" "aviatrix_controller_password" {
   length           = 24
   special          = true
@@ -92,6 +92,7 @@ resource "random_password" "aviatrix_controller_password" {
   override_special = "_@$*()!"
 }
 
+# Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
 resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
   name        = "/aviatrix/controller/password"
   description = "The local password for Aviatrix Controller."
@@ -100,13 +101,15 @@ resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
   tags        = { "Name" = "${var.tag_prefix}-controller-password" }
 }
 
+# Creates Aviatrix Controller Security Group
 resource "aws_security_group" "aviatrix_controller_security_group" {
   name        = var.aviatrix_controller_security_group_name
   description = "Aviatrix - Controller Security Group"
   vpc_id      = aws_vpc.vpc.id
-  tags        = { "Name" = "${var.tag_prefix}-controller-security-group" }
+  tags        = { "Name" = var.aviatrix_controller_security_group_name }
 }
 
+# Creates Ingress Rule for allowed user public IP addresses for the Aviatrix Controller
 resource "aws_security_group_rule" "aviatrix_controller_security_group_ingress_rule" {
   description       = "Allow User Assigned IP addresses inbound to Aviatrix Controller."
   type              = "ingress"
@@ -117,6 +120,7 @@ resource "aws_security_group_rule" "aviatrix_controller_security_group_ingress_r
   security_group_id = aws_security_group.aviatrix_controller_security_group.id
 }
 
+# Creates Egress Rule for internet traffic for the Aviatrix Controller
 resource "aws_security_group_rule" "aviatrix_controller_security_group_egress_rule" {
   description       = "Allow default route outbound to internet."
   type              = "egress"
@@ -127,22 +131,25 @@ resource "aws_security_group_rule" "aviatrix_controller_security_group_egress_ru
   security_group_id = aws_security_group.aviatrix_controller_security_group.id
 }
 
+# Creates Public IP Address for Aviatrix Controller
 resource "aws_eip" "aviatrix_controller_eip" {
   vpc  = true
   tags = { "Name" = "${var.tag_prefix}-controller-eip" }
 }
 
+# Creates Network Interface for Aviatrix Controller
 resource "aws_network_interface" "aviatrix_controller_network_interface" {
   subnet_id       = aws_subnet.aviatrix_controller_subnet.id
   security_groups = [aws_security_group.aviatrix_controller_security_group.id]
-
-  tags = { "Name" = "${var.tag_prefix}-controller-eni" }
+  private_ip      = local.controller_private_ip
+  tags            = { "Name" = "${var.tag_prefix}-controller-eni" }
 
   lifecycle {
     ignore_changes = [tags, security_groups, subnet_id]
   }
 }
 
+# Creates Aviatrix Controller Instance
 resource "aws_instance" "aviatrix_controller_instance" {
   ami                     = local.controller_ami_id
   instance_type           = var.aviatrix_controller_instance_size
@@ -176,13 +183,10 @@ resource "aws_instance" "aviatrix_controller_instance" {
   }
 }
 
+# Associates Public IP Address to Aviatrix Controller Instance.
 resource "aws_eip_association" "aviatrix_controller_eip_assoc" {
   instance_id   = aws_instance.aviatrix_controller_instance.id
   allocation_id = aws_eip.aviatrix_controller_eip.id
-}
-
-data "aws_network_interface" "aviatrix_controller_network_interface" {
-  id = aws_network_interface.aviatrix_controller_network_interface.id
 }
 
 module "aviatrix_controller_initialize" {
@@ -191,7 +195,7 @@ module "aviatrix_controller_initialize" {
   ]
   source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=main"
   aviatrix_controller_public_ip       = aws_eip.aviatrix_controller_eip.public_ip
-  aviatrix_controller_private_ip      = data.aws_network_interface.aviatrix_controller_network_interface.private_ip
+  aviatrix_controller_private_ip      = local.controller_private_ip
   aviatrix_controller_password        = random_password.aviatrix_controller_password.result
   aviatrix_controller_admin_email     = var.aviatrix_controller_admin_email
   aviatrix_controller_version         = var.aviatrix_controller_version
@@ -200,21 +204,24 @@ module "aviatrix_controller_initialize" {
   aviatrix_aws_primary_account_number = data.aws_caller_identity.current.account_id
 }
 
-# Aviatrix Co-Pilot Deployment
+# Creates CoPilot Public IP Address
 resource "aws_eip" "aviatrix_copilot_eip" {
   vpc  = true
   tags = { "Name" = "${var.tag_prefix}-copilot-eip" }
 }
 
+# Creates CoPilot Network Interface
 resource "aws_network_interface" "aviatrix_copilot_network_interface" {
   subnet_id       = aws_subnet.aviatrix_copilot_subnet.id
   security_groups = [aws_security_group.aviatrix_controller_security_group.id]
+  private_ip      = local.controller_private_ip
   tags            = { "Name" = "${var.tag_prefix}-copilot-eni" }
   lifecycle {
     ignore_changes = [tags, security_groups, subnet_id]
   }
 }
 
+# Creates CoPilot Instance
 resource "aws_instance" "aviatrix_copilot_instance" {
   ami           = local.copilot_ami_id
   instance_type = var.aviatrix_copilot_instance_size
@@ -241,14 +248,25 @@ resource "aws_instance" "aviatrix_copilot_instance" {
   tags = { "Name" = "${var.tag_prefix}-${var.aviatrix_copilot_name}" }
 }
 
+# Associates Public IP Address to Aviatrix CoPilot Instance.
 resource "aws_eip_association" "aviatrix_copilot_eip_assoc" {
   instance_id   = aws_instance.aviatrix_copilot_instance.id
   allocation_id = aws_eip.aviatrix_copilot_eip.id
 }
 
-resource "aws_volume_attachment" "ebs_att" {
+# Attaches extra volumes to CoPilot Instance
+resource "aws_volume_attachment" "aviatrix_copilot_ebs_attach" {
   for_each    = var.aviatrix_copilot_additional_volumes
   device_name = each.value.device_name
   volume_id   = each.value.volume_id
   instance_id = aws_instance.aviatrix_copilot_instance.id
+}
+
+
+# Creates Aviatrix Copilot Security Group
+resource "aws_security_group" "aviatrix_copilot_security_group" {
+  name        = var.aviatrix_copilot_security_group_name
+  description = "Aviatrix - CoPilot Security Group"
+  vpc_id      = aws_vpc.vpc.id
+  tags        = { "Name" = var.aviatrix_copilot_security_group_name }
 }

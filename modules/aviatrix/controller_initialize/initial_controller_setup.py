@@ -294,6 +294,7 @@ def main():
 
     if os.getenv('AWS_PRIMARY_ACCOUNT_NAME'):
         controller.primary_aws_account(os.getenv('AWS_PRIMARY_ACCOUNT_NAME'))
+    if os.getenv('ENABLE_SECURITY_GROUP_MANAGEMENT'):
         controller.enable_security_group_management()
 
 

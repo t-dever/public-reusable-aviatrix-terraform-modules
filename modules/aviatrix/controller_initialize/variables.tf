@@ -44,3 +44,9 @@ variable "aviatrix_aws_primary_account_number" {
   type        = string
   default     = ""
 }
+
+variable "enable_security_group_management" {
+  description = "Enables Auto Security Group Management within the Aviatrix Controller. A primary access account is required for implementation."
+  type        = bool
+  default     = true
+}

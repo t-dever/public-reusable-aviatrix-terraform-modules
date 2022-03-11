@@ -82,6 +82,12 @@ variable "aviatrix_controller_security_group_name" {
   default     = "aviatrix-controller-security-group"
 }
 
+variable "aviatrix_copilot_security_group_name" {
+  description = "The name of the security group for the Aviatrix CoPilot."
+  type        = string
+  default     = "aviatrix-copilot-security-group"
+}
+
 variable "allowed_ips" {
   description = "List of allowed ips to be added as ingress rule for security group."
   type        = list(string)
@@ -206,4 +212,6 @@ locals {
   controller_ami_id = local.controller_images[data.aws_region.current.name]
   copilot_images    = jsondecode(data.http.aviatrix_copilot_iam_id.body).Copilot
   copilot_ami_id    = local.copilot_images[data.aws_region.current.name]
+  controller_private_ip = cidrhost(var.aviatrix_controller_subnet.cidr_block, 4)
+  copilot_private_ip = cidrhost(var.aviatrix_copilot_subnet.cidr_block, 4)
 }
