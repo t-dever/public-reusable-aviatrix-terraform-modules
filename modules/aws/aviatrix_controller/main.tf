@@ -109,7 +109,7 @@ resource "aws_security_group" "aviatrix_controller_security_group" {
   tags        = { "Name" = var.aviatrix_controller_security_group_name }
 }
 
-# Creates Ingress Rule for allowed user public IP addresses for the Aviatrix Controller
+# Creates Ingress Rule to allow user public IP addresses for the Aviatrix Controller
 resource "aws_security_group_rule" "aviatrix_controller_security_group_ingress_rule" {
   description       = "Allow User Assigned IP addresses inbound to Aviatrix Controller."
   type              = "ingress"
@@ -120,7 +120,7 @@ resource "aws_security_group_rule" "aviatrix_controller_security_group_ingress_r
   security_group_id = aws_security_group.aviatrix_controller_security_group.id
 }
 
-# Creates Egress Rule for internet traffic for the Aviatrix Controller
+# Creates Egress Rule to allow internet traffic for the Aviatrix Controller
 resource "aws_security_group_rule" "aviatrix_controller_security_group_egress_rule" {
   description       = "Allow default route outbound to internet."
   type              = "egress"
@@ -128,6 +128,17 @@ resource "aws_security_group_rule" "aviatrix_controller_security_group_egress_ru
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.aviatrix_controller_security_group.id
+}
+
+# Creates Ingress Rule to allow CoPilot access to the Aviatrix Controller
+resource "aws_security_group_rule" "aviatrix_controller_security_group_ingress_allow_copilot" {
+  description       = "Allow CoPilot inbound to Aviatrix Controller."
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["${local.copilot_private_ip}/32"]
   security_group_id = aws_security_group.aviatrix_controller_security_group.id
 }
 
@@ -141,7 +152,7 @@ resource "aws_eip" "aviatrix_controller_eip" {
 resource "aws_network_interface" "aviatrix_controller_network_interface" {
   subnet_id       = aws_subnet.aviatrix_controller_subnet.id
   security_groups = [aws_security_group.aviatrix_controller_security_group.id]
-  private_ip      = local.controller_private_ip
+  private_ips     = [local.controller_private_ip]
   tags            = { "Name" = "${var.tag_prefix}-controller-eni" }
 
   lifecycle {
@@ -174,7 +185,7 @@ resource "aws_instance" "aviatrix_controller_instance" {
     volume_type = var.aviatrix_controller_root_volume_type
   }
 
-  tags = { "Name" = "${var.tag_prefix}-${var.aviatrix_controller_name}" }
+  tags = { "Name" = var.aviatrix_controller_name }
 
   lifecycle {
     ignore_changes = [
@@ -189,11 +200,12 @@ resource "aws_eip_association" "aviatrix_controller_eip_assoc" {
   allocation_id = aws_eip.aviatrix_controller_eip.id
 }
 
+# Python Script to Bootstrap the Aviatrix Controller by adding Admin Email, License, Reset Password, Upgrade Controller.
 module "aviatrix_controller_initialize" {
   depends_on = [
     aws_instance.aviatrix_controller_instance
   ]
-  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=main"
+  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=improveAwsController"
   aviatrix_controller_public_ip       = aws_eip.aviatrix_controller_eip.public_ip
   aviatrix_controller_private_ip      = local.controller_private_ip
   aviatrix_controller_password        = random_password.aviatrix_controller_password.result
@@ -202,6 +214,7 @@ module "aviatrix_controller_initialize" {
   aviatrix_controller_customer_id     = var.aviatrix_controller_customer_id
   aviatrix_aws_primary_account_name   = var.aviatrix_aws_primary_account_name
   aviatrix_aws_primary_account_number = data.aws_caller_identity.current.account_id
+  enable_security_group_management    = false
 }
 
 # Creates CoPilot Public IP Address
@@ -210,11 +223,72 @@ resource "aws_eip" "aviatrix_copilot_eip" {
   tags = { "Name" = "${var.tag_prefix}-copilot-eip" }
 }
 
+data "external" "get_aviatrix_gateway_cidrs" {
+  program = ["python3", "${path.module}/get_security_group_rules.py"]
+  query = {
+    region = "${var.region}"
+  }
+}
+
+# Creates Aviatrix Copilot Security Group
+resource "aws_security_group" "aviatrix_copilot_security_group" {
+  name        = var.aviatrix_copilot_security_group_name
+  description = "Aviatrix - CoPilot Security Group"
+  vpc_id      = aws_vpc.vpc.id
+  tags        = { "Name" = var.aviatrix_copilot_security_group_name }
+}
+
+# Creates Egress Rule to allow internet traffic for the Aviatrix CoPilot
+resource "aws_security_group_rule" "aviatrix_copilot_security_group_egress_rule" {
+  description       = "Allow default route outbound to internet."
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.aviatrix_copilot_security_group.id
+}
+
+# Creates Ingress Rule to allow user public IP addresses for the Aviatrix CoPilot
+resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_rule" {
+  description       = "Allow User Assigned IP addresses inbound to Aviatrix CoPilot."
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = var.allowed_ips
+  security_group_id = aws_security_group.aviatrix_copilot_security_group.id
+}
+
+# Creates Ingress Rule to allow Aviatrix Gateways Syslog Access to CoPilot
+resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gateways_syslog_rule" {
+  count             = length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) > 0 ? 1 : 0
+  description       = "Allow Gateways access to send Rsyslog to Aviatrix CoPilot."
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 5000
+  protocol          = "udp"
+  cidr_blocks       = jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)
+  security_group_id = aws_security_group.aviatrix_copilot_security_group.id
+}
+
+# Creates Ingress Rule to allow Aviatrix Gateways Flow Logs Access to CoPilot
+resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gateways_flow_logs_rule" {
+  count             = length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) > 0 ? 1 : 0
+  description       = "Allow Gateways access to send Flow Logs to Aviatrix CoPilot."
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 31283
+  protocol          = "udp"
+  cidr_blocks       = jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)
+  security_group_id = aws_security_group.aviatrix_copilot_security_group.id
+}
+
 # Creates CoPilot Network Interface
 resource "aws_network_interface" "aviatrix_copilot_network_interface" {
   subnet_id       = aws_subnet.aviatrix_copilot_subnet.id
-  security_groups = [aws_security_group.aviatrix_controller_security_group.id]
-  private_ip      = local.controller_private_ip
+  security_groups = [aws_security_group.aviatrix_copilot_security_group.id]
+  private_ips     = [local.copilot_private_ip]
   tags            = { "Name" = "${var.tag_prefix}-copilot-eni" }
   lifecycle {
     ignore_changes = [tags, security_groups, subnet_id]
@@ -245,7 +319,7 @@ resource "aws_instance" "aviatrix_copilot_instance" {
     volume_type = var.aviatrix_copilot_root_volume_type
   }
 
-  tags = { "Name" = "${var.tag_prefix}-${var.aviatrix_copilot_name}" }
+  tags = { "Name" = var.aviatrix_copilot_name }
 }
 
 # Associates Public IP Address to Aviatrix CoPilot Instance.
@@ -262,11 +336,3 @@ resource "aws_volume_attachment" "aviatrix_copilot_ebs_attach" {
   instance_id = aws_instance.aviatrix_copilot_instance.id
 }
 
-
-# Creates Aviatrix Copilot Security Group
-resource "aws_security_group" "aviatrix_copilot_security_group" {
-  name        = var.aviatrix_copilot_security_group_name
-  description = "Aviatrix - CoPilot Security Group"
-  vpc_id      = aws_vpc.vpc.id
-  tags        = { "Name" = var.aviatrix_copilot_security_group_name }
-}
