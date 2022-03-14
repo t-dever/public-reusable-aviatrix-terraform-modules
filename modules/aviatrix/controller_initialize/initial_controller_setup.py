@@ -269,10 +269,10 @@ class ControllerSetup():
             }
             # Adding Future Support for this Option
             if os.getenv('AWS_ROLE_APP_ARN'):
-                payload['aws_role_arn'] = os.getenv('AWS_ROLE_ARN')
+                payload['aws_role_arn'] = os.getenv('AWS_ROLE_APP_ARN')
             # Adding Future Support for this Option
             if os.getenv('AWS_ROLE_EC2_ARN'):
-                payload['aws_role_ec2'] = os.getenv('AWS_ROLE_EC2')
+                payload['aws_role_ec2'] = os.getenv('AWS_ROLE_EC2_ARN')
             self._format_response(
                 requests.post(self.url, data=payload, verify=False))
             print(f"Successfully added {primary_account_name}.")

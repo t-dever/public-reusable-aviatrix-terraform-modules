@@ -108,6 +108,12 @@ variable "aviatrix_copilot_security_group_name" {
   default     = "aviatrix-copilot-security-group"
 }
 
+variable "enable_auto_aviatrix_copilot_security_group" {
+  description = "The name of the security group for the Aviatrix CoPilot."
+  type        = bool
+  default     = false
+}
+
 variable "allowed_ips" {
   description = "List of allowed ips to be added as ingress rule for security group."
   type        = list(string)

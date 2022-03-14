@@ -214,6 +214,8 @@ module "aviatrix_controller_initialize" {
   aviatrix_controller_customer_id     = var.aviatrix_controller_customer_id
   aviatrix_aws_primary_account_name   = var.aviatrix_aws_primary_account_name
   aviatrix_aws_primary_account_number = data.aws_caller_identity.current.account_id
+  aviatrix_aws_role_app_arn           = aws_iam_role.aviatrix_role_app.arn
+  aviatrix_aws_role_ec2_arn           = aws_iam_role.aviatrix_role_ec2.arn
   enable_security_group_management    = false
 }
 
@@ -262,7 +264,7 @@ resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_rule
 
 # Creates Ingress Rule to allow Aviatrix Gateways Syslog Access to CoPilot
 resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gateways_syslog_rule" {
-  count             = length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) > 0 ? 1 : 0
+  count             = var.enable_auto_aviatrix_copilot_security_group && length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) > 0 ? 1 : 0
   description       = "Allow Gateways access to send Rsyslog to Aviatrix CoPilot."
   type              = "ingress"
   from_port         = 0
@@ -274,7 +276,7 @@ resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gate
 
 # Creates Ingress Rule to allow Aviatrix Gateways Flow Logs Access to CoPilot
 resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gateways_flow_logs_rule" {
-  count             = length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) > 0 ? 1 : 0
+  count             = var.enable_auto_aviatrix_copilot_security_group && length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) > 0 ? 1 : 0
   description       = "Allow Gateways access to send Flow Logs to Aviatrix CoPilot."
   type              = "ingress"
   from_port         = 0
