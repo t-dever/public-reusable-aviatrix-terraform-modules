@@ -45,6 +45,18 @@ variable "aviatrix_aws_primary_account_number" {
   default     = ""
 }
 
+variable "aviatrix_aws_role_app_arn" {
+  description = "The AWS role app ARN for the primary AWS account."
+  type        = string
+  default     = ""
+}
+
+variable "aviatrix_aws_role_ec2_arn" {
+  description = "The AWS role ec2 ARN for the primary AWS account."
+  type        = string
+  default     = ""
+}
+
 variable "enable_security_group_management" {
   description = "Enables Auto Security Group Management within the Aviatrix Controller. A primary access account is required for implementation."
   type        = bool

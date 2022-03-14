@@ -10,6 +10,8 @@ resource "null_resource" "initial_config" {
       CUSTOMER_ID                      = var.aviatrix_controller_customer_id
       AWS_PRIMARY_ACCOUNT_NAME         = var.aviatrix_aws_primary_account_name
       AWS_PRIMARY_ACCOUNT_NUMBER       = var.aviatrix_aws_primary_account_number
+      AWS_ROLE_APP_ARN                 = var.aviatrix_aws_role_app_arn
+      AWS_ROLE_EC2_ARN                 = var.aviatrix_aws_role_ec2_arn
       ENABLE_SECURITY_GROUP_MANAGEMENT = var.enable_security_group_management
     }
   }
