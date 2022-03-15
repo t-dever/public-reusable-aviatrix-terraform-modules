@@ -217,6 +217,7 @@ module "aviatrix_controller_initialize" {
   aviatrix_aws_role_app_arn           = aws_iam_role.aviatrix_role_app.arn
   aviatrix_aws_role_ec2_arn           = aws_iam_role.aviatrix_role_ec2.arn
   enable_security_group_management    = false
+  aws_gov                             = local.is_aws_gov
 }
 
 # Creates CoPilot Public IP Address
@@ -226,6 +227,9 @@ resource "aws_eip" "aviatrix_copilot_eip" {
 }
 
 data "external" "get_aviatrix_gateway_cidrs" {
+  depends_on = [
+    module.aviatrix_controller_initialize
+  ]
   program = ["python3", "${path.module}/get_security_group_rules.py"]
   query = {
     region = "${var.region}"
@@ -264,25 +268,25 @@ resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_rule
 
 # Creates Ingress Rule to allow Aviatrix Gateways Syslog Access to CoPilot
 resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gateways_syslog_rule" {
-  count             = var.enable_auto_aviatrix_copilot_security_group && length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) > 0 ? 1 : 0
+  count             = var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
   description       = "Allow Gateways access to send Rsyslog to Aviatrix CoPilot."
   type              = "ingress"
   from_port         = 0
   to_port           = 5000
   protocol          = "udp"
-  cidr_blocks       = jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)
+  cidr_blocks       = length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) == 0 ? [] : jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)
   security_group_id = aws_security_group.aviatrix_copilot_security_group.id
 }
 
 # Creates Ingress Rule to allow Aviatrix Gateways Flow Logs Access to CoPilot
 resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gateways_flow_logs_rule" {
-  count             = var.enable_auto_aviatrix_copilot_security_group && length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) > 0 ? 1 : 0
+  count             = var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
   description       = "Allow Gateways access to send Flow Logs to Aviatrix CoPilot."
   type              = "ingress"
   from_port         = 0
   to_port           = 31283
   protocol          = "udp"
-  cidr_blocks       = jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)
+  cidr_blocks       = length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) == 0 ? [] : jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)
   security_group_id = aws_security_group.aviatrix_copilot_security_group.id
 }
 

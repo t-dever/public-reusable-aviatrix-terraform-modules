@@ -240,4 +240,5 @@ locals {
   copilot_ami_id        = local.copilot_images[data.aws_region.current.name]
   controller_private_ip = cidrhost(var.aviatrix_controller_subnet.cidr_block, 4)
   copilot_private_ip    = cidrhost(var.aviatrix_copilot_subnet.cidr_block, 4)
+  is_aws_gov               = length(regexall("/gov/", var.region)) > 0 ? true : false
 }

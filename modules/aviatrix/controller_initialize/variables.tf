@@ -33,6 +33,12 @@ variable "aviatrix_controller_customer_id" {
   type        = string
 }
 
+variable "aws_gov" {
+  description = "If using AWS Gov set to true."
+  type = bool
+  default = false
+}
+
 variable "aviatrix_aws_primary_account_name" {
   description = "The AWS Primary Account name to be added to the Aviatrix Controller Access Accounts."
   type        = string

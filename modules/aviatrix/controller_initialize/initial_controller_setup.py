@@ -20,6 +20,10 @@ class ControllerSetup():
         self.controller_new_password = os.getenv(
             'AVIATRIX_CONTROLLER_PASSWORD')
         self.primary_access_account = ""
+        self.aws_primary_account_number = os.getenv('AWS_PRIMARY_ACCOUNT_NUMBER')
+        self.is_aws_gov = os.getenv('AWS_GOV')
+        self.aws_role_app_arn = os.getenv('AWS_ROLE_APP_ARN')
+        self.aws_role_ec2_arn = os.getenv('AWS_ROLE_EC2_ARN')
 
     def _check_environment_vars(self):
         print("Checking required environment variables.")
@@ -249,7 +253,7 @@ class ControllerSetup():
         sys.exit(1)
 
     def primary_aws_account(self, primary_account_name):
-        if not os.getenv('AWS_PRIMARY_ACCOUNT_NUMBER'):
+        if not self.aws_primary_account_number:
             raise Exception("Environment variable "
                             "'AWS_PRIMARY_ACCOUNT_NUMBER' must be defined")
         self.primary_access_account = primary_account_name
@@ -262,17 +266,20 @@ class ControllerSetup():
                 'action': 'setup_account_profile',
                 'CID': self._get_cid(),
                 'account_name': primary_account_name,
-                'cloud_type': 1,
-                'account_email': self.admin_email,
-                'aws_account_number': os.getenv('AWS_PRIMARY_ACCOUNT_NUMBER'),
-                'aws_iam': 'true'
+                'account_email': self.admin_email
             }
-            # Adding Future Support for this Option
-            if os.getenv('AWS_ROLE_APP_ARN'):
-                payload['aws_role_arn'] = os.getenv('AWS_ROLE_APP_ARN')
-            # Adding Future Support for this Option
-            if os.getenv('AWS_ROLE_EC2_ARN'):
-                payload['aws_role_ec2'] = os.getenv('AWS_ROLE_EC2_ARN')
+            if self.is_aws_gov:
+                payload['cloud_type'] = 256
+                payload['awsgov_account_number'] = self.aws_primary_account_number
+                payload['awsgov_iam'] = 'true'
+                payload['awsgov_role_arn'] = self.aws_role_app_arn
+                payload['awsgov_role_ec2'] = self.aws_role_ec2_arn
+            else:
+                payload['cloud_type'] = 1
+                payload['aws_account_number'] = self.aws_primary_account_number
+                payload['aws_iam'] = 'true'
+                payload['aws_role_arn'] = self.aws_role_app_arn
+                payload['aws_role_ec2'] = self.aws_role_ec2_arn
             self._format_response(
                 requests.post(self.url, data=payload, verify=False))
             print(f"Successfully added {primary_account_name}.")
