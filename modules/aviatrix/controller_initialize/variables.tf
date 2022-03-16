@@ -33,6 +33,12 @@ variable "aviatrix_controller_customer_id" {
   type        = string
 }
 
+variable "aws_gov" {
+  description = "If using AWS Gov set to true."
+  type        = bool
+  default     = false
+}
+
 variable "aviatrix_aws_primary_account_name" {
   description = "The AWS Primary Account name to be added to the Aviatrix Controller Access Accounts."
   type        = string
@@ -43,4 +49,22 @@ variable "aviatrix_aws_primary_account_number" {
   description = "The AWS Account Number to be used with the primary AWS account."
   type        = string
   default     = ""
+}
+
+variable "aviatrix_aws_role_app_arn" {
+  description = "The AWS role app ARN for the primary AWS account."
+  type        = string
+  default     = ""
+}
+
+variable "aviatrix_aws_role_ec2_arn" {
+  description = "The AWS role ec2 ARN for the primary AWS account."
+  type        = string
+  default     = ""
+}
+
+variable "enable_security_group_management" {
+  description = "Enables Auto Security Group Management within the Aviatrix Controller. A primary access account is required for implementation."
+  type        = bool
+  default     = true
 }

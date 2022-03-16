@@ -20,6 +20,12 @@ class ControllerSetup():
         self.controller_new_password = os.getenv(
             'AVIATRIX_CONTROLLER_PASSWORD')
         self.primary_access_account = ""
+        self.aws_primary_account_name = os.getenv('AWS_PRIMARY_ACCOUNT_NAME')
+        self.aws_primary_account_number = os.getenv('AWS_PRIMARY_ACCOUNT_NUMBER')
+        self.is_aws_gov = os.getenv('AWS_GOV')
+        self.aws_role_app_arn = os.getenv('AWS_ROLE_APP_ARN')
+        self.aws_role_ec2_arn = os.getenv('AWS_ROLE_EC2_ARN')
+        self.security_group_management = os.getenv('ENABLE_SECURITY_GROUP_MANAGEMENT')
 
     def _check_environment_vars(self):
         print("Checking required environment variables.")
@@ -87,11 +93,11 @@ class ControllerSetup():
             results = response.json()
             print(f"JSON BODY: {results}")
             return results
-            # if results.get('return') is True:
+
         print("Failed to return status code 200")
         print(response.status_code)
         print(response.text)
-        raise Exception
+        raise Exception(response.text)
 
     def _is_software_up_to_date(self, controller_version):
         print("Checking if software is up-to-date...")
@@ -183,32 +189,23 @@ class ControllerSetup():
             requests.post(self.url, data=payload, verify=False))
         print("Successfully set customer id")
 
-    def software_update(self, controller_version, initial_upgrade=True):
+    def software_update(self):
         try:
-            if initial_upgrade:
-                print("Attempting Initial Software Update...")
-                print(
-                    f"Attempting to upgrade software to {controller_version}")
-                payload = {
-                    'action': 'initial_setup',
-                    'CID': self._get_cid(),
-                    'subaction': 'run',
-                    'target_version': controller_version
-                }
-            else:
-                print(
-                    f"Attempting to upgrade software to {controller_version}")
-                payload = {
-                    'action': 'upgrade',
-                    'CID': self._get_cid(),
-                    'version': self.controller_version
-                }
+            if self._is_software_up_to_date(self.controller_version):
+                return
+            print(
+                f"Attempting to upgrade software to {self.controller_version}")
+            payload = {
+                'action': 'upgrade',
+                'CID': self._get_cid(),
+                'version': self.controller_version
+            }
             response = requests.post(self.url, data=payload, verify=False)
             r = self._format_response(response)
             if r:
                 if r.get('return') is True:
                     print
-                    (f"Successfully updated software to: {controller_version}")
+                    (f"Successfully updated software to: {self.controller_version}")
                     return True
             return False
         except requests.exceptions.Timeout:
@@ -217,59 +214,47 @@ class ControllerSetup():
                 print(f"Attempts remaining to check software version: "
                       f" {attempts}")
                 attempts -= 1
-                if self._is_software_up_to_date(controller_version):
+                if self._is_software_up_to_date(self.controller_version):
                     return True
                 time.sleep(30)
                 continue
-            return False
+            print("Timeout Exception has occurred.")
+            sys.exit(1)
         except Exception as err:
             print(str(err))
-            return False
+            sys.exit(1)
 
-    def perform_software_updates(self):
-        if self._is_software_up_to_date(self.controller_version):
-            return
-        # If controller is being upgraded to 6.6 then do the initial software
-        # update then upgrade from 6.5 to 6.6
-        elif self.controller_version == "6.6":
-            result = self.software_update("6.5", initial_upgrade=True)
-            if result:
-                result = self.software_update("6.6", initial_upgrade=False)
-            else:
-                raise Exception("Failed to update to 6.6")
-        # If controller is not being upgraded to 6.6 then only do
-        # initial_software_update
-        else:
-            result = self.software_update(self.controller_version,
-                                          initial_upgrade=True)
-        if result:
-            print("All Software Updates Succeeded.")
-            return True
-        print("All attempts to update software failed")
-        sys.exit(1)
-
-    def primary_aws_account(self, primary_account_name):
-        if not os.getenv('AWS_PRIMARY_ACCOUNT_NUMBER'):
+    def primary_aws_account(self):
+        if not self.aws_primary_account_number:
             raise Exception("Environment variable "
                             "'AWS_PRIMARY_ACCOUNT_NUMBER' must be defined")
-        self.primary_access_account = primary_account_name
+        self.primary_access_account = self.aws_primary_account_name
         print("Checking if account already exists.")
-        if self._does_account_exist(primary_account_name) is True:
+        if self._does_account_exist(self.aws_primary_account_name) is True:
             return
         else:
             print("Attempting to add AWS Primary IAM Account.")
             payload = {
                 'action': 'setup_account_profile',
                 'CID': self._get_cid(),
-                'account_name': primary_account_name,
-                'cloud_type': 1,
-                'account_email': self.admin_email,
-                'aws_account_number': os.getenv('AWS_PRIMARY_ACCOUNT_NUMBER'),
-                'aws_iam': 'true'
+                'account_name': self.aws_primary_account_name,
+                'account_email': self.admin_email
             }
+            if self.is_aws_gov:
+                payload['cloud_type'] = 256
+                payload['awsgov_account_number'] = self.aws_primary_account_number
+                payload['awsgov_iam'] = 'true'
+                payload['awsgov_role_arn'] = self.aws_role_app_arn
+                payload['awsgov_role_ec2'] = self.aws_role_ec2_arn
+            else:
+                payload['cloud_type'] = 1
+                payload['aws_account_number'] = self.aws_primary_account_number
+                payload['aws_iam'] = 'true'
+                payload['aws_role_arn'] = self.aws_role_app_arn
+                payload['aws_role_ec2'] = self.aws_role_ec2_arn
             self._format_response(
                 requests.post(self.url, data=payload, verify=False))
-            print(f"Successfully added {primary_account_name}.")
+            print(f"Successfully added {self.aws_primary_account_name}.")
 
     def enable_security_group_management(self):
         print("Enabling auto security group management")
@@ -290,10 +275,11 @@ def main():
     controller.set_admin_email()
     controller.reset_admin_password()
     controller.set_customer_id()
-    controller.perform_software_updates()
+    controller.software_update()
 
-    if os.getenv('AWS_PRIMARY_ACCOUNT_NAME'):
-        controller.primary_aws_account(os.getenv('AWS_PRIMARY_ACCOUNT_NAME'))
+    if controller.aws_primary_account_name:
+        controller.primary_aws_account()
+    if controller.security_group_management:
         controller.enable_security_group_management()
 
 
