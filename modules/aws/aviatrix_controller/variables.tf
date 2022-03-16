@@ -5,21 +5,25 @@ variable "region" {
 }
 
 variable "aviatrix_role_ec2_name" {
+  description = "The name of the Aviatrix Role for EC2."
   type = string
   default = "aviatrix-role-ec2"
 }
 
 variable "aviatrix_role_app_name" {
+  description = "The name of the Aviatrix Role for App."
   type = string
   default = "aviatrix-role-app"
 }
 
 variable "aviatrix_assume_policy_role_policy_name" {
+  description = "The name of the Aviatrix Assume Role Policy."
   type = string
   default = "aviatrix-role-ec2-assume-role-policy"
 }
 
 variable "aviatrix_app_policy_name" {
+  description = "The name of the Aviatrix App Role Policy."
   type = string
   default = "aviatrix-role-app-policy"
 }
