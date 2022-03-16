@@ -59,22 +59,26 @@ resource "aws_route_table" "vpc_route_table" {
   tags   = { "Name" = "${var.tag_prefix}-route-table" }
 }
 
+# Creates Default Route to Internet for route table.
 resource "aws_route" "internet_route" {
   route_table_id         = aws_route_table.vpc_route_table.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.vpc_internet_gateway.id
 }
 
+# Associate Route Table to Aviatrix Controller Instance
 resource "aws_route_table_association" "aviatrix_controller_route_table_assoc" {
   subnet_id      = aws_subnet.aviatrix_controller_subnet.id
   route_table_id = aws_route_table.vpc_route_table.id
 }
 
+# Associate Route Table to Aviatrix CoPilot Instance
 resource "aws_route_table_association" "aviatrix_copilot_route_table_assoc" {
   subnet_id      = aws_subnet.aviatrix_copilot_subnet.id
   route_table_id = aws_route_table.vpc_route_table.id
 }
 
+# Creates AWS Key Pair based on SSH Public Key Provided
 resource "aws_key_pair" "key_pair" {
   key_name   = var.aws_key_pair_name
   public_key = var.aws_key_pair_public_key

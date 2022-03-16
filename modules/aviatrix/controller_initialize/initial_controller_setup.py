@@ -189,23 +189,12 @@ class ControllerSetup():
             requests.post(self.url, data=payload, verify=False))
         print("Successfully set customer id")
 
-    def software_update(self, controller_version, initial_upgrade=True):
+    def software_update(self):
         try:
             if self._is_software_up_to_date(self.controller_version):
                 return
-            # if initial_upgrade:
-            #     print("Attempting Initial Software Update...")
-            #     print(
-            #         f"Attempting to upgrade software to {controller_version}")
-            #     payload = {
-            #         'action': 'initial_setup',
-            #         'CID': self._get_cid(),
-            #         'subaction': 'run',
-            #         'target_version': controller_version
-            #     }
-            # else:
             print(
-                f"Attempting to upgrade software to {controller_version}")
+                f"Attempting to upgrade software to {self.controller_version}")
             payload = {
                 'action': 'upgrade',
                 'CID': self._get_cid(),
@@ -216,7 +205,7 @@ class ControllerSetup():
             if r:
                 if r.get('return') is True:
                     print
-                    (f"Successfully updated software to: {controller_version}")
+                    (f"Successfully updated software to: {self.controller_version}")
                     return True
             return False
         except requests.exceptions.Timeout:
@@ -225,7 +214,7 @@ class ControllerSetup():
                 print(f"Attempts remaining to check software version: "
                       f" {attempts}")
                 attempts -= 1
-                if self._is_software_up_to_date(controller_version):
+                if self._is_software_up_to_date(self.controller_version):
                     return True
                 time.sleep(30)
                 continue

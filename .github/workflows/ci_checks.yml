@@ -17,7 +17,7 @@ jobs:
         find-dir: modules
         output-file: README.md
         output-method: inject
-        git-push: false
+        git-push: true
 
     - name: Push to Branch
       run: |
