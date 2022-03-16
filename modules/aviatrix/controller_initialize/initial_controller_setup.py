@@ -92,8 +92,6 @@ class ControllerSetup():
         if response.status_code == 200:
             results = response.json()
             print(f"JSON BODY: {results}")
-            if results.get('return') == False:
-                raise Exception(results)
             return results
 
         print("Failed to return status code 200")
@@ -254,8 +252,10 @@ class ControllerSetup():
                 payload['aws_iam'] = 'true'
                 payload['aws_role_arn'] = self.aws_role_app_arn
                 payload['aws_role_ec2'] = self.aws_role_ec2_arn
-            self._format_response(
+            response = self._format_response(
                 requests.post(self.url, data=payload, verify=False))
+            if response.get('return') == False:
+                raise Exception(response)
             print(f"Successfully added {self.aws_primary_account_name}.")
 
     def enable_security_group_management(self):
