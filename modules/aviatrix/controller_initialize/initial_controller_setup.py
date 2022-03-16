@@ -224,28 +224,6 @@ class ControllerSetup():
             print(str(err))
             sys.exit(1)
 
-    # def perform_software_updates(self):
-    #     if self._is_software_up_to_date(self.controller_version):
-    #         return
-    #     # If controller is being upgraded to 6.6 then do the initial software
-    #     # update then upgrade from 6.5 to 6.6
-    #     elif self.controller_version == "6.6":
-    #         result = self.software_update("6.5", initial_upgrade=True)
-    #         if result:
-    #             result = self.software_update("6.6", initial_upgrade=False)
-    #         else:
-    #             raise Exception("Failed to update to 6.6")
-    #     # If controller is not being upgraded to 6.6 then only do
-    #     # initial_software_update
-    #     else:
-    #         result = self.software_update(self.controller_version,
-    #                                       initial_upgrade=True)
-    #     if result:
-    #         print("All Software Updates Succeeded.")
-    #         return True
-    #     print("All attempts to update software failed")
-    #     sys.exit(1)
-
     def primary_aws_account(self):
         if not self.aws_primary_account_number:
             raise Exception("Environment variable "
@@ -297,7 +275,6 @@ def main():
     controller.set_admin_email()
     controller.reset_admin_password()
     controller.set_customer_id()
-    # controller.perform_software_updates()
     controller.software_update()
 
     if controller.aws_primary_account_name:

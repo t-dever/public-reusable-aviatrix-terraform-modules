@@ -19,16 +19,6 @@ jobs:
         output-method: inject
         git-push: true
 
-    # - name: Push to Branch
-    #   run: |
-    #     git config --global user.name "github-actions[bot]"
-    #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
-    #     git add .
-    #     git commit -m "terraform-docs: automated action" || echo "No changes to commit"
-    #     git push
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   format:
     runs-on: ubuntu-latest
     name: Format Terraform Files

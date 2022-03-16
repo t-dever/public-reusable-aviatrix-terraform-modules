@@ -1,22 +1,22 @@
 # Create Resource Group Query
-# resource "aws_resourcegroups_group" "aviatrix_resource_group" {
-#   name = "aviatrix"
+resource "aws_resourcegroups_group" "aviatrix_resource_group" {
+  name = "aviatrix"
 
-#   resource_query {
-#     query = <<JSON
-# {
-#   "ResourceTypeFilters": [ "AWS::AllSupported" ],
-#   "TagFilters": [
-#     {
-#       "Key": "ownedBy",
-#       "Values": ["${var.tags.ownedBy}"]
-#     }
-#   ]
-# }
-# JSON
-#   }
-#   tags = { "Name" = "${var.tag_prefix}-resource-group" }
-# }
+  resource_query {
+    query = <<JSON
+{
+  "ResourceTypeFilters": [ "AWS::AllSupported" ],
+  "TagFilters": [
+    {
+      "Key": "ownedBy",
+      "Values": ["${var.tags.ownedBy}"]
+    }
+  ]
+}
+JSON
+  }
+  tags = { "Name" = "${var.tag_prefix}-resource-group" }
+}
 
 resource "aws_vpc" "vpc" {
   cidr_block = var.vpc_address_space
