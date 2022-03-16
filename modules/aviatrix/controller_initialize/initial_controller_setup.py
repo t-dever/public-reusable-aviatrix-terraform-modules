@@ -93,7 +93,7 @@ class ControllerSetup():
             results = response.json()
             print(f"JSON BODY: {results}")
             if results.get('return') == False:
-                Exception(results)
+                raise Exception(results)
             return results
 
         print("Failed to return status code 200")
