@@ -191,24 +191,26 @@ class ControllerSetup():
 
     def software_update(self, controller_version, initial_upgrade=True):
         try:
-            if initial_upgrade:
-                print("Attempting Initial Software Update...")
-                print(
-                    f"Attempting to upgrade software to {controller_version}")
-                payload = {
-                    'action': 'initial_setup',
-                    'CID': self._get_cid(),
-                    'subaction': 'run',
-                    'target_version': controller_version
-                }
-            else:
-                print(
-                    f"Attempting to upgrade software to {controller_version}")
-                payload = {
-                    'action': 'upgrade',
-                    'CID': self._get_cid(),
-                    'version': self.controller_version
-                }
+            if self._is_software_up_to_date(self.controller_version):
+                return
+            # if initial_upgrade:
+            #     print("Attempting Initial Software Update...")
+            #     print(
+            #         f"Attempting to upgrade software to {controller_version}")
+            #     payload = {
+            #         'action': 'initial_setup',
+            #         'CID': self._get_cid(),
+            #         'subaction': 'run',
+            #         'target_version': controller_version
+            #     }
+            # else:
+            print(
+                f"Attempting to upgrade software to {controller_version}")
+            payload = {
+                'action': 'upgrade',
+                'CID': self._get_cid(),
+                'version': self.controller_version
+            }
             response = requests.post(self.url, data=payload, verify=False)
             r = self._format_response(response)
             if r:
@@ -230,29 +232,29 @@ class ControllerSetup():
             return False
         except Exception as err:
             print(str(err))
-            return False
+            sys.exit(1)
 
-    def perform_software_updates(self):
-        if self._is_software_up_to_date(self.controller_version):
-            return
-        # If controller is being upgraded to 6.6 then do the initial software
-        # update then upgrade from 6.5 to 6.6
-        elif self.controller_version == "6.6":
-            result = self.software_update("6.5", initial_upgrade=True)
-            if result:
-                result = self.software_update("6.6", initial_upgrade=False)
-            else:
-                raise Exception("Failed to update to 6.6")
-        # If controller is not being upgraded to 6.6 then only do
-        # initial_software_update
-        else:
-            result = self.software_update(self.controller_version,
-                                          initial_upgrade=True)
-        if result:
-            print("All Software Updates Succeeded.")
-            return True
-        print("All attempts to update software failed")
-        sys.exit(1)
+    # def perform_software_updates(self):
+    #     if self._is_software_up_to_date(self.controller_version):
+    #         return
+    #     # If controller is being upgraded to 6.6 then do the initial software
+    #     # update then upgrade from 6.5 to 6.6
+    #     elif self.controller_version == "6.6":
+    #         result = self.software_update("6.5", initial_upgrade=True)
+    #         if result:
+    #             result = self.software_update("6.6", initial_upgrade=False)
+    #         else:
+    #             raise Exception("Failed to update to 6.6")
+    #     # If controller is not being upgraded to 6.6 then only do
+    #     # initial_software_update
+    #     else:
+    #         result = self.software_update(self.controller_version,
+    #                                       initial_upgrade=True)
+    #     if result:
+    #         print("All Software Updates Succeeded.")
+    #         return True
+    #     print("All attempts to update software failed")
+    #     sys.exit(1)
 
     def primary_aws_account(self):
         if not self.aws_primary_account_number:
@@ -305,7 +307,8 @@ def main():
     controller.set_admin_email()
     controller.reset_admin_password()
     controller.set_customer_id()
-    controller.perform_software_updates()
+    # controller.perform_software_updates()
+    controller.software_update()
 
     if controller.aws_primary_account_name:
         controller.primary_aws_account()

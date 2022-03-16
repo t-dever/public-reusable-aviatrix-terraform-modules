@@ -109,7 +109,7 @@ variable "aviatrix_copilot_security_group_name" {
 }
 
 variable "enable_auto_aviatrix_copilot_security_group" {
-  description = "The name of the security group for the Aviatrix CoPilot."
+  description = "Turns on the script for collecting the gateway IP addresses from the security groups of the Aviatrix Controller. Then applies them to copilot security group."
   type        = bool
   default     = false
 }
