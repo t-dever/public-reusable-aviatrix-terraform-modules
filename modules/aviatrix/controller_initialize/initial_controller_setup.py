@@ -20,10 +20,12 @@ class ControllerSetup():
         self.controller_new_password = os.getenv(
             'AVIATRIX_CONTROLLER_PASSWORD')
         self.primary_access_account = ""
+        self.aws_primary_account_name = os.getenv('AWS_PRIMARY_ACCOUNT_NAME')
         self.aws_primary_account_number = os.getenv('AWS_PRIMARY_ACCOUNT_NUMBER')
         self.is_aws_gov = os.getenv('AWS_GOV')
         self.aws_role_app_arn = os.getenv('AWS_ROLE_APP_ARN')
         self.aws_role_ec2_arn = os.getenv('AWS_ROLE_EC2_ARN')
+        self.security_group_management = os.getenv('ENABLE_SECURITY_GROUP_MANAGEMENT')
 
     def _check_environment_vars(self):
         print("Checking required environment variables.")
@@ -91,7 +93,7 @@ class ControllerSetup():
             results = response.json()
             print(f"JSON BODY: {results}")
             return results
-            # if results.get('return') is True:
+
         print("Failed to return status code 200")
         print(response.status_code)
         print(response.text)
@@ -252,20 +254,20 @@ class ControllerSetup():
         print("All attempts to update software failed")
         sys.exit(1)
 
-    def primary_aws_account(self, primary_account_name):
+    def primary_aws_account(self):
         if not self.aws_primary_account_number:
             raise Exception("Environment variable "
                             "'AWS_PRIMARY_ACCOUNT_NUMBER' must be defined")
-        self.primary_access_account = primary_account_name
+        self.primary_access_account = self.aws_primary_account_name
         print("Checking if account already exists.")
-        if self._does_account_exist(primary_account_name) is True:
+        if self._does_account_exist(self.aws_primary_account_name) is True:
             return
         else:
             print("Attempting to add AWS Primary IAM Account.")
             payload = {
                 'action': 'setup_account_profile',
                 'CID': self._get_cid(),
-                'account_name': primary_account_name,
+                'account_name': self.aws_primary_account_name,
                 'account_email': self.admin_email
             }
             if self.is_aws_gov:
@@ -282,7 +284,7 @@ class ControllerSetup():
                 payload['aws_role_ec2'] = self.aws_role_ec2_arn
             self._format_response(
                 requests.post(self.url, data=payload, verify=False))
-            print(f"Successfully added {primary_account_name}.")
+            print(f"Successfully added {self.aws_primary_account_name}.")
 
     def enable_security_group_management(self):
         print("Enabling auto security group management")
@@ -305,9 +307,9 @@ def main():
     controller.set_customer_id()
     controller.perform_software_updates()
 
-    if os.getenv('AWS_PRIMARY_ACCOUNT_NAME'):
-        controller.primary_aws_account(os.getenv('AWS_PRIMARY_ACCOUNT_NAME'))
-    if os.getenv('ENABLE_SECURITY_GROUP_MANAGEMENT'):
+    if controller.aws_primary_account_name:
+        controller.primary_aws_account()
+    if controller.security_group_management:
         controller.enable_security_group_management()
 
 
