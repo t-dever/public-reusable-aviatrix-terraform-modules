@@ -25,10 +25,10 @@ output "aviatrix_gateway_cidrs" {
 
 output "aws_app_role_arn" {
   description = "The ARN for the app role created."
-  value = aws_iam_role.aviatrix_role_app.arn
+  value       = aws_iam_role.aviatrix_role_app.arn
 }
 
 output "aws_ec2_role_arn" {
   description = "The ARN for the ec2 role created."
-  value = aws_iam_role.aviatrix_role_ec2.arn
+  value       = aws_iam_role.aviatrix_role_ec2.arn
 }

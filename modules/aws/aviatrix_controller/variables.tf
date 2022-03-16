@@ -5,22 +5,22 @@ variable "region" {
 }
 
 variable "aviatrix_role_ec2_name" {
-  type = string
+  type    = string
   default = "aviatrix-role-ec2"
 }
 
 variable "aviatrix_role_app_name" {
-  type = string
+  type    = string
   default = "aviatrix-role-app"
 }
 
 variable "aviatrix_assume_policy_role_policy_name" {
-  type = string
+  type    = string
   default = "aviatrix-role-ec2-assume-role-policy"
 }
 
 variable "aviatrix_app_policy_name" {
-  type = string
+  type    = string
   default = "aviatrix-role-app-policy"
 }
 
@@ -234,12 +234,12 @@ data "http" "aviatrix_copilot_iam_id" {
 }
 
 locals {
-  controller_images     = jsondecode(data.http.aviatrix_controller_iam_id.body).BYOL
-  controller_ami_id     = local.controller_images[data.aws_region.current.name]
-  copilot_images        = jsondecode(data.http.aviatrix_copilot_iam_id.body).Copilot
-  copilot_ami_id        = local.copilot_images[data.aws_region.current.name]
-  controller_private_ip = cidrhost(var.aviatrix_controller_subnet.cidr_block, 4)
-  copilot_private_ip    = cidrhost(var.aviatrix_copilot_subnet.cidr_block, 4)
-  is_aws_gov               = length(regexall("/gov/", var.region)) > 0 ? true : false
+  controller_images          = jsondecode(data.http.aviatrix_controller_iam_id.body).BYOL
+  controller_ami_id          = local.controller_images[data.aws_region.current.name]
+  copilot_images             = jsondecode(data.http.aviatrix_copilot_iam_id.body).Copilot
+  copilot_ami_id             = local.copilot_images[data.aws_region.current.name]
+  controller_private_ip      = cidrhost(var.aviatrix_controller_subnet.cidr_block, 4)
+  copilot_private_ip         = cidrhost(var.aviatrix_copilot_subnet.cidr_block, 4)
+  is_aws_gov                 = length(regexall("/gov/", var.region)) > 0 ? true : false
   copilot_security_group_ips = concat(["${aws_eip.aviatrix_controller_eip.public_ip}/32"], jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs))
 }

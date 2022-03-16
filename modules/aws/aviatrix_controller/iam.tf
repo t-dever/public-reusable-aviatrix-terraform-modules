@@ -1,6 +1,6 @@
 # Create IAM Role for Managing EC2 Instances
 resource "aws_iam_role" "aviatrix_role_ec2" {
-#   name               = "aviatrix-role-ec2"
+  #   name               = "aviatrix-role-ec2"
   name               = var.aviatrix_role_ec2_name
   description        = "Aviatrix EC2 Role - Created by Terraform"
   path               = "/"
@@ -26,7 +26,7 @@ EOF
 
 # Create IAM Role for Aviatrix App Controller
 resource "aws_iam_role" "aviatrix_role_app" {
-#   name               = "aviatrix-role-app"
+  #   name               = "aviatrix-role-app"
   name               = var.aviatrix_role_app_name
   description        = "Aviatrix APP Role - Created by Terraform"
   path               = "/"
@@ -52,8 +52,8 @@ EOF
 
 # Create IAM Policy for assuming role and accepting marketplace AMI.
 resource "aws_iam_policy" "aviatrix_assume_role_policy" {
-#   name        = "aviatrix-role-ec2-assume-role-policy"
-  name               = var.aviatrix_assume_policy_role_policy_name
+  #   name        = "aviatrix-role-ec2-assume-role-policy"
+  name        = var.aviatrix_assume_policy_role_policy_name
   path        = "/"
   description = "Policy to Assume App Role - Created by Terraform"
   policy      = <<EOF
@@ -82,8 +82,8 @@ EOF
 
 # Create IAM Policy for Aviatrix App to deploy resources.
 resource "aws_iam_policy" "aviatrix_app_policy" {
-#   name        = "aviatrix-role-app-policy"
-  name               = var.aviatrix_app_policy_name
+  #   name        = "aviatrix-role-app-policy"
+  name        = var.aviatrix_app_policy_name
   path        = "/"
   description = "Policy to deploy resources - Created by Terraform"
   policy      = <<EOF

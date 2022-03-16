@@ -35,8 +35,8 @@ variable "aviatrix_controller_customer_id" {
 
 variable "aws_gov" {
   description = "If using AWS Gov set to true."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "aviatrix_aws_primary_account_name" {
