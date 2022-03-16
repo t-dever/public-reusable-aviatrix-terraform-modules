@@ -7,6 +7,7 @@ input = sys.stdin.read()
 input_json = json.loads(input)
 
 region = input_json['region']
+vpc_id = input_json['vpc_id']
 
 my_config = Config(
     region_name = region,
@@ -23,6 +24,10 @@ def get_security_groups(ec2):
             {
                 'Name': 'tag:Name', 
                 'Values':['AviatrixSecurityGroup']
+            },
+            {
+                'Name': 'vpc-id', 
+                'Values':[vpc_id]
             }])
     return security_groups
 

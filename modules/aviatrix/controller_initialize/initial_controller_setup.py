@@ -95,7 +95,7 @@ class ControllerSetup():
         print("Failed to return status code 200")
         print(response.status_code)
         print(response.text)
-        raise Exception
+        raise Exception(response.text)
 
     def _is_software_up_to_date(self, controller_version):
         print("Checking if software is up-to-date...")

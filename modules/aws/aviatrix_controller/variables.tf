@@ -241,4 +241,5 @@ locals {
   controller_private_ip = cidrhost(var.aviatrix_controller_subnet.cidr_block, 4)
   copilot_private_ip    = cidrhost(var.aviatrix_copilot_subnet.cidr_block, 4)
   is_aws_gov               = length(regexall("/gov/", var.region)) > 0 ? true : false
+  copilot_security_group_ips = concat(["${aws_eip.aviatrix_controller_eip.public_ip}/32"], jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs))
 }

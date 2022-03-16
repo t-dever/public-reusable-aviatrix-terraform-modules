@@ -233,6 +233,7 @@ data "external" "get_aviatrix_gateway_cidrs" {
   program = ["python3", "${path.module}/get_security_group_rules.py"]
   query = {
     region = "${var.region}"
+    vpc_id = "${aws_vpc.vpc.id}"
   }
 }
 
@@ -271,10 +272,10 @@ resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gate
   count             = var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
   description       = "Allow Gateways access to send Rsyslog to Aviatrix CoPilot."
   type              = "ingress"
-  from_port         = 0
+  from_port         = 5000
   to_port           = 5000
   protocol          = "udp"
-  cidr_blocks       = length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) == 0 ? [] : jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)
+  cidr_blocks       = local.copilot_security_group_ips
   security_group_id = aws_security_group.aviatrix_copilot_security_group.id
 }
 
@@ -283,10 +284,10 @@ resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gate
   count             = var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
   description       = "Allow Gateways access to send Flow Logs to Aviatrix CoPilot."
   type              = "ingress"
-  from_port         = 0
+  from_port         = 31283
   to_port           = 31283
   protocol          = "udp"
-  cidr_blocks       = length(jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)) == 0 ? [] : jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)
+  cidr_blocks       = local.copilot_security_group_ips
   security_group_id = aws_security_group.aviatrix_copilot_security_group.id
 }
 
