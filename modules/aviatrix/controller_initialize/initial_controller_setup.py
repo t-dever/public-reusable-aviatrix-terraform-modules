@@ -218,7 +218,8 @@ class ControllerSetup():
                     return True
                 time.sleep(30)
                 continue
-            return False
+            print("Timeout Exception has occurred.")
+            sys.exit(1)
         except Exception as err:
             print(str(err))
             sys.exit(1)
