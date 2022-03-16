@@ -11,7 +11,7 @@ variable "aviatrix_controller_private_ip" {
 variable "aviatrix_controller_password" {
   description = "The password to be added to the admin account of the Aviatrix Controller"
   type        = string
-  sensitive   = true
+  # sensitive   = true
 }
 
 variable "aviatrix_controller_admin_email" {
