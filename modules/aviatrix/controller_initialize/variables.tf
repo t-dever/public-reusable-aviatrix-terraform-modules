@@ -71,13 +71,13 @@ variable "enable_security_group_management" {
 
 variable "copilot_username" {
   description = "Username of Copilot Account; Adds a account for CoPilot with ReadOnly Credentials. Must Provide variables 'copilot_username' and 'copilot_password'"
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "copilot_password" {
   description = "Password of Copilot Account; Adds a account for CoPilot with ReadOnly Credentials. Must Provide variables 'copilot_username' and 'copilot_password'"
-  type = string
-  default = ""
-  sensitive = true
+  type        = string
+  default     = ""
+  sensitive   = true
 }
