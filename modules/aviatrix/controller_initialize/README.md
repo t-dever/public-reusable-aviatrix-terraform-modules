@@ -36,6 +36,8 @@ No modules.
 | <a name="input_aviatrix_controller_public_ip"></a> [aviatrix\_controller\_public\_ip](#input\_aviatrix\_controller\_public\_ip) | The Public IP Address of the Aviatrix Controller. | `string` | n/a | yes |
 | <a name="input_aviatrix_controller_version"></a> [aviatrix\_controller\_version](#input\_aviatrix\_controller\_version) | The version of the Aviatrix Controller. | `string` | n/a | yes |
 | <a name="input_aws_gov"></a> [aws\_gov](#input\_aws\_gov) | If using AWS Gov set to true. | `bool` | `false` | no |
+| <a name="input_copilot_password"></a> [copilot\_password](#input\_copilot\_password) | Password of Copilot Account; Adds a account for CoPilot with ReadOnly Credentials. Must Provide variables 'copilot\_username' and 'copilot\_password' | `string` | `""` | no |
+| <a name="input_copilot_username"></a> [copilot\_username](#input\_copilot\_username) | Username of Copilot Account; Adds a account for CoPilot with ReadOnly Credentials. Must Provide variables 'copilot\_username' and 'copilot\_password' | `string` | `""` | no |
 | <a name="input_enable_security_group_management"></a> [enable\_security\_group\_management](#input\_enable\_security\_group\_management) | Enables Auto Security Group Management within the Aviatrix Controller. A primary access account is required for implementation. | `bool` | `true` | no |
 
 ## Outputs

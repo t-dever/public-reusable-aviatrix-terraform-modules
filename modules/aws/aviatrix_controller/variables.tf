@@ -169,6 +169,12 @@ variable "aviatrix_aws_primary_account_name" {
   default     = "aviatrix-aws-primary-account"
 }
 
+variable "copilot_username" {
+  description = "Username of Copilot Account; Adds a account for CoPilot with ReadOnly Credentials. Must Provide variables 'copilot_username' and 'copilot_password'"
+  type        = string
+  default     = "copilot-read-only"
+}
+
 variable "aviatrix_copilot_name" {
   description = "Name of copilot that will be launched."
   type        = string

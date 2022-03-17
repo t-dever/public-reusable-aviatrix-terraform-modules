@@ -27,6 +27,8 @@ class ControllerSetup():
         self.aws_role_app_arn = os.getenv('AWS_ROLE_APP_ARN')
         self.aws_role_ec2_arn = os.getenv('AWS_ROLE_EC2_ARN')
         self.security_group_management = strtobool(os.getenv('ENABLE_SECURITY_GROUP_MANAGEMENT'))
+        self.copilot_username = os.getenv('COPILOT_USERNAME')
+        self.copilot_password = os.getenv('COPILOT_PASSWORD')
 
     def _check_environment_vars(self):
         print("Checking required environment variables.")
@@ -273,6 +275,29 @@ class ControllerSetup():
             requests.post(self.url, data=payload, verify=False))
         print("Successfully enabled auto security group management.")
 
+    def add_copilot_user_account(self):
+        print(f"Checking if Copilot Account {self.copilot_username} already exists.")
+        if self._does_account_exist(self.copilot_username) is True:
+            return
+        else:
+            print(f"Adding CoPilot User Account")
+            payload = {
+                'action': 'add_account_user',
+                'CID': self._get_cid(),
+                'username': self.copilot_username,
+                'password': self.copilot_password,
+                'email': self.admin_email,
+                'groups': "read_only"
+            }
+            response = self._format_response(
+                requests.post(self.url, data=payload, verify=False))
+            if response.get('return') == False:
+                if response.get('reason'):
+                    print(f"Failed to add account: '{self.copilot_username}'"
+                          f" due to Error: '{response.get('reason')}'")
+                raise Exception(response)
+            print(f"Successfully added {self.copilot_username}.")
+
 
 def main():
     controller = ControllerSetup()
@@ -287,7 +312,8 @@ def main():
         controller.primary_aws_account()
     if controller.security_group_management:
         controller.enable_security_group_management()
-
+    if controller.copilot_username and controller.copilot_password:
+        controller.add_copilot_user_account()
 
 main()
 sys.exit(0)
