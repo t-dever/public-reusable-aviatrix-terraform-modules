@@ -27,6 +27,7 @@
 | Name | Type |
 |------|------|
 | [aws_default_security_group.default_security_group](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/default_security_group) | resource |
+| [aws_ebs_volume.aviatrix_copilot_ebs_volumes](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/ebs_volume) | resource |
 | [aws_eip.aviatrix_controller_eip](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/eip) | resource |
 | [aws_eip.aviatrix_copilot_eip](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/eip) | resource |
 | [aws_eip_association.aviatrix_controller_eip_assoc](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/eip_association) | resource |
@@ -91,7 +92,7 @@
 | <a name="input_aviatrix_controller_security_group_name"></a> [aviatrix\_controller\_security\_group\_name](#input\_aviatrix\_controller\_security\_group\_name) | The name of the security group for the Aviatrix Controller. | `string` | `"aviatrix-controller-security-group"` | no |
 | <a name="input_aviatrix_controller_subnet"></a> [aviatrix\_controller\_subnet](#input\_aviatrix\_controller\_subnet) | The aviatrix controller subnet to be created. | <pre>object({<br>    name              = string,<br>    cidr_block        = string,<br>    availability_zone = string<br>  })</pre> | <pre>{<br>  "availability_zone": "us-east-1a",<br>  "cidr_block": "10.0.0.0/26",<br>  "name": "aviatrix-controller"<br>}</pre> | no |
 | <a name="input_aviatrix_controller_version"></a> [aviatrix\_controller\_version](#input\_aviatrix\_controller\_version) | The version used for the controller | `string` | `"6.6"` | no |
-| <a name="input_aviatrix_copilot_additional_volumes"></a> [aviatrix\_copilot\_additional\_volumes](#input\_aviatrix\_copilot\_additional\_volumes) | Additonal volumes to add to CoPilot. | <pre>map(object({<br>    device_name = string,<br>    volume_id   = string,<br>  }))</pre> | `{}` | no |
+| <a name="input_aviatrix_copilot_additional_volumes"></a> [aviatrix\_copilot\_additional\_volumes](#input\_aviatrix\_copilot\_additional\_volumes) | Additonal volumes to add to CoPilot. | <pre>list(object({<br>    size = string<br>  }))</pre> | <pre>[<br>  {<br>    "size": 50<br>  }<br>]</pre> | no |
 | <a name="input_aviatrix_copilot_instance_size"></a> [aviatrix\_copilot\_instance\_size](#input\_aviatrix\_copilot\_instance\_size) | Aviatrix CoPilot instance size. | `string` | `"t3.2xlarge"` | no |
 | <a name="input_aviatrix_copilot_name"></a> [aviatrix\_copilot\_name](#input\_aviatrix\_copilot\_name) | Name of copilot that will be launched. | `string` | `"aviatrix-copilot"` | no |
 | <a name="input_aviatrix_copilot_root_volume_size"></a> [aviatrix\_copilot\_root\_volume\_size](#input\_aviatrix\_copilot\_root\_volume\_size) | Root volume size for copilot | `number` | `25` | no |

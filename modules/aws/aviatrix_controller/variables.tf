@@ -206,11 +206,10 @@ variable "aviatrix_copilot_root_volume_type" {
 
 variable "aviatrix_copilot_additional_volumes" {
   description = "Additonal volumes to add to CoPilot."
-  type = map(object({
-    device_name = string,
-    volume_id   = string,
+  type = list(object({
+    size = string
   }))
-  default = {}
+  default = [{ size = 50 }]
 }
 
 variable "tag_prefix" {
@@ -244,13 +243,14 @@ data "http" "aviatrix_copilot_iam_id" {
 }
 
 locals {
-  controller_images          = jsondecode(data.http.aviatrix_controller_iam_id.body).BYOL
-  controller_ami_id          = local.controller_images[data.aws_region.current.name]
-  copilot_images             = jsondecode(data.http.aviatrix_copilot_iam_id.body).Copilot
-  copilot_ami_id             = local.copilot_images[data.aws_region.current.name]
-  controller_private_ip      = cidrhost(var.aviatrix_controller_subnet.cidr_block, 4)
-  copilot_private_ip         = cidrhost(var.aviatrix_copilot_subnet.cidr_block, 4)
-  is_aws_gov                 = length(regexall("gov", var.region)) > 0 ? true : false
-  arn_partition              = local.is_aws_gov ? "aws-us-gov" : "aws"
-  copilot_security_group_ips = concat(["${aws_eip.aviatrix_controller_eip.public_ip}/32"], jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs))
+  controller_images           = jsondecode(data.http.aviatrix_controller_iam_id.body).BYOL
+  controller_ami_id           = local.controller_images[data.aws_region.current.name]
+  copilot_images              = jsondecode(data.http.aviatrix_copilot_iam_id.body).Copilot
+  copilot_ami_id              = local.copilot_images[data.aws_region.current.name]
+  controller_private_ip       = cidrhost(var.aviatrix_controller_subnet.cidr_block, 4)
+  copilot_private_ip          = cidrhost(var.aviatrix_copilot_subnet.cidr_block, 4)
+  is_aws_gov                  = length(regexall("gov", var.region)) > 0 ? true : false
+  arn_partition               = local.is_aws_gov ? "aws-us-gov" : "aws"
+  copilot_security_group_ips  = concat(["${aws_eip.aviatrix_controller_eip.public_ip}/32"], jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs))
+  additonal_volumes_lettering = "hijklmnop"
 }
