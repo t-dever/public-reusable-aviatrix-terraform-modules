@@ -209,7 +209,7 @@ module "aviatrix_controller_initialize" {
   depends_on = [
     aws_instance.aviatrix_controller_instance
   ]
-  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=hotfix/awsController/allowSecurityGroupEnablement"
+  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=v2.3.1"
   aviatrix_controller_public_ip       = aws_eip.aviatrix_controller_eip.public_ip
   aviatrix_controller_private_ip      = local.controller_private_ip
   aviatrix_controller_password        = random_password.aviatrix_controller_password.result

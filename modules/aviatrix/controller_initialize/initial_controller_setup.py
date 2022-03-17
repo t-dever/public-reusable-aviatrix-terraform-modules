@@ -241,7 +241,6 @@ class ControllerSetup():
                 'account_name': self.aws_primary_account_name,
                 'account_email': self.admin_email
             }
-            print(f"IS AWS GOV? : {self.is_aws_gov}")
             if self.is_aws_gov:
                 payload['cloud_type'] = 256
                 payload['awsgov_account_number'] = self.aws_primary_account_number
