@@ -88,16 +88,16 @@ variable "vpc_name" {
   default     = "aviatrix-controller-vpc"
 }
 
-variable "arn_partition" {
-  description = "The value used in ARN ID."
-  type        = string
-  default     = "aws" # For Gov use "aws-us-gov"
-}
-
 variable "aviatrix_controller_name" {
   description = "Name of controller that will be launched."
   type        = string
   default     = "aviatrix-controller"
+}
+
+variable "enable_auto_aviatrix_controller_security_group_mgmt" {
+  description = "Enables auto security group management for the Aviatrix controller via the Controller Initialize script."
+  type        = bool
+  default     = false
 }
 
 variable "aviatrix_controller_security_group_name" {
@@ -244,6 +244,7 @@ locals {
   copilot_ami_id             = local.copilot_images[data.aws_region.current.name]
   controller_private_ip      = cidrhost(var.aviatrix_controller_subnet.cidr_block, 4)
   copilot_private_ip         = cidrhost(var.aviatrix_copilot_subnet.cidr_block, 4)
-  is_aws_gov                 = length(regexall("/gov/", var.region)) > 0 ? true : false
+  is_aws_gov                 = length(regexall("gov", var.region)) > 0 ? true : false
+  arn_partition              = local.is_aws_gov ? "aws-us-gov" : "aws"
   copilot_security_group_ips = concat(["${aws_eip.aviatrix_controller_eip.public_ip}/32"], jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs))
 }

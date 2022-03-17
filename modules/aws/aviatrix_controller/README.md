@@ -20,7 +20,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aviatrix_controller_initialize"></a> [aviatrix\_controller\_initialize](#module\_aviatrix\_controller\_initialize) | git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize | improveAwsController |
+| <a name="module_aviatrix_controller_initialize"></a> [aviatrix\_controller\_initialize](#module\_aviatrix\_controller\_initialize) | git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize | v2.3.1 |
 
 ## Resources
 
@@ -44,6 +44,7 @@
 | [aws_key_pair.key_pair](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/key_pair) | resource |
 | [aws_network_interface.aviatrix_controller_network_interface](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/network_interface) | resource |
 | [aws_network_interface.aviatrix_copilot_network_interface](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/network_interface) | resource |
+| [aws_resourcegroups_group.aviatrix_resource_group](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/resourcegroups_group) | resource |
 | [aws_route.internet_route](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/route) | resource |
 | [aws_route_table.vpc_route_table](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/route_table) | resource |
 | [aws_route_table_association.aviatrix_controller_route_table_assoc](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/route_table_association) | resource |
@@ -76,7 +77,6 @@
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_subnets"></a> [additional\_subnets](#input\_additional\_subnets) | The subnets to be created. | <pre>map(object({<br>    cidr_block        = string,<br>    availability_zone = string<br>  }))</pre> | `{}` | no |
 | <a name="input_allowed_ips"></a> [allowed\_ips](#input\_allowed\_ips) | List of allowed ips to be added as ingress rule for security group. | `list(string)` | `[]` | no |
-| <a name="input_arn_partition"></a> [arn\_partition](#input\_arn\_partition) | The value used in ARN ID. | `string` | `"aws"` | no |
 | <a name="input_aviatrix_app_policy_name"></a> [aviatrix\_app\_policy\_name](#input\_aviatrix\_app\_policy\_name) | The name of the Aviatrix App Role Policy. | `string` | `"aviatrix-role-app-policy"` | no |
 | <a name="input_aviatrix_assume_policy_role_policy_name"></a> [aviatrix\_assume\_policy\_role\_policy\_name](#input\_aviatrix\_assume\_policy\_role\_policy\_name) | The name of the Aviatrix Assume Role Policy. | `string` | `"aviatrix-role-ec2-assume-role-policy"` | no |
 | <a name="input_aviatrix_aws_primary_account_name"></a> [aviatrix\_aws\_primary\_account\_name](#input\_aviatrix\_aws\_primary\_account\_name) | The primary account name to be added to the aviatrix access accounts. | `string` | `"aviatrix-aws-primary-account"` | no |
@@ -100,6 +100,7 @@
 | <a name="input_aviatrix_role_ec2_name"></a> [aviatrix\_role\_ec2\_name](#input\_aviatrix\_role\_ec2\_name) | The name of the Aviatrix Role for EC2. | `string` | `"aviatrix-role-ec2"` | no |
 | <a name="input_aws_key_pair_name"></a> [aws\_key\_pair\_name](#input\_aws\_key\_pair\_name) | The key pair name to be used for EC2 Instance Deployments. | `string` | `"aviatrix-controller-key"` | no |
 | <a name="input_aws_key_pair_public_key"></a> [aws\_key\_pair\_public\_key](#input\_aws\_key\_pair\_public\_key) | The key pair public ssh key to be used for EC2 Instance Deployments. | `string` | n/a | yes |
+| <a name="input_enable_auto_aviatrix_controller_security_group_mgmt"></a> [enable\_auto\_aviatrix\_controller\_security\_group\_mgmt](#input\_enable\_auto\_aviatrix\_controller\_security\_group\_mgmt) | Enables auto security group management for the Aviatrix controller via the Controller Initialize script. | `bool` | `false` | no |
 | <a name="input_enable_auto_aviatrix_copilot_security_group"></a> [enable\_auto\_aviatrix\_copilot\_security\_group](#input\_enable\_auto\_aviatrix\_copilot\_security\_group) | Turns on the script for collecting the gateway IP addresses from the security groups of the Aviatrix Controller. Then applies them to copilot security group. | `bool` | `false` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region where the resources will be deployed. | `string` | `"us-east-1"` | no |
 | <a name="input_tag_prefix"></a> [tag\_prefix](#input\_tag\_prefix) | The prefix of tagged resource names. | `string` | `"aviatrix"` | no |

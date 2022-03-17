@@ -3,6 +3,7 @@ import sys
 import time
 import requests
 import urllib3
+from distutils.util import strtobool
 
 urllib3.disable_warnings()
 
@@ -22,10 +23,10 @@ class ControllerSetup():
         self.primary_access_account = ""
         self.aws_primary_account_name = os.getenv('AWS_PRIMARY_ACCOUNT_NAME')
         self.aws_primary_account_number = os.getenv('AWS_PRIMARY_ACCOUNT_NUMBER')
-        self.is_aws_gov = os.getenv('AWS_GOV')
+        self.is_aws_gov = strtobool(os.getenv('AWS_GOV'))
         self.aws_role_app_arn = os.getenv('AWS_ROLE_APP_ARN')
         self.aws_role_ec2_arn = os.getenv('AWS_ROLE_EC2_ARN')
-        self.security_group_management = os.getenv('ENABLE_SECURITY_GROUP_MANAGEMENT')
+        self.security_group_management = strtobool(os.getenv('ENABLE_SECURITY_GROUP_MANAGEMENT'))
 
     def _check_environment_vars(self):
         print("Checking required environment variables.")
@@ -255,6 +256,9 @@ class ControllerSetup():
             response = self._format_response(
                 requests.post(self.url, data=payload, verify=False))
             if response.get('return') == False:
+                if response.get('reason'):
+                    print(f"Failed to add account: '{self.aws_primary_account_name}'"
+                          f" due to Error: '{response.get('reason')}'")
                 raise Exception(response)
             print(f"Successfully added {self.aws_primary_account_name}.")
 
