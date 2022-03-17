@@ -240,7 +240,6 @@ class ControllerSetup():
                 'account_name': self.aws_primary_account_name,
                 'account_email': self.admin_email
             }
-            print(self.is_aws_gov)
             if self.is_aws_gov == 'true':
                 payload['cloud_type'] = 256
                 payload['awsgov_account_number'] = self.aws_primary_account_number
@@ -282,7 +281,7 @@ def main():
 
     if controller.aws_primary_account_name:
         controller.primary_aws_account()
-    if controller.security_group_management:
+    if controller.security_group_management == 'true':
         controller.enable_security_group_management()
 
 

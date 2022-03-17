@@ -86,7 +86,6 @@ resource "aviatrix_transit_gateway" "aviatrix_transit_gateway" {
   insane_mode                   = var.insane_mode ? true : false
   insane_mode_az                = var.insane_mode ? length(var.aviatrix_transit_availability_zone_1) > 0 ? var.aviatrix_transit_availability_zone_1 : "${var.region}a" : null
   ha_insane_mode_az             = var.enable_aviatrix_transit_gateway_ha && var.insane_mode ? length(var.aviatrix_transit_availability_zone_2) > 0 ? var.aviatrix_transit_availability_zone_2 : "${var.region}b" : null
-  enable_gateway_load_balancer = true
 }
 
 # resource "azurerm_subnet" "azure_transit_firewall_subnet" {
