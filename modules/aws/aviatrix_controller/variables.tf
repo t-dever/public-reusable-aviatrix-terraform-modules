@@ -100,6 +100,12 @@ variable "aviatrix_controller_name" {
   default     = "aviatrix-controller"
 }
 
+variable "enable_auto_aviatrix_controller_security_group_mgmt" {
+  description = "Enables auto security group management for the Aviatrix controller via the Controller Initialize script."
+  type        = bool
+  default     = false
+}
+
 variable "aviatrix_controller_security_group_name" {
   description = "The name of the security group for the Aviatrix Controller."
   type        = string
