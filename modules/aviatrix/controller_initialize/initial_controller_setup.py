@@ -284,7 +284,7 @@ class ControllerSetup():
             payload = {
                 'action': 'add_account_user',
                 'CID': self._get_cid(),
-                'account_name': self.copilot_username,
+                'username': self.copilot_username,
                 'password': self.copilot_password,
                 'email': self.admin_email,
                 'groups': "read_only"
