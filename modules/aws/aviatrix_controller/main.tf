@@ -209,7 +209,7 @@ module "aviatrix_controller_initialize" {
   depends_on = [
     aws_instance.aviatrix_controller_instance
   ]
-  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize"
+  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=v2.3.1"
   aviatrix_controller_public_ip       = aws_eip.aviatrix_controller_eip.public_ip
   aviatrix_controller_private_ip      = local.controller_private_ip
   aviatrix_controller_password        = random_password.aviatrix_controller_password.result
@@ -220,7 +220,7 @@ module "aviatrix_controller_initialize" {
   aviatrix_aws_primary_account_number = data.aws_caller_identity.current.account_id
   aviatrix_aws_role_app_arn           = aws_iam_role.aviatrix_role_app.arn
   aviatrix_aws_role_ec2_arn           = aws_iam_role.aviatrix_role_ec2.arn
-  enable_security_group_management    = false
+  enable_security_group_management    = var.enable_auto_aviatrix_controller_security_group_mgmt
   aws_gov                             = local.is_aws_gov
 }
 

@@ -256,8 +256,9 @@ class ControllerSetup():
             response = self._format_response(
                 requests.post(self.url, data=payload, verify=False))
             if response.get('return') == False:
-                print(f"Failed to add account: '{self.aws_primary_account_name}'"
-                      f" due to Error: '{response.get('results')}'")
+                if response.get('reason'):
+                    print(f"Failed to add account: '{self.aws_primary_account_name}'"
+                          f" due to Error: '{response.get('reason')}'")
                 raise Exception(response)
             print(f"Successfully added {self.aws_primary_account_name}.")
 

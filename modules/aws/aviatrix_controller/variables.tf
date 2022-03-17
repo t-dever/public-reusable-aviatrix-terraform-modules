@@ -100,6 +100,12 @@ variable "aviatrix_controller_name" {
   default     = "aviatrix-controller"
 }
 
+variable "enable_auto_aviatrix_controller_security_group_mgmt" {
+  description = "Enables auto security group management for the Aviatrix controller via the Controller Initialize script."
+  type        = bool
+  default     = false
+}
+
 variable "aviatrix_controller_security_group_name" {
   description = "The name of the security group for the Aviatrix Controller."
   type        = string
@@ -244,6 +250,6 @@ locals {
   copilot_ami_id             = local.copilot_images[data.aws_region.current.name]
   controller_private_ip      = cidrhost(var.aviatrix_controller_subnet.cidr_block, 4)
   copilot_private_ip         = cidrhost(var.aviatrix_copilot_subnet.cidr_block, 4)
-  is_aws_gov                 = length(regexall("/gov/", var.region)) > 0 ? true : false
+  is_aws_gov                 = length(regexall("gov", var.region)) > 0 ? true : false
   copilot_security_group_ips = concat(["${aws_eip.aviatrix_controller_eip.public_ip}/32"], jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs))
 }
