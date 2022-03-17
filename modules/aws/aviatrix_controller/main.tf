@@ -96,6 +96,17 @@ resource "random_password" "aviatrix_controller_password" {
   override_special = "_@$*()!"
 }
 
+# Generates random password Aviatrix Copilot credentials
+resource "random_password" "aviatrix_copilot_password" {
+  length           = 24
+  special          = true
+  min_lower        = 2
+  min_numeric      = 2
+  min_special      = 2
+  min_upper        = 2
+  override_special = "_@$*()!"
+}
+
 # Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
 resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
   name        = "/aviatrix/controller/password"
@@ -104,6 +115,16 @@ resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
   value       = random_password.aviatrix_controller_password.result
   tags        = { "Name" = "${var.tag_prefix}-controller-password" }
 }
+
+# Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
+resource "aws_ssm_parameter" "aviatrix_copilot_secret_parameter" {
+  name        = "/aviatrix/copilot/password"
+  description = "The copilot password used to authenticate with the controller using read-only."
+  type        = "SecureString"
+  value       = random_password.aviatrix_copilot_password.result
+  tags        = { "Name" = "${var.tag_prefix}-copilot-password" }
+}
+
 
 # Creates Aviatrix Controller Security Group
 resource "aws_security_group" "aviatrix_controller_security_group" {
@@ -209,7 +230,7 @@ module "aviatrix_controller_initialize" {
   depends_on = [
     aws_instance.aviatrix_controller_instance
   ]
-  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=v2.3.1"
+  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=v2.3.3"
   aviatrix_controller_public_ip       = aws_eip.aviatrix_controller_eip.public_ip
   aviatrix_controller_private_ip      = local.controller_private_ip
   aviatrix_controller_password        = random_password.aviatrix_controller_password.result
@@ -222,6 +243,8 @@ module "aviatrix_controller_initialize" {
   aviatrix_aws_role_ec2_arn           = aws_iam_role.aviatrix_role_ec2.arn
   enable_security_group_management    = var.enable_auto_aviatrix_controller_security_group_mgmt
   aws_gov                             = local.is_aws_gov
+  copilot_username                    = var.copilot_username
+  copilot_password                    = random_password.aviatrix_copilot_password.result
 }
 
 # Creates CoPilot Public IP Address
@@ -340,11 +363,21 @@ resource "aws_eip_association" "aviatrix_copilot_eip_assoc" {
   allocation_id = aws_eip.aviatrix_copilot_eip.id
 }
 
+# Creates EBS volumes
+resource "aws_ebs_volume" "aviatrix_copilot_ebs_volumes" {
+  #checkov:skip=CKV_AWS_189:Ensure EBS Volume is encrypted by KMS using a customer managed Key (CMK)
+  #checkov:skip=CKV2_AWS_9:Ensure that EBS are added in the backup plans of AWS Backup
+  count             = length(var.aviatrix_copilot_additional_volumes)
+  availability_zone = var.aviatrix_copilot_subnet.availability_zone
+  size              = var.aviatrix_copilot_additional_volumes[count.index].size
+  encrypted         = true
+}
+
 # Attaches extra volumes to CoPilot Instance
 resource "aws_volume_attachment" "aviatrix_copilot_ebs_attach" {
-  for_each    = var.aviatrix_copilot_additional_volumes
-  device_name = each.value.device_name
-  volume_id   = each.value.volume_id
+  count       = length(var.aviatrix_copilot_additional_volumes)
+  device_name = "/dev/sd${substr(local.additonal_volumes_lettering, count.index, 1)}"
+  volume_id   = aws_ebs_volume.aviatrix_copilot_ebs_volumes[count.index].id
   instance_id = aws_instance.aviatrix_copilot_instance.id
 }
 

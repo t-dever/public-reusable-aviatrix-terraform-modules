@@ -20,13 +20,14 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aviatrix_controller_initialize"></a> [aviatrix\_controller\_initialize](#module\_aviatrix\_controller\_initialize) | git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize | v2.3.1 |
+| <a name="module_aviatrix_controller_initialize"></a> [aviatrix\_controller\_initialize](#module\_aviatrix\_controller\_initialize) | git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize | v2.3.3 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
 | [aws_default_security_group.default_security_group](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/default_security_group) | resource |
+| [aws_ebs_volume.aviatrix_copilot_ebs_volumes](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/ebs_volume) | resource |
 | [aws_eip.aviatrix_controller_eip](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/eip) | resource |
 | [aws_eip.aviatrix_copilot_eip](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/eip) | resource |
 | [aws_eip_association.aviatrix_controller_eip_assoc](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/eip_association) | resource |
@@ -59,12 +60,14 @@
 | [aws_security_group_rule.aviatrix_copilot_security_group_ingress_gateways_syslog_rule](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.aviatrix_copilot_security_group_ingress_rule](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/security_group_rule) | resource |
 | [aws_ssm_parameter.aviatrix_controller_secret_parameter](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/ssm_parameter) | resource |
+| [aws_ssm_parameter.aviatrix_copilot_secret_parameter](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/ssm_parameter) | resource |
 | [aws_subnet.additional_subnets](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/subnet) | resource |
 | [aws_subnet.aviatrix_controller_subnet](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/subnet) | resource |
 | [aws_subnet.aviatrix_copilot_subnet](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/subnet) | resource |
 | [aws_volume_attachment.aviatrix_copilot_ebs_attach](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/volume_attachment) | resource |
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/resources/vpc) | resource |
 | [random_password.aviatrix_controller_password](https://registry.terraform.io/providers/hashicorp/random/3.1.0/docs/resources/password) | resource |
+| [random_password.aviatrix_copilot_password](https://registry.terraform.io/providers/hashicorp/random/3.1.0/docs/resources/password) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/data-sources/caller_identity) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/4.4.0/docs/data-sources/region) | data source |
 | [external_external.get_aviatrix_gateway_cidrs](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
@@ -89,7 +92,7 @@
 | <a name="input_aviatrix_controller_security_group_name"></a> [aviatrix\_controller\_security\_group\_name](#input\_aviatrix\_controller\_security\_group\_name) | The name of the security group for the Aviatrix Controller. | `string` | `"aviatrix-controller-security-group"` | no |
 | <a name="input_aviatrix_controller_subnet"></a> [aviatrix\_controller\_subnet](#input\_aviatrix\_controller\_subnet) | The aviatrix controller subnet to be created. | <pre>object({<br>    name              = string,<br>    cidr_block        = string,<br>    availability_zone = string<br>  })</pre> | <pre>{<br>  "availability_zone": "us-east-1a",<br>  "cidr_block": "10.0.0.0/26",<br>  "name": "aviatrix-controller"<br>}</pre> | no |
 | <a name="input_aviatrix_controller_version"></a> [aviatrix\_controller\_version](#input\_aviatrix\_controller\_version) | The version used for the controller | `string` | `"6.6"` | no |
-| <a name="input_aviatrix_copilot_additional_volumes"></a> [aviatrix\_copilot\_additional\_volumes](#input\_aviatrix\_copilot\_additional\_volumes) | Additonal volumes to add to CoPilot. | <pre>map(object({<br>    device_name = string,<br>    volume_id   = string,<br>  }))</pre> | `{}` | no |
+| <a name="input_aviatrix_copilot_additional_volumes"></a> [aviatrix\_copilot\_additional\_volumes](#input\_aviatrix\_copilot\_additional\_volumes) | Additonal volumes to add to CoPilot. | <pre>list(object({<br>    size = string<br>  }))</pre> | <pre>[<br>  {<br>    "size": 50<br>  }<br>]</pre> | no |
 | <a name="input_aviatrix_copilot_instance_size"></a> [aviatrix\_copilot\_instance\_size](#input\_aviatrix\_copilot\_instance\_size) | Aviatrix CoPilot instance size. | `string` | `"t3.2xlarge"` | no |
 | <a name="input_aviatrix_copilot_name"></a> [aviatrix\_copilot\_name](#input\_aviatrix\_copilot\_name) | Name of copilot that will be launched. | `string` | `"aviatrix-copilot"` | no |
 | <a name="input_aviatrix_copilot_root_volume_size"></a> [aviatrix\_copilot\_root\_volume\_size](#input\_aviatrix\_copilot\_root\_volume\_size) | Root volume size for copilot | `number` | `25` | no |
@@ -100,6 +103,7 @@
 | <a name="input_aviatrix_role_ec2_name"></a> [aviatrix\_role\_ec2\_name](#input\_aviatrix\_role\_ec2\_name) | The name of the Aviatrix Role for EC2. | `string` | `"aviatrix-role-ec2"` | no |
 | <a name="input_aws_key_pair_name"></a> [aws\_key\_pair\_name](#input\_aws\_key\_pair\_name) | The key pair name to be used for EC2 Instance Deployments. | `string` | `"aviatrix-controller-key"` | no |
 | <a name="input_aws_key_pair_public_key"></a> [aws\_key\_pair\_public\_key](#input\_aws\_key\_pair\_public\_key) | The key pair public ssh key to be used for EC2 Instance Deployments. | `string` | n/a | yes |
+| <a name="input_copilot_username"></a> [copilot\_username](#input\_copilot\_username) | Username of Copilot Account; Adds a account for CoPilot with ReadOnly Credentials. Must Provide variables 'copilot\_username' and 'copilot\_password' | `string` | `"copilot-read-only"` | no |
 | <a name="input_enable_auto_aviatrix_controller_security_group_mgmt"></a> [enable\_auto\_aviatrix\_controller\_security\_group\_mgmt](#input\_enable\_auto\_aviatrix\_controller\_security\_group\_mgmt) | Enables auto security group management for the Aviatrix controller via the Controller Initialize script. | `bool` | `false` | no |
 | <a name="input_enable_auto_aviatrix_copilot_security_group"></a> [enable\_auto\_aviatrix\_copilot\_security\_group](#input\_enable\_auto\_aviatrix\_copilot\_security\_group) | Turns on the script for collecting the gateway IP addresses from the security groups of the Aviatrix Controller. Then applies them to copilot security group. | `bool` | `false` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region where the resources will be deployed. | `string` | `"us-east-1"` | no |

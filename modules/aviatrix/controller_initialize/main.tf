@@ -14,6 +14,8 @@ resource "null_resource" "initial_config" {
       AWS_ROLE_EC2_ARN                 = var.aviatrix_aws_role_ec2_arn
       ENABLE_SECURITY_GROUP_MANAGEMENT = var.enable_security_group_management
       AWS_GOV                          = var.aws_gov
+      COPILOT_USERNAME                 = var.copilot_username
+      COPILOT_PASSWORD                 = var.copilot_password
     }
   }
 }
