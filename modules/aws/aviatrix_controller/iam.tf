@@ -36,7 +36,7 @@ resource "aws_iam_role" "aviatrix_role_app" {
         "Effect": "Allow",
         "Principal": {
           "AWS": [
-              "arn:${var.arn_partition}:iam::${data.aws_caller_identity.current.account_id}:root"
+              "arn:${local.arn_partition}:iam::${data.aws_caller_identity.current.account_id}:root"
             ]
         },
         "Action": [
