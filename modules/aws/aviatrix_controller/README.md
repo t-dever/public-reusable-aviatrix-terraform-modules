@@ -77,7 +77,6 @@
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_subnets"></a> [additional\_subnets](#input\_additional\_subnets) | The subnets to be created. | <pre>map(object({<br>    cidr_block        = string,<br>    availability_zone = string<br>  }))</pre> | `{}` | no |
 | <a name="input_allowed_ips"></a> [allowed\_ips](#input\_allowed\_ips) | List of allowed ips to be added as ingress rule for security group. | `list(string)` | `[]` | no |
-| <a name="input_arn_partition"></a> [arn\_partition](#input\_arn\_partition) | The value used in ARN ID. | `string` | `"aws"` | no |
 | <a name="input_aviatrix_app_policy_name"></a> [aviatrix\_app\_policy\_name](#input\_aviatrix\_app\_policy\_name) | The name of the Aviatrix App Role Policy. | `string` | `"aviatrix-role-app-policy"` | no |
 | <a name="input_aviatrix_assume_policy_role_policy_name"></a> [aviatrix\_assume\_policy\_role\_policy\_name](#input\_aviatrix\_assume\_policy\_role\_policy\_name) | The name of the Aviatrix Assume Role Policy. | `string` | `"aviatrix-role-ec2-assume-role-policy"` | no |
 | <a name="input_aviatrix_aws_primary_account_name"></a> [aviatrix\_aws\_primary\_account\_name](#input\_aviatrix\_aws\_primary\_account\_name) | The primary account name to be added to the aviatrix access accounts. | `string` | `"aviatrix-aws-primary-account"` | no |
