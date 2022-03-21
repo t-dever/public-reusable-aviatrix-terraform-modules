@@ -22,6 +22,12 @@ variable "insane_mode" {
   default     = false
 }
 
+variable "vpc_name" {
+  description = "The name of the VPC."
+  type        = string
+  default     = "aviatrix-transit-vpc"
+}
+
 variable "vpc_address_space" {
   description = "The address space used for the VPC."
   type        = string
@@ -38,6 +44,12 @@ variable "aviatrix_transit_ha_subnet_name" {
   description = "The name of the HA Aviatrix Transit Gateway Subnet."
   type        = string
   default     = "aviatrix-transit-ha"
+}
+
+variable "aviatrix_firewall_mgmt_primary_subnet_name" {
+  description = "The name of the Primary Firewall Management Subnet."
+  type        = string
+  default     = "aviatrix-firewall-mgmt-primary"
 }
 
 variable "aviatrix_transit_availability_zone_1" {
@@ -252,10 +264,12 @@ locals {
   is_aws_gov              = length(regexall("gov", var.region)) > 0 ? true : false
   cidrbits                = tonumber(split("/", var.vpc_address_space)[1])
   transit_gateway_newbits = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
+  firewall_subnet_newbits = 28 - local.cidrbits
   netnum                  = pow(2, local.transit_gateway_newbits)
   # firewall_newbits          = 28 - local.cidrbits
-  transit_gateway_subnet    = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, 1)
-  transit_gateway_ha_subnet = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, 2)
+  transit_gateway_subnet    = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, 0)
+  transit_gateway_ha_subnet = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, 1)
+  firewall_mgmt_subnet = cidrsubnets(var.vpc_address_space, local.transit_gateway_newbits, local.transit_gateway_newbits, local.firewall_subnet_newbits)[2]
   # transit_gateway_subnet    = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, local.netnum - 2)
   # transit_gateway_ha_subnet = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, local.netnum - 1)
   # firewall_subnet           = cidrsubnet(var.vnet_address_prefix, local.firewall_newbits, 0)

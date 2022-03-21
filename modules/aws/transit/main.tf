@@ -1,18 +1,15 @@
+# Create Virtual Private Connection (Virtual Network)
 resource "aws_vpc" "vpc" {
   cidr_block = var.vpc_address_space
   tags       = { "Name" = var.vpc_name }
 }
 
+# Create Default Security Group for VPC
 resource "aws_default_security_group" "default_security_group" {
   vpc_id = aws_vpc.vpc.id
 }
 
-variable "vpc_name" {
-  description = "The name of the VPC."
-  type        = string
-  default     = "aviatrix-transit-vpc"
-}
-
+# Create Transit Gateway Primary Subnet
 resource "aws_subnet" "aviatrix_transit_primary_subnet" {
   count             = var.insane_mode ? 0 : 1
   vpc_id            = aws_vpc.vpc.id
@@ -21,12 +18,22 @@ resource "aws_subnet" "aviatrix_transit_primary_subnet" {
   tags              = { "Name" = "${var.aviatrix_transit_primary_subnet_name}" }
 }
 
+# Create Transit Gateway HA Subnet
 resource "aws_subnet" "aviatrix_transit_ha_subnet" {
   count             = var.insane_mode ? 0 : var.enable_aviatrix_transit_gateway_ha ? 1 : 0
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = local.transit_gateway_ha_subnet
   availability_zone = length(var.aviatrix_transit_availability_zone_2) > 0 ? var.aviatrix_transit_availability_zone_2 : "${var.region}b"
   tags              = { "Name" = "${var.aviatrix_transit_primary_subnet_name}" }
+}
+
+# Create Firewall Primary Subnet
+resource "aws_subnet" "aviatrix_firewall_mgmt_primary_subnet" {
+  count             = length(var.firewalls) > 0 ? 1 : 0
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = local.firewall_mgmt_subnet
+  availability_zone = length(var.aviatrix_transit_availability_zone_1) > 0 ? var.aviatrix_transit_availability_zone_1 : "${var.region}a"
+  tags              = { "Name" = "${var.aviatrix_firewall_mgmt_primary_subnet_name}" }
 }
 
 # Creates Internet Gateway for VPC
@@ -90,6 +97,7 @@ resource "aviatrix_transit_gateway" "aviatrix_transit_gateway" {
   tags                          = var.tags
 }
 
+# Create Aviatrix Firenet
 resource "aviatrix_firenet" "firenet" {
   depends_on = [
     aviatrix_transit_gateway.aviatrix_transit_gateway
@@ -105,7 +113,7 @@ resource "aviatrix_firenet" "firenet" {
 }
 
 # resource "aviatrix_firewall_instance" "firewall_instance" {
-#   count                  = var.firenet_enabled ? var.firewalls : 0
+#   count                  = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
 #   vpc_id                 = aws_vpc.vpc.id
 #   firenet_gw_name        = aviatrix_transit_gateway.aviatrix_transit_gateway.gw_name
 #   firewall_name          = var.firewalls[count.index].name
@@ -113,9 +121,9 @@ resource "aviatrix_firenet" "firenet" {
 #   firewall_image_version = var.firewall_image_version
 #   firewall_size          = var.firewalls[count.index].size
 #   zone                   = var.firewalls[count.index].availability_zone
-#   management_subnet      = local.is_palo ? var.firewalls[count.index].availability_zone == var.aviatrix_transit_availability_zone_1 ? local.transit_gateway_subnet : local.transit_gateway_ha_subnet : null  # This may need a separate subnet; It will eat into the ip space for insane mode
-#   egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[0].address_prefix
-#   user_data              = local.is_fortinet ? local.fortinet_bootstrap : null
+#   management_subnet      = local.is_palo ?  # This may need a separate subnet; It will eat into the ip space for insane mode
+#   # egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[0].address_prefix
+#   # user_data              = local.is_fortinet ? local.fortinet_bootstrap : null
 # }
 
 # resource "azurerm_subnet" "azure_transit_firewall_subnet" {
