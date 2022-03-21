@@ -167,6 +167,7 @@ resource "azurerm_key_vault_secret" "aviatrix_controller_public_ip_secret" {
 }
 
 resource "azurerm_network_interface" "azure_controller_nic" {
+  #checkov:skip=CKV_AZURE_119: "Ensure that Network Interfaces don't use public IPs" REASON: Public IP is required for Controller NIC.
   name                = "${var.aviatrix_controller_name}-nic"
   location            = azurerm_resource_group.resource_group.location
   resource_group_name = azurerm_resource_group.resource_group.name
