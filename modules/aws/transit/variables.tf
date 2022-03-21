@@ -80,6 +80,44 @@ variable "enable_aviatrix_transit_firenet" {
   default     = false
 }
 
+variable "enable_firenet_egress" {
+  type        = bool
+  default     = false
+  description = "Allow traffic to the internet through firewall."
+}
+
+variable "firewall_name" {
+  description = "The name of the firewall to be deployed."
+  type        = string
+  default = ""
+}
+
+variable "firewall_image" {
+  type        = string
+  description = "The firewall image to be used to deploy the NGFW's"
+  default     = ""
+  validation {
+    condition     = contains(["Palo Alto Networks VM-Series Next-Generation Firewall Bundle 1", ""], var.firewall_image)
+    error_message = "The firewall_image must be one of values in the condition statement."
+  }
+}
+
+variable "firewall_image_version" {
+  description = "The firewall image version specific to the NGFW vendor image"
+  type        = string
+  default     = ""
+}
+
+variable "firewalls" {
+  description = "The firewall instance information required for creating firewalls"
+  type = list(object({
+    name = string,
+    size = string,
+    availability_zone = string,
+  }))
+}
+
+
 # variable "resource_group_name" {
 #   description = "The resource group name to be created."
 #   type        = string
@@ -198,11 +236,7 @@ variable "enable_aviatrix_transit_firenet" {
 #   default     = "fwadmin"
 # }
 
-# variable "egress_enabled" {
-#   type        = bool
-#   default     = false
-#   description = "Allow traffic to the internet through firewall"
-# }
+
 
 # variable "allowed_public_ips" {
 #   description = "A list of allowed public IP's access to firewalls."
@@ -213,15 +247,17 @@ variable "enable_aviatrix_transit_firenet" {
 
 locals {
   # is_checkpoint             = length(regexall("check", lower(var.firewall_image))) > 0    # Check if fw image contains checkpoint.
-  # is_palo                   = length(regexall("palo", lower(var.firewall_image))) > 0     # Check if fw image contains palo.
+  is_palo                   = length(regexall("palo", lower(var.firewall_image))) > 0     # Check if fw image contains palo.
   # is_fortinet               = length(regexall("fortinet", lower(var.firewall_image))) > 0 # Check if fw image contains fortinet.
   is_aws_gov              = length(regexall("gov", var.region)) > 0 ? true : false
   cidrbits                = tonumber(split("/", var.vpc_address_space)[1])
   transit_gateway_newbits = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
   netnum                  = pow(2, local.transit_gateway_newbits)
   # firewall_newbits          = 28 - local.cidrbits
-  transit_gateway_subnet    = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, local.netnum - 2)
-  transit_gateway_ha_subnet = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, local.netnum - 1)
+  transit_gateway_subnet    = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, 1)
+  transit_gateway_ha_subnet = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, 2)
+  # transit_gateway_subnet    = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, local.netnum - 2)
+  # transit_gateway_ha_subnet = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, local.netnum - 1)
   # firewall_subnet           = cidrsubnet(var.vnet_address_prefix, local.firewall_newbits, 0)
   # firewall_wan_gateway      = cidrhost(local.firewall_subnet, 1)
   # fortinet_bootstrap        = local.is_fortinet && var.egress_enabled ? templatefile("${path.module}/firewalls/fortinet/fortinet_egress_init.tftpl", { wan_gateway = local.firewall_wan_gateway }) : templatefile("${path.module}/firewalls/fortinet/fortinet_init.tftpl")

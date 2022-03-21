@@ -83,10 +83,40 @@ resource "aviatrix_transit_gateway" "aviatrix_transit_gateway" {
   enable_transit_firenet        = var.enable_aviatrix_transit_firenet ? true : false
   enable_hybrid_connection      = true
   enable_vpc_dns_server         = false
+  enable_encrypt_volume         = true
   insane_mode                   = var.insane_mode ? true : false
   insane_mode_az                = var.insane_mode ? length(var.aviatrix_transit_availability_zone_1) > 0 ? var.aviatrix_transit_availability_zone_1 : "${var.region}a" : null
   ha_insane_mode_az             = var.enable_aviatrix_transit_gateway_ha && var.insane_mode ? length(var.aviatrix_transit_availability_zone_2) > 0 ? var.aviatrix_transit_availability_zone_2 : "${var.region}b" : null
+  tags                          = var.tags
 }
+
+resource "aviatrix_firenet" "firenet" {
+  depends_on = [
+    aviatrix_transit_gateway.aviatrix_transit_gateway
+  ]
+  count                                = var.enable_aviatrix_transit_firenet ? 1 : 0
+  vpc_id                               = aws_vpc.vpc.id
+  inspection_enabled                   = true
+  egress_enabled                       = var.enable_firenet_egress
+  keep_alive_via_lan_interface_enabled = false
+  manage_firewall_instance_association = false
+  east_west_inspection_excluded_cidrs  = []
+  egress_static_cidrs                  = []
+}
+
+# resource "aviatrix_firewall_instance" "firewall_instance" {
+#   count                  = var.firenet_enabled ? var.firewalls : 0
+#   vpc_id                 = aws_vpc.vpc.id
+#   firenet_gw_name        = aviatrix_transit_gateway.aviatrix_transit_gateway.gw_name
+#   firewall_name          = var.firewalls[count.index].name
+#   firewall_image         = var.firewall_image
+#   firewall_image_version = var.firewall_image_version
+#   firewall_size          = var.firewalls[count.index].size
+#   zone                   = var.firewalls[count.index].availability_zone
+#   management_subnet      = local.is_palo ? var.firewalls[count.index].availability_zone == var.aviatrix_transit_availability_zone_1 ? local.transit_gateway_subnet : local.transit_gateway_ha_subnet : null  # This may need a separate subnet; It will eat into the ip space for insane mode
+#   egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[0].address_prefix
+#   user_data              = local.is_fortinet ? local.fortinet_bootstrap : null
+# }
 
 # resource "azurerm_subnet" "azure_transit_firewall_subnet" {
 #   count                = var.firenet_enabled ? 1 : 0
@@ -124,64 +154,6 @@ resource "aviatrix_transit_gateway" "aviatrix_transit_gateway" {
 #   network_security_group_id = azurerm_network_security_group.firewall_mgmt_nsg[0].id
 # }
 
-# resource "azurerm_public_ip" "transit_public_ip" {
-#   lifecycle {
-#     ignore_changes = [tags]
-#   }
-#   name                = "${var.transit_gateway_name}-public-ip"
-#   location            = azurerm_resource_group.azure_transit_resource_group.location
-#   resource_group_name = azurerm_resource_group.azure_transit_resource_group.name
-#   sku                 = "Standard"
-#   allocation_method   = "Static"
-# }
-
-# resource "azurerm_public_ip" "transit_hagw_public_ip" {
-#   lifecycle {
-#     ignore_changes = [tags]
-#   }
-#   count               = var.transit_gateway_ha ? 1 : 0
-#   name                = "${var.transit_gateway_name}-ha-public-ip"
-#   location            = azurerm_resource_group.azure_transit_resource_group.location
-#   resource_group_name = azurerm_resource_group.azure_transit_resource_group.name
-#   sku                 = "Standard"
-#   allocation_method   = "Static"
-# }
-
-# # Create an Aviatrix Azure Transit Network Gateway
-
-
-# resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown" {
-#   count = var.enable_transit_gateway_scheduled_shutdown ? 1 : 0
-#   depends_on = [
-#     aviatrix_transit_gateway.azure_transit_gateway
-#   ]
-#   virtual_machine_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_transit_resource_group.name}/providers/Microsoft.Compute/virtualMachines/av-gw-${var.transit_gateway_name}"
-#   location           = azurerm_resource_group.azure_transit_resource_group.location
-#   enabled            = true
-
-#   daily_recurrence_time = "1800"
-#   timezone              = "Central Standard Time"
-#   notification_settings {
-#     enabled = false
-#   }
-# }
-
-# resource "azurerm_dev_test_global_vm_shutdown_schedule" "transit_shutdown_1" {
-#   count = var.enable_transit_gateway_scheduled_shutdown && var.transit_gateway_ha ? 1 : 0
-#   depends_on = [
-#     aviatrix_transit_gateway.azure_transit_gateway
-#   ]
-#   virtual_machine_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${azurerm_resource_group.azure_transit_resource_group.name}/providers/Microsoft.Compute/virtualMachines/av-gw-${var.transit_gateway_name}-hagw"
-#   location           = azurerm_resource_group.azure_transit_resource_group.location
-#   enabled            = true
-
-#   daily_recurrence_time = "1800"
-#   timezone              = "Central Standard Time"
-#   notification_settings {
-#     enabled = false
-#   }
-# }
-
 # resource "random_password" "generate_firewall_secret" {
 #   count            = var.firenet_enabled ? 1 : 0
 #   length           = 16
@@ -196,16 +168,6 @@ resource "aviatrix_transit_gateway" "aviatrix_transit_gateway" {
 #   key_vault_id = var.key_vault_id
 # }
 
-# resource "aviatrix_firenet" "firenet" {
-#   count                                = var.firenet_enabled ? 1 : 0
-#   vpc_id                               = data.aviatrix_transit_gateway.transit_gw_data.vpc_id
-#   inspection_enabled                   = true
-#   egress_enabled                       = var.egress_enabled
-#   keep_alive_via_lan_interface_enabled = false
-#   manage_firewall_instance_association = false
-#   east_west_inspection_excluded_cidrs  = []
-#   egress_static_cidrs                  = []
-# }
 
 # # LIMITATION: In firewall deployment we can't perform a count "x" due to the arm template deployment using the same deployment name
 # #             This will cause a failure when attempting to deploy 2 or more instances at the same time. TODO: (Potentially look into creating scale set for autoscaling capabilities)
