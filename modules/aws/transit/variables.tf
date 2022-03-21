@@ -52,6 +52,25 @@ variable "aviatrix_firewall_mgmt_primary_subnet_name" {
   default     = "aviatrix-firewall-mgmt-primary"
 }
 
+variable "aviatrix_firewall_mgmt_ha_subnet_name" {
+  description = "The name of the HA Firewall Management Subnet."
+  type        = string
+  default     = "aviatrix-firewall-mgmt-ha"
+}
+
+variable "aviatrix_firewall_egress_primary_subnet_name" {
+  description = "The name of the Primary Firewall Egress Subnet."
+  type        = string
+  default     = "aviatrix-firewall-egress-primary"
+}
+
+variable "aviatrix_firewall_egress_ha_subnet_name" {
+  description = "The name of the HA Firewall Egress Subnet."
+  type        = string
+  default     = "aviatrix-firewall-egress-ha"
+}
+
+
 variable "aviatrix_transit_availability_zone_1" {
   description = "The availability zone for Primary Aviatrix Transit Gateway"
   type        = string
@@ -101,7 +120,13 @@ variable "enable_firenet_egress" {
 variable "firewall_name" {
   description = "The name of the firewall to be deployed."
   type        = string
-  default = ""
+  default     = ""
+}
+
+variable "firewall_mgmt_security_group_name" {
+  description = "The name of the Security Group for Firewall Management."
+  type = string
+  default = "aviatrix-firewall-mgmt-security-group"
 }
 
 variable "firewall_image" {
@@ -114,6 +139,12 @@ variable "firewall_image" {
   }
 }
 
+variable "allowed_ips" {
+  description = "List of allowed User Public Ips to be added as ingress rule for security group."
+  type        = list(string)
+  default     = []
+}
+
 variable "firewall_image_version" {
   description = "The firewall image version specific to the NGFW vendor image"
   type        = string
@@ -123,8 +154,8 @@ variable "firewall_image_version" {
 variable "firewalls" {
   description = "The firewall instance information required for creating firewalls"
   type = list(object({
-    name = string,
-    size = string,
+    name              = string,
+    size              = string,
     availability_zone = string,
   }))
 }
@@ -259,7 +290,7 @@ variable "firewalls" {
 
 locals {
   # is_checkpoint             = length(regexall("check", lower(var.firewall_image))) > 0    # Check if fw image contains checkpoint.
-  is_palo                   = length(regexall("palo", lower(var.firewall_image))) > 0     # Check if fw image contains palo.
+  is_palo = length(regexall("palo", lower(var.firewall_image))) > 0 # Check if fw image contains palo.
   # is_fortinet               = length(regexall("fortinet", lower(var.firewall_image))) > 0 # Check if fw image contains fortinet.
   is_aws_gov              = length(regexall("gov", var.region)) > 0 ? true : false
   cidrbits                = tonumber(split("/", var.vpc_address_space)[1])
@@ -267,9 +298,13 @@ locals {
   firewall_subnet_newbits = 28 - local.cidrbits
   netnum                  = pow(2, local.transit_gateway_newbits)
   # firewall_newbits          = 28 - local.cidrbits
-  transit_gateway_subnet    = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, 0)
-  transit_gateway_ha_subnet = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, 1)
-  firewall_mgmt_subnet = cidrsubnets(var.vpc_address_space, local.transit_gateway_newbits, local.transit_gateway_newbits, local.firewall_subnet_newbits)[2]
+  combined_cidr_subnets          = cidrsubnets(var.vpc_address_space, local.transit_gateway_newbits, local.transit_gateway_newbits, local.firewall_subnet_newbits, local.firewall_subnet_newbits, local.firewall_subnet_newbits, local.firewall_subnet_newbits)
+  transit_gateway_subnet         = local.combined_cidr_subnets[0]
+  transit_gateway_ha_subnet      = local.combined_cidr_subnets[1]
+  firewall_mgmt_primary_subnet   = local.combined_cidr_subnets[2]
+  firewall_mgmt_ha_subnet        = local.combined_cidr_subnets[3]
+  firewall_egress_primary_subnet = local.combined_cidr_subnets[4]
+  firewall_egress_ha_subnet      = local.combined_cidr_subnets[5]
   # transit_gateway_subnet    = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, local.netnum - 2)
   # transit_gateway_ha_subnet = cidrsubnet(var.vpc_address_space, local.transit_gateway_newbits, local.netnum - 1)
   # firewall_subnet           = cidrsubnet(var.vnet_address_prefix, local.firewall_newbits, 0)

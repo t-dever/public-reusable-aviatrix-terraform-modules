@@ -27,17 +27,47 @@ resource "aws_subnet" "aviatrix_transit_ha_subnet" {
   tags              = { "Name" = "${var.aviatrix_transit_primary_subnet_name}" }
 }
 
-# Create Firewall Primary Subnet
+# Create Firewall Management Primary Subnet
 resource "aws_subnet" "aviatrix_firewall_mgmt_primary_subnet" {
-  count             = length(var.firewalls) > 0 ? 1 : 0
+  count             = var.enable_aviatrix_transit_firenet ? 1 : 0
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = local.firewall_mgmt_subnet
+  cidr_block        = local.firewall_mgmt_primary_subnet
   availability_zone = length(var.aviatrix_transit_availability_zone_1) > 0 ? var.aviatrix_transit_availability_zone_1 : "${var.region}a"
   tags              = { "Name" = "${var.aviatrix_firewall_mgmt_primary_subnet_name}" }
 }
 
+# Create Firewall Management HA Subnet
+resource "aws_subnet" "aviatrix_firewall_mgmt_ha_subnet" {
+  count             = var.enable_aviatrix_transit_firenet ? 1 : 0
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = local.firewall_mgmt_ha_subnet
+  availability_zone = length(var.aviatrix_transit_availability_zone_2) > 0 ? var.aviatrix_transit_availability_zone_2 : "${var.region}b"
+  tags              = { "Name" = "${var.aviatrix_firewall_mgmt_ha_subnet_name}" }
+}
+
+# Create Firewall Egress Primary Subnet
+resource "aws_subnet" "aviatrix_firewall_egress_primary_subnet" {
+  count             = var.enable_aviatrix_transit_firenet ? 1 : 0
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = local.firewall_egress_primary_subnet
+  availability_zone = length(var.aviatrix_transit_availability_zone_1) > 0 ? var.aviatrix_transit_availability_zone_1 : "${var.region}a"
+  tags              = { "Name" = "${var.aviatrix_firewall_egress_primary_subnet_name}" }
+}
+
+# Create Firewall Egress HA Subnet
+resource "aws_subnet" "aviatrix_firewall_egress_ha_subnet" {
+  count             = var.enable_aviatrix_transit_firenet ? 1 : 0
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = local.firewall_egress_ha_subnet
+  availability_zone = length(var.aviatrix_transit_availability_zone_2) > 0 ? var.aviatrix_transit_availability_zone_2 : "${var.region}b"
+  tags              = { "Name" = "${var.aviatrix_firewall_egress_ha_subnet_name}" }
+}
+
 # Creates Internet Gateway for VPC
 resource "aws_internet_gateway" "vpc_internet_gateway" {
+  depends_on = [
+    aws_vpc.vpc
+  ]
   vpc_id = aws_vpc.vpc.id
   tags   = { "Name" = "${var.tag_prefix}-internet-gateway" }
 }
@@ -69,8 +99,45 @@ resource "aws_route_table_association" "aviatrix_transit_ha_route_table_assoc" {
   route_table_id = aws_route_table.vpc_route_table.id
 }
 
+# Associate Route Table to Firewall Mgmt Primary Subnet
+resource "aws_route_table_association" "aviatrix_firewall_mgmt_primary_route_table_assoc" {
+  count          = var.enable_aviatrix_transit_firenet ? 1 : 0
+  subnet_id      = aws_subnet.aviatrix_firewall_mgmt_primary_subnet[0].id
+  route_table_id = aws_route_table.vpc_route_table.id
+}
+
+# Associate Route Table to Firewall Mgmt HA Subnet
+resource "aws_route_table_association" "aviatrix_firewall_mgmt_ha_route_table_assoc" {
+  count          = var.enable_aviatrix_transit_firenet ? 1 : 0
+  subnet_id      = aws_subnet.aviatrix_firewall_mgmt_ha_subnet[0].id
+  route_table_id = aws_route_table.vpc_route_table.id
+}
+
+# Associate Route Table to Firewall Ingress/Egress Primary Subnet
+resource "aws_route_table_association" "aviatrix_firewall_egress_primary_route_table_assoc" {
+  count          = var.enable_aviatrix_transit_firenet ? 1 : 0
+  subnet_id      = aws_subnet.aviatrix_firewall_egress_primary_subnet[0].id
+  route_table_id = aws_route_table.vpc_route_table.id
+}
+
+# Associate Route Table to Firewall Ingress/Egress HA Subnet
+resource "aws_route_table_association" "aviatrix_firewall_egress_ha_route_table_assoc" {
+  count          = var.enable_aviatrix_transit_firenet ? 1 : 0
+  subnet_id      = aws_subnet.aviatrix_firewall_egress_ha_subnet[0].id
+  route_table_id = aws_route_table.vpc_route_table.id
+}
+
 # Deploy Aviatrix Transit Gateways
 resource "aviatrix_transit_gateway" "aviatrix_transit_gateway" {
+  depends_on = [
+    aws_subnet.aviatrix_transit_primary_subnet,
+    aws_subnet.aviatrix_transit_ha_subnet,
+    aws_subnet.aviatrix_firewall_mgmt_primary_subnet,
+    aws_subnet.aviatrix_firewall_mgmt_ha_subnet,
+    aws_subnet.aviatrix_firewall_egress_primary_subnet,
+    aws_subnet.aviatrix_firewall_egress_ha_subnet,
+    aws_internet_gateway.vpc_internet_gateway
+  ]
   lifecycle {
     ignore_changes = [tags]
   }
@@ -97,6 +164,19 @@ resource "aviatrix_transit_gateway" "aviatrix_transit_gateway" {
   tags                          = var.tags
 }
 
+
+
+# # Creates Ingress Rule to allow user public IP addresses to Firewall Management
+# resource "aws_security_group_rule" "aviatrix_firewall_mgmt_ingress_https_user_public_ips" {
+#   description       = "Allow User Assigned IP addresses inbound to Firewall Management Subnets."
+#   type              = "ingress"
+#   from_port         = 443
+#   to_port           = 443
+#   protocol          = "tcp"
+#   cidr_blocks       = var.allowed_ips
+#   security_group_id = aws_security_group.aviatrix_firewall_mgmt_security_group.id
+# }
+
 # Create Aviatrix Firenet
 resource "aviatrix_firenet" "firenet" {
   depends_on = [
@@ -112,27 +192,44 @@ resource "aviatrix_firenet" "firenet" {
   egress_static_cidrs                  = []
 }
 
-# resource "aviatrix_firewall_instance" "firewall_instance" {
-#   count                  = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
-#   vpc_id                 = aws_vpc.vpc.id
-#   firenet_gw_name        = aviatrix_transit_gateway.aviatrix_transit_gateway.gw_name
-#   firewall_name          = var.firewalls[count.index].name
-#   firewall_image         = var.firewall_image
-#   firewall_image_version = var.firewall_image_version
-#   firewall_size          = var.firewalls[count.index].size
-#   zone                   = var.firewalls[count.index].availability_zone
-#   management_subnet      = local.is_palo ?  # This may need a separate subnet; It will eat into the ip space for insane mode
-#   # egress_subnet          = azurerm_subnet.azure_transit_firewall_subnet[0].address_prefix
-#   # user_data              = local.is_fortinet ? local.fortinet_bootstrap : null
-# }
+resource "aviatrix_firewall_instance" "firewall_instance" {
+  count                  = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
+  vpc_id                 = aws_vpc.vpc.id
+  firenet_gw_name        = aviatrix_transit_gateway.aviatrix_transit_gateway.gw_name
+  firewall_name          = var.firewalls[count.index].name
+  firewall_image         = var.firewall_image
+  firewall_image_version = var.firewall_image_version
+  firewall_size          = var.firewalls[count.index].size
+  management_subnet      = local.is_palo ? var.firewalls[count.index].availability_zone == var.aviatrix_transit_availability_zone_1 ? local.firewall_mgmt_primary_subnet : local.firewall_mgmt_ha_subnet : null
+  egress_subnet          = var.firewalls[count.index].availability_zone == var.aviatrix_transit_availability_zone_1 ? local.firewall_egress_primary_subnet : local.firewall_egress_ha_subnet
+  # user_data              = local.is_fortinet ? local.fortinet_bootstrap : null
+}
 
-# resource "azurerm_subnet" "azure_transit_firewall_subnet" {
-#   count                = var.firenet_enabled ? 1 : 0
-#   name                 = "firewall-subnet"
-#   virtual_network_name = azurerm_virtual_network.azure_transit_vnet.name
-#   resource_group_name  = azurerm_resource_group.azure_transit_resource_group.name
-#   address_prefixes     = [local.firewall_subnet]
-# }
+# Creates Firewall Management Security Group
+resource "aws_security_group" "aviatrix_firewall_mgmt_security_group" {
+  name        = var.firewall_mgmt_security_group_name
+  description = "Aviatrix - Firewall Management Security Group"
+  vpc_id      = aws_vpc.vpc.id
+  tags        = { "Name" = var.firewall_mgmt_security_group_name }
+}
+
+# Creates Ingress Rule to allow user public IP addresses to Firewall Management
+resource "aws_security_group_rule" "aviatrix_firewall_mgmt_ingress_https_user_public_ips" {
+  description       = "Allow User Assigned IP addresses inbound to Firewall Management Subnets."
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = var.allowed_ips
+  security_group_id = aws_security_group.aviatrix_firewall_mgmt_security_group.id
+}
+
+# Attach Security Group to Firewall Mgmt Interface
+resource "aws_network_interface_sg_attachment" "attach_firewall_mgmt_security_group" {
+  count                = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
+  security_group_id    = aws_security_group.aviatrix_firewall_mgmt_security_group.id
+  network_interface_id = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
+}
 
 # resource "azurerm_network_security_group" "firewall_mgmt_nsg" {
 #   count               = var.firenet_enabled ? 1 : 0
