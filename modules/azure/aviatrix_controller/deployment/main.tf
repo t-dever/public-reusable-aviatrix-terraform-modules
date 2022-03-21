@@ -269,6 +269,7 @@ resource "azurerm_public_ip" "azure_copilot_public_ip" {
 }
 
 resource "azurerm_network_interface" "azure_copilot_nic" {
+  #checkov:skip=CKV_AZURE_119: "Ensure that Network Interfaces don't use public IPs" REASON: Public IP is required for CoPilot NIC.
   count               = var.aviatrix_deploy_copilot ? 1 : 0
   name                = "${var.aviatrix_copilot_name}-nic"
   location            = azurerm_resource_group.resource_group.location
