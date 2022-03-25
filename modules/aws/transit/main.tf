@@ -225,6 +225,7 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
 
 # Creates Firewall Management Security Group
 resource "aws_security_group" "aviatrix_firewall_mgmt_security_group" {
+  #checkov:skip=CKV2_AWS_5: "Ensure that Security Groups are attached to another resource" REASON: This Security Group is attached to firewall management network interface. Using 'aws_network_interface_sg_attachment'
   count       = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? 1 : 0
   name        = var.firewall_mgmt_security_group_name
   description = "Aviatrix - Firewall Management Security Group"
