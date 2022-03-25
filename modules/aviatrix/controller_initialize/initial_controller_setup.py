@@ -243,7 +243,7 @@ class ControllerSetup():
                 'account_name': self.aws_primary_account_name,
                 'account_email': self.admin_email
             }
-            if self.is_aws_gov == 'true':
+            if self.is_aws_gov:
                 payload['cloud_type'] = 256
                 payload['awsgov_account_number'] = self.aws_primary_account_number
                 payload['awsgov_iam'] = 'true'
@@ -310,7 +310,7 @@ def main():
 
     if controller.aws_primary_account_name:
         controller.primary_aws_account()
-    if controller.security_group_management == 'true':
+    if controller.security_group_management:
         controller.enable_security_group_management()
     if controller.copilot_username and controller.copilot_password:
         controller.add_copilot_user_account()
