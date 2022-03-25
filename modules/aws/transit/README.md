@@ -70,7 +70,6 @@
 | <a name="input_enable_aviatrix_transit_firenet"></a> [enable\_aviatrix\_transit\_firenet](#input\_enable\_aviatrix\_transit\_firenet) | Enables firenet on the aviatrix transit gateway | `bool` | `false` | no |
 | <a name="input_enable_aviatrix_transit_gateway_ha"></a> [enable\_aviatrix\_transit\_gateway\_ha](#input\_enable\_aviatrix\_transit\_gateway\_ha) | Enable High Availability (HA) for transit gateways | `bool` | `false` | no |
 | <a name="input_enable_firenet_egress"></a> [enable\_firenet\_egress](#input\_enable\_firenet\_egress) | Allow traffic to the internet through firewall. | `bool` | `false` | no |
-| <a name="input_firewall_admin_username"></a> [firewall\_admin\_username](#input\_firewall\_admin\_username) | The default firewall admin name. | `string` | `"admin"` | no |
 | <a name="input_firewall_allowed_ips"></a> [firewall\_allowed\_ips](#input\_firewall\_allowed\_ips) | List of allowed User Public Ips to be added as ingress rule for security group. | `list(string)` | `[]` | no |
 | <a name="input_firewall_aws_key_pair_name"></a> [firewall\_aws\_key\_pair\_name](#input\_firewall\_aws\_key\_pair\_name) | The key pair name to be used for Firewall EC2 Instance Deployments. | `string` | `"aviatrix-firenet-key"` | no |
 | <a name="input_firewall_image"></a> [firewall\_image](#input\_firewall\_image) | The firewall image to be used to deploy the NGFW's | `string` | `"Palo Alto Networks VM-Series Next-Generation Firewall Bundle 1"` | no |

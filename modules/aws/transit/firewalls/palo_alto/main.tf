@@ -65,7 +65,7 @@ resource "aws_s3_bucket_logging" "s3_logging" {
 
 # Enables S3 Bucket Logging
 resource "aws_s3_bucket_public_access_block" "s3_block_public_access" {
-  bucket = aws_s3_bucket.s3_bucket.id
+  bucket                  = aws_s3_bucket.s3_bucket.id
   block_public_acls       = true
   block_public_policy     = true
   restrict_public_buckets = true
