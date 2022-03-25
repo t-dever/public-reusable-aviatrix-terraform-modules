@@ -78,7 +78,7 @@
 | <a name="input_firewall_mgmt_security_group_name"></a> [firewall\_mgmt\_security\_group\_name](#input\_firewall\_mgmt\_security\_group\_name) | The name of the Security Group for Firewall Management. | `string` | `"aviatrix-firewall-mgmt-security-group"` | no |
 | <a name="input_firewall_private_key_location"></a> [firewall\_private\_key\_location](#input\_firewall\_private\_key\_location) | The location of the private key on the local machine to authenticate to palo firewall to change admin credentials. | `string` | `""` | no |
 | <a name="input_firewall_public_key"></a> [firewall\_public\_key](#input\_firewall\_public\_key) | The key pair public ssh key to be used for Firewall Instance Deployments. | `string` | `""` | no |
-| <a name="input_firewalls"></a> [firewalls](#input\_firewalls) | The firewall instance information required for creating firewalls | <pre>list(object({<br>    name              = string,<br>    size              = string<br>  }))</pre> | `[]` | no |
+| <a name="input_firewalls"></a> [firewalls](#input\_firewalls) | The firewall instance information required for creating firewalls | <pre>list(object({<br>    name = string,<br>    size = string<br>  }))</pre> | `[]` | no |
 | <a name="input_insane_mode"></a> [insane\_mode](#input\_insane\_mode) | Enable insane mode for transit gateway. | `bool` | `false` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region where the resources will be deployed. | `string` | `"us-east-1"` | no |
 | <a name="input_s3_bucket_name"></a> [s3\_bucket\_name](#input\_s3\_bucket\_name) | The name of the S3 Bucket to store Firewall Bootstrap. | `string` | `""` | no |
