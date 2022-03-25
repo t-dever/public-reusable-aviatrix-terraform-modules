@@ -30,6 +30,7 @@ resource "aws_ssm_parameter" "aviatrix_palo_alto_secret_parameter" {
 resource "aws_s3_bucket" "s3_bucket" {
   #checkov:skip=CKV_AWS_145:"Ensure that S3 buckets are encrypted with KMS by default" REASON: No sensitive information availabile
   #checkov:skip=CKV_AWS_144:"Ensure that S3 bucket has cross-region replication enabled" REASON: Replication not required
+  #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled" REASON: Versioning is enabled in another resource
   bucket = local.s3_bucket_name
 }
 
