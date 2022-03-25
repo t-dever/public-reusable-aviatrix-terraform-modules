@@ -225,6 +225,7 @@ resource "aviatrix_firewall_instance_association" "firewall_instance_association
 
 # Creates Firewall Management Security Group
 resource "aws_security_group" "aviatrix_firewall_mgmt_security_group" {
+  count       = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? 1 : 0
   name        = var.firewall_mgmt_security_group_name
   description = "Aviatrix - Firewall Management Security Group"
   vpc_id      = aws_vpc.vpc.id
@@ -233,19 +234,20 @@ resource "aws_security_group" "aviatrix_firewall_mgmt_security_group" {
 
 # Creates Ingress Rule to allow user public IP addresses to Firewall Management
 resource "aws_security_group_rule" "aviatrix_firewall_mgmt_ingress_https_user_public_ips" {
+  count             = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? 1 : 0
   description       = "Allow User Assigned IP addresses inbound to Firewall Management Subnets."
   type              = "ingress"
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
   cidr_blocks       = var.firewall_allowed_ips
-  security_group_id = aws_security_group.aviatrix_firewall_mgmt_security_group.id
+  security_group_id = aws_security_group.aviatrix_firewall_mgmt_security_group[0].id
 }
 
 # Attach Security Group to Firewall Mgmt Interface
 resource "aws_network_interface_sg_attachment" "attach_firewall_mgmt_security_group" {
   count                = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
-  security_group_id    = aws_security_group.aviatrix_firewall_mgmt_security_group.id
+  security_group_id    = aws_security_group.aviatrix_firewall_mgmt_security_group[0].id
   network_interface_id = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
 }
 
