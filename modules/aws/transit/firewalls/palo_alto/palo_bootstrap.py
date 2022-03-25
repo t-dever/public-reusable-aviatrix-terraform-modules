@@ -80,7 +80,9 @@ class PaloAlto():
                 time.sleep(60)
                 if attempts == 0:
                     print(json.dumps(error, indent=4))
+                    sys.exit(1)
                 else:
+                    self.connect()
                     print(str(err))
                     continue
             except KeyError as e:

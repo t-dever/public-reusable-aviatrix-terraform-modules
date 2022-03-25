@@ -163,12 +163,6 @@ variable "firewall_private_key_location" {
   default     = ""
 }
 
-variable "firewall_admin_username" {
-  description = "The default firewall admin name."
-  type        = string
-  default     = "admin"
-}
-
 variable "firewalls" {
   description = "The firewall instance information required for creating firewalls"
   type = list(object({

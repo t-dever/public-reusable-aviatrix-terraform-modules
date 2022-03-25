@@ -10,7 +10,7 @@ output "bootstrap_bucket_name" {
 
 output "firewall_admin_username" {
   description = "The firewall admin username added to the firewall."
-  value       = var.firewall_admin_username
+  value       = "admin"
 }
 
 output "firewall_password" {

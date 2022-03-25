@@ -30,12 +30,13 @@ resource "aws_ssm_parameter" "aviatrix_palo_alto_secret_parameter" {
 resource "aws_s3_bucket" "s3_bucket" {
   #checkov:skip=CKV_AWS_145:"Ensure that S3 buckets are encrypted with KMS by default" REASON: No sensitive information availabile
   #checkov:skip=CKV_AWS_144:"Ensure that S3 bucket has cross-region replication enabled" REASON: Replication not required
-  #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled" REASON: Versioning is enabled by another resource
-  #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled" REASON: Logging is enabled by another resource
-  #checkov:skip=CKV_AWS_19: "Ensure all data stored in the S3 bucket is securely encrypted at rest" REASON: Encryption is enabled by another resource
+  #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled" REASON: Versioning is enabled by 'aws_s3_bucket_versioning.s3_versioning' resource
+  #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled" REASON: Logging is enabled by 'aws_s3_bucket_logging.s3_logging' resource
+  #checkov:skip=CKV_AWS_19: "Ensure all data stored in the S3 bucket is securely encrypted at rest" REASON: Encryption is enabled by 'aws_s3_bucket_server_side_encryption_configuration.s3_encryption' resource
   bucket = local.s3_bucket_name
 }
 
+# Enables S3 Bucket Versioning for bootstrap bucket
 resource "aws_s3_bucket_versioning" "s3_versioning" {
   bucket = aws_s3_bucket.s3_bucket.id
   versioning_configuration {
@@ -43,6 +44,7 @@ resource "aws_s3_bucket_versioning" "s3_versioning" {
   }
 }
 
+# Enables S3 Bucket Server Side Encryption
 resource "aws_s3_bucket_server_side_encryption_configuration" "s3_encryption" {
   bucket = aws_s3_bucket.s3_bucket.bucket
 
@@ -53,6 +55,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_encryption" {
   }
 }
 
+# Enables S3 Bucket Logging
 resource "aws_s3_bucket_logging" "s3_logging" {
   bucket = aws_s3_bucket.s3_bucket.id
 
@@ -60,9 +63,9 @@ resource "aws_s3_bucket_logging" "s3_logging" {
   target_prefix = "log/"
 }
 
+# Enables S3 Bucket Logging
 resource "aws_s3_bucket_public_access_block" "s3_block_public_access" {
   bucket = aws_s3_bucket.s3_bucket.id
-
   block_public_acls       = true
   block_public_policy     = true
   restrict_public_buckets = true
@@ -70,7 +73,7 @@ resource "aws_s3_bucket_public_access_block" "s3_block_public_access" {
 }
 
 # Creates S3 ACL to private
-resource "aws_s3_bucket_acl" "example" {
+resource "aws_s3_bucket_acl" "s3_acl" {
   bucket = aws_s3_bucket.s3_bucket.id
   acl    = "private"
 }
@@ -100,7 +103,7 @@ resource "aws_s3_object" "bootstrap_software" {
 resource "aws_s3_object" "bootstrap_upload" {
   bucket                 = aws_s3_bucket.s3_bucket.id
   key                    = "config/bootstrap.xml"
-  content                = templatefile("${path.module}/bootstrap.tftpl", { admin_username = var.firewall_admin_username, public_key = var.aws_key_pair_public_key })
+  content                = templatefile("${path.module}/bootstrap.tftpl", { public_key = var.aws_key_pair_public_key })
   server_side_encryption = "AES256"
 }
 

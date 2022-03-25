@@ -186,15 +186,16 @@ resource "aws_key_pair" "key_pair" {
   tags       = { "Name" = var.firewall_aws_key_pair_name }
 }
 
+# Creates S3 Bucket, IAM, bucket objects required for bootstrapping
 module "palo_alto_bootstrap" {
   count                   = local.is_palo && length(var.firewalls) > 0 ? 1 : 0
   source                  = "./firewalls/palo_alto"
   s3_bucket_name          = var.s3_bucket_name
   s3_iam_role_name        = var.s3_iam_role_name
   aws_key_pair_public_key = var.firewall_public_key
-  firewall_admin_username = var.firewall_admin_username
 }
 
+# Creates Firewall Instance
 resource "aviatrix_firewall_instance" "firewall_instance" {
   count                  = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
   vpc_id                 = aws_vpc.vpc.id
@@ -210,7 +211,7 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   bootstrap_bucket_name  = module.palo_alto_bootstrap[0].bootstrap_bucket_name
 }
 
-# Associate Firewall to Firenet
+# Associate Firewall Instance to Firenet
 resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
   count                = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
   vpc_id               = aws_vpc.vpc.id
@@ -263,7 +264,7 @@ resource "null_resource" "initial_config" {
     command = "python3 ${path.module}/firewalls/palo_alto/palo_bootstrap.py"
     environment = {
       PALO_IP_ADDRESS           = aviatrix_firewall_instance.firewall_instance[count.index].public_ip
-      PALO_USERNAME             = var.firewall_admin_username
+      PALO_USERNAME             = "admin"
       PALO_NEW_PASSWORD         = module.palo_alto_bootstrap[0].firewall_password
       PALO_PRIVATE_KEY_LOCATION = var.firewall_private_key_location
     }
@@ -282,7 +283,7 @@ data "aviatrix_firenet_vendor_integration" "vendor_integration" {
   vendor_type   = local.is_palo ? "Palo Alto Networks VM-Series" : "Generic"
   public_ip     = aviatrix_firewall_instance.firewall_instance[count.index].public_ip
   firewall_name = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
-  username      = var.firewall_admin_username
+  username      = "admin"
   password      = local.is_palo ? module.palo_alto_bootstrap[0].firewall_password : null
   save          = true
 }

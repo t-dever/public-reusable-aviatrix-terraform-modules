@@ -25,7 +25,6 @@ firewall_image_version                       = "10.1.4"
 firewall_aws_key_pair_name                   = "aviatrix-firenet-key"
 firewall_public_key                          = "<Public SSH Key"                                              # Required for deploying firewalls
 firewall_private_key_location                = "<file location for private key on machine running terraform>" # Required for deploying firewalls
-firewall_admin_username                      = "aviatrix-admin"
 firewalls                                    = []
 s3_bucket_name                               = ""
 s3_iam_role_name                             = "aviatrix-s3-bootstrap-role"
