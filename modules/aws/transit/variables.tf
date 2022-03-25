@@ -90,7 +90,7 @@ variable "insane_mode" {
 variable "aviatrix_transit_gateway_name" {
   type        = string
   description = "The name used for the transit gateway resource"
-  default = "aviatrix-transit-gw"
+  default     = "aviatrix-transit-gw"
 }
 
 variable "aviatrix_transit_gateway_size" {
@@ -154,13 +154,13 @@ variable "firewall_aws_key_pair_name" {
 variable "firewall_public_key" {
   description = "The key pair public ssh key to be used for Firewall Instance Deployments."
   type        = string
-  default = ""
+  default     = ""
 }
 
 variable "firewall_private_key_location" {
   description = "The location of the private key on the local machine to authenticate to palo firewall to change admin credentials."
   type        = string
-  default = ""
+  default     = ""
 }
 
 variable "firewall_admin_username" {
@@ -172,8 +172,8 @@ variable "firewall_admin_username" {
 variable "firewalls" {
   description = "The firewall instance information required for creating firewalls"
   type = list(object({
-    name              = string,
-    size              = string
+    name = string,
+    size = string
   }))
   default = []
 }
@@ -193,7 +193,7 @@ variable "s3_iam_role_name" {
 locals {
   # is_checkpoint             = length(regexall("check", lower(var.firewall_image))) > 0    # Check if fw image contains checkpoint.
   # is_fortinet               = length(regexall("fortinet", lower(var.firewall_image))) > 0 # Check if fw image contains fortinet.
-  is_palo = length(regexall("palo", lower(var.firewall_image))) > 0 # Check if fw image contains palo.
+  is_palo                        = length(regexall("palo", lower(var.firewall_image))) > 0 # Check if fw image contains palo.
   is_aws_gov                     = length(regexall("gov", var.region)) > 0 ? true : false
   cidrbits                       = tonumber(split("/", var.vpc_address_space)[1])
   transit_gateway_newbits        = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
