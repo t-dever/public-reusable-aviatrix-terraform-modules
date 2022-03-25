@@ -198,7 +198,6 @@ locals {
   cidrbits                       = tonumber(split("/", var.vpc_address_space)[1])
   transit_gateway_newbits        = var.insane_mode ? 26 - local.cidrbits : 28 - local.cidrbits
   firewall_subnet_newbits        = 28 - local.cidrbits
-  netnum                         = pow(2, local.transit_gateway_newbits)
   combined_cidr_subnets          = cidrsubnets(var.vpc_address_space, local.transit_gateway_newbits, local.transit_gateway_newbits, local.firewall_subnet_newbits, local.firewall_subnet_newbits, local.firewall_subnet_newbits, local.firewall_subnet_newbits)
   transit_gateway_subnet         = local.combined_cidr_subnets[0]
   transit_gateway_ha_subnet      = local.combined_cidr_subnets[1]

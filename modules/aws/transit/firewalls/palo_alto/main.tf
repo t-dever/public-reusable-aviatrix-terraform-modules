@@ -28,7 +28,40 @@ resource "aws_ssm_parameter" "aviatrix_palo_alto_secret_parameter" {
 
 # Creates S3 Bucket for Bootstrap Config
 resource "aws_s3_bucket" "s3_bucket" {
+  #checkov:skip=CKV_AWS_145:"Ensure that S3 buckets are encrypted with KMS by default" REASON: No sensitive information availabile
+  #checkov:skip=CKV_AWS_144:"Ensure that S3 bucket has cross-region replication enabled" REASON: Replication not required
   bucket = local.s3_bucket_name
+}
+
+resource "aws_s3_bucket_versioning" "s3_versioning" {
+  bucket = aws_s3_bucket.s3_bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "s3_encryption" {
+  bucket = aws_s3_bucket.s3_bucket.bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_logging" "s3_logging" {
+  bucket = aws_s3_bucket.s3_bucket.id
+
+  target_bucket = aws_s3_bucket.s3_bucket.id
+  target_prefix = "log/"
+}
+
+resource "aws_s3_bucket_public_access_block" "s3_block_public_access" {
+  bucket = aws_s3_bucket.s3_bucket.id
+
+  block_public_acls   = true
+  block_public_policy = true
 }
 
 # Creates S3 ACL to private

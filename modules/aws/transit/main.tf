@@ -24,7 +24,7 @@ resource "aws_subnet" "aviatrix_transit_ha_subnet" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = local.transit_gateway_ha_subnet
   availability_zone = length(var.aviatrix_transit_availability_zone_2) > 0 ? var.aviatrix_transit_availability_zone_2 : "${var.region}b"
-  tags              = { "Name" = "${var.aviatrix_transit_primary_subnet_name}" }
+  tags              = { "Name" = "${var.aviatrix_transit_ha_subnet_name}" }
 }
 
 # Create Firewall Management Primary Subnet
@@ -268,6 +268,7 @@ resource "null_resource" "initial_config" {
 }
 
 # Performs vendor integration to automatically add routes
+# tflint-ignore: terraform_unused_declarations
 data "aviatrix_firenet_vendor_integration" "vendor_integration" {
   depends_on = [
     null_resource.initial_config
