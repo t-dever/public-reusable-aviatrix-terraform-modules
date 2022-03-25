@@ -30,7 +30,9 @@ resource "aws_ssm_parameter" "aviatrix_palo_alto_secret_parameter" {
 resource "aws_s3_bucket" "s3_bucket" {
   #checkov:skip=CKV_AWS_145:"Ensure that S3 buckets are encrypted with KMS by default" REASON: No sensitive information availabile
   #checkov:skip=CKV_AWS_144:"Ensure that S3 bucket has cross-region replication enabled" REASON: Replication not required
-  #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled" REASON: Versioning is enabled in another resource
+  #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled" REASON: Versioning is enabled by another resource
+  #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled" REASON: Logging is enabled by another resource
+  #checkov:skip=CKV_AWS_19: "Ensure all data stored in the S3 bucket is securely encrypted at rest" REASON: Encryption is enabled by another resource
   bucket = local.s3_bucket_name
 }
 
@@ -63,6 +65,8 @@ resource "aws_s3_bucket_public_access_block" "s3_block_public_access" {
 
   block_public_acls   = true
   block_public_policy = true
+  restrict_public_buckets = true
+  ignore_public_acls=true
 }
 
 # Creates S3 ACL to private

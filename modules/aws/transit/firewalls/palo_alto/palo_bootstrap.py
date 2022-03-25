@@ -57,24 +57,36 @@ class PaloAlto():
             sys.exit(1)
 
     def set_admin_password(self):
-        try:
-            commands_list = [
-                "configure" ,
-                f"set mgt-config users {self.username} password",
-                self.new_password,
-                self.new_password,
-                "commit"
-            ]
-            print("Configuring password")
-            for command in commands_list:
-                time.sleep(5)
-                self.connection.send(command + "\n")
-                output = self.connection.recv(receiveTime)
-                print(output.decode())
-        except KeyError as e:
-            error = {"error": str(e)}
-            json.dumps(error, indent=4)
-            sys.exit(1)
+        attempts = 2
+        while attempts != 0:
+            attempts -= 1
+            try:
+                commands_list = [
+                    "configure" ,
+                    f"set mgt-config users {self.username} password",
+                    self.new_password,
+                    self.new_password,
+                    "commit"
+                ]
+                print("Configuring password")
+                for command in commands_list:
+                    time.sleep(5)
+                    self.connection.send(command + "\n")
+                    output = self.connection.recv(receiveTime)
+                    print(output.decode())
+                return
+            except socket.error as err:
+                print(f"Socket Error occurred: {str(err)}")
+                time.sleep(60)
+                if attempts == 0:
+                    print(json.dumps(error, indent=4))
+                else:
+                    print(str(err))
+                    continue
+            except KeyError as e:
+                error = {"error": str(e)}
+                json.dumps(error, indent=4)
+                sys.exit(1)
 
     def disconnect(self):
         try:
