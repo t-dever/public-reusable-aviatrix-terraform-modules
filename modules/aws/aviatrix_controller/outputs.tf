@@ -32,3 +32,9 @@ output "aws_ec2_role_arn" {
   description = "The ARN for the ec2 role created."
   value       = aws_iam_role.aviatrix_role_ec2.arn
 }
+
+output "controller_admin_password" {
+  value       = random_password.aviatrix_controller_password[0].result
+  description = "The controller admin password"
+  sensitive   = true
+}
