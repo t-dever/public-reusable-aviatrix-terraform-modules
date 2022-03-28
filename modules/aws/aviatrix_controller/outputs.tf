@@ -38,3 +38,8 @@ output "controller_admin_password" {
   description = "The controller admin password"
   sensitive   = true
 }
+
+output "aviatrix_primary_account_name" {
+  description = "The name of the aviatrix primary account to be provisioned in the controller."
+  value = var.aviatrix_aws_primary_account_name
+}
