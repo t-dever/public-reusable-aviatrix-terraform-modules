@@ -10,7 +10,7 @@ output "aviatrix_controller_private_ip" {
 
 output "aviatrix_copilot_public_ip" {
   description = "The Aviatrix CoPilot public IP Address."
-  value       = aws_eip.aviatrix_copilot_eip.public_ip
+  value       = var.deploy_aviatrix_copilot ? aws_eip.aviatrix_copilot_eip[0].public_ip : null
 }
 
 output "aviatrix_copilot_private_ip" {
@@ -20,7 +20,7 @@ output "aviatrix_copilot_private_ip" {
 
 output "aviatrix_gateway_cidrs" {
   description = "Gateway Cidrs found on Aviatrix Controller Security Groups"
-  value       = jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs)
+  value       = var.deploy_aviatrix_copilot ? jsondecode(data.external.get_aviatrix_gateway_cidrs[0].result.gateway_cidrs) : null
 }
 
 output "aws_app_role_arn" {
