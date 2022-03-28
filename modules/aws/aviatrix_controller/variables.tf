@@ -169,7 +169,13 @@ variable "aviatrix_aws_primary_account_name" {
   default     = "aviatrix-aws-primary-account"
 }
 
-variable "copilot_username" {
+variable "deploy_aviatrix_copilot" {
+  description = "Deploys Aviatrix CoPilot with the Aviatrix Controller."
+  type        = bool
+  default     = true
+}
+
+variable "aviatrix_copilot_username" {
   description = "Username of Copilot Account; Adds a account for CoPilot with ReadOnly Credentials. Must Provide variables 'copilot_username' and 'copilot_password'"
   type        = string
   default     = "copilot-read-only"
@@ -251,6 +257,6 @@ locals {
   copilot_private_ip          = cidrhost(var.aviatrix_copilot_subnet.cidr_block, 4)
   is_aws_gov                  = length(regexall("gov", var.region)) > 0 ? true : false
   arn_partition               = local.is_aws_gov ? "aws-us-gov" : "aws"
-  copilot_security_group_ips  = concat(["${aws_eip.aviatrix_controller_eip.public_ip}/32"], jsondecode(data.external.get_aviatrix_gateway_cidrs.result.gateway_cidrs))
+  copilot_security_group_ips  = var.deploy_aviatrix_copilot && var.enable_auto_aviatrix_copilot_security_group ? concat(["${aws_eip.aviatrix_controller_eip.public_ip}/32"], jsondecode(data.external.get_aviatrix_gateway_cidrs[0].result.gateway_cidrs)) : null
   additonal_volumes_lettering = "hijklmnop"
 }
