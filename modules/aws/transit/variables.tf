@@ -1,3 +1,23 @@
+variable "controller_username" {
+  description = "The controllers username."
+  default     = "admin"
+  type        = string
+  sensitive   = true
+}
+
+variable "controller_password" {
+  description = "The controllers password."
+  type        = string
+  sensitive   = true
+}
+
+variable "controller_public_ip" {
+  description = "The controllers public IP address."
+  default     = "1.2.3.4"
+  type        = string
+  sensitive   = true
+}
+
 variable "region" {
   description = "The region where the resources will be deployed."
   type        = string
