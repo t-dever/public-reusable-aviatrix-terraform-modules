@@ -20,7 +20,7 @@ output "aviatrix_copilot_private_ip" {
 
 output "aviatrix_gateway_cidrs" {
   description = "Gateway Cidrs found on Aviatrix Controller Security Groups"
-  value       = var.deploy_aviatrix_copilot ? jsondecode(data.external.get_aviatrix_gateway_cidrs[0].result.gateway_cidrs) : null
+  value       = var.deploy_aviatrix_copilot && var.enable_auto_aviatrix_copilot_security_group ? jsondecode(data.external.get_aviatrix_gateway_cidrs[0].result.gateway_cidrs) : null
 }
 
 output "aws_app_role_arn" {
