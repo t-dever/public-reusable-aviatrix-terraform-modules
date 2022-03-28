@@ -35,7 +35,7 @@ resource "aws_subnet" "aviatrix_controller_subnet" {
 }
 
 resource "aws_subnet" "aviatrix_copilot_subnet" {
-  count = var.deploy_aviatrix_copilot ? 1 : 0
+  count             = var.deploy_aviatrix_copilot ? 1 : 0
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = var.aviatrix_copilot_subnet.cidr_block
   availability_zone = var.aviatrix_copilot_subnet.availability_zone
@@ -75,7 +75,7 @@ resource "aws_route_table_association" "aviatrix_controller_route_table_assoc" {
 
 # Associate Route Table to Aviatrix CoPilot Instance
 resource "aws_route_table_association" "aviatrix_copilot_route_table_assoc" {
-  count = var.deploy_aviatrix_copilot ? 1 : 0
+  count          = var.deploy_aviatrix_copilot ? 1 : 0
   subnet_id      = aws_subnet.aviatrix_copilot_subnet[0].id
   route_table_id = aws_route_table.vpc_route_table.id
 }
@@ -100,7 +100,7 @@ resource "random_password" "aviatrix_controller_password" {
 
 # Generates random password Aviatrix Copilot credentials
 resource "random_password" "aviatrix_copilot_password" {
-  count = var.deploy_aviatrix_copilot ? 1 : 0
+  count            = var.deploy_aviatrix_copilot ? 1 : 0
   length           = 24
   special          = true
   min_lower        = 2
@@ -121,7 +121,7 @@ resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
 
 # Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
 resource "aws_ssm_parameter" "aviatrix_copilot_secret_parameter" {
-  count = var.deploy_aviatrix_copilot ? 1 : 0
+  count       = var.deploy_aviatrix_copilot ? 1 : 0
   name        = "/aviatrix/copilot/password"
   description = "The copilot password used to authenticate with the controller using read-only."
   type        = "SecureString"
@@ -254,13 +254,13 @@ module "aviatrix_controller_initialize" {
 # Creates CoPilot Public IP Address
 resource "aws_eip" "aviatrix_copilot_eip" {
   count = var.deploy_aviatrix_copilot ? 1 : 0
-  vpc  = true
-  tags = { "Name" = "${var.tag_prefix}-copilot-eip" }
+  vpc   = true
+  tags  = { "Name" = "${var.tag_prefix}-copilot-eip" }
 }
 
 # Get's the Aviatrix Gateways IP addresses from the Aviatrix Controller Security Groups.
 data "external" "get_aviatrix_gateway_cidrs" {
-  count             = var.deploy_aviatrix_copilot && var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
+  count = var.deploy_aviatrix_copilot && var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
   depends_on = [
     module.aviatrix_controller_initialize
   ]
@@ -273,7 +273,7 @@ data "external" "get_aviatrix_gateway_cidrs" {
 
 # Creates Aviatrix Copilot Security Group
 resource "aws_security_group" "aviatrix_copilot_security_group" {
-  count = var.deploy_aviatrix_copilot ? 1 : 0
+  count       = var.deploy_aviatrix_copilot ? 1 : 0
   name        = var.aviatrix_copilot_security_group_name
   description = "Aviatrix - CoPilot Security Group"
   vpc_id      = aws_vpc.vpc.id
@@ -282,7 +282,7 @@ resource "aws_security_group" "aviatrix_copilot_security_group" {
 
 # Creates Egress Rule to allow internet traffic for the Aviatrix CoPilot
 resource "aws_security_group_rule" "aviatrix_copilot_security_group_egress_rule" {
-  count = var.deploy_aviatrix_copilot ? 1 : 0
+  count             = var.deploy_aviatrix_copilot ? 1 : 0
   description       = "Allow default route outbound to internet."
   type              = "egress"
   from_port         = 0
@@ -294,7 +294,7 @@ resource "aws_security_group_rule" "aviatrix_copilot_security_group_egress_rule"
 
 # Creates Ingress Rule to allow user public IP addresses for the Aviatrix CoPilot
 resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_rule" {
-  count = var.deploy_aviatrix_copilot ? 1 : 0
+  count             = var.deploy_aviatrix_copilot ? 1 : 0
   description       = "Allow User Assigned IP addresses inbound to Aviatrix CoPilot."
   type              = "ingress"
   from_port         = 443
@@ -330,7 +330,7 @@ resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gate
 
 # Creates CoPilot Network Interface
 resource "aws_network_interface" "aviatrix_copilot_network_interface" {
-  count = var.deploy_aviatrix_copilot ? 1 : 0
+  count           = var.deploy_aviatrix_copilot ? 1 : 0
   subnet_id       = aws_subnet.aviatrix_copilot_subnet[0].id
   security_groups = [aws_security_group.aviatrix_copilot_security_group[0].id]
   private_ips     = [local.copilot_private_ip]
@@ -342,7 +342,7 @@ resource "aws_network_interface" "aviatrix_copilot_network_interface" {
 
 # Creates CoPilot Instance
 resource "aws_instance" "aviatrix_copilot_instance" {
-  count = var.deploy_aviatrix_copilot ? 1 : 0
+  count         = var.deploy_aviatrix_copilot ? 1 : 0
   ami           = local.copilot_ami_id
   instance_type = var.aviatrix_copilot_instance_size
   key_name      = aws_key_pair.key_pair.key_name
@@ -370,7 +370,7 @@ resource "aws_instance" "aviatrix_copilot_instance" {
 
 # Associates Public IP Address to Aviatrix CoPilot Instance.
 resource "aws_eip_association" "aviatrix_copilot_eip_assoc" {
-  count = var.deploy_aviatrix_copilot ? 1 : 0
+  count         = var.deploy_aviatrix_copilot ? 1 : 0
   instance_id   = aws_instance.aviatrix_copilot_instance[0].id
   allocation_id = aws_eip.aviatrix_copilot_eip[0].id
 }
