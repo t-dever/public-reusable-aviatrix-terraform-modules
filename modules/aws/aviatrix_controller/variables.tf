@@ -172,7 +172,7 @@ variable "aviatrix_aws_primary_account_name" {
 variable "deploy_aviatrix_copilot" {
   description = "Deploys Aviatrix CoPilot with the Aviatrix Controller."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "aviatrix_copilot_username" {
