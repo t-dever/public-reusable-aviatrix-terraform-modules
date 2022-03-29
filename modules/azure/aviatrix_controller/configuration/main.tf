@@ -99,12 +99,12 @@ resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
   network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
 }
 
-resource "azurerm_subnet_network_security_group_association" "azure_controller_nsg_association" {
+resource "azurerm_network_interface_security_group_association" "azure_controller_nsg_association" {
   depends_on = [
     aviatrix_account.azure_account,
     aviatrix_controller_security_group_management_config.security_group_management
   ]
-  subnet_id                 = var.controller_subnet_id
+  network_interface_id      = var.controller_nic_id
   network_security_group_id = data.azurerm_network_security_group.controller_security_group.id
 }
 

@@ -22,6 +22,11 @@ variable "controller_private_ip" {
   sensitive   = true
 }
 
+variable "controller_nic_id" {
+  description = "The controllers network interface id."
+  type        = string
+}
+
 variable "controller_username" {
   description = "The controllers username."
   default     = "admin"

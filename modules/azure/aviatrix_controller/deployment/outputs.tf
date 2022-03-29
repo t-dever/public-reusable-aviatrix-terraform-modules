@@ -26,6 +26,11 @@ output "controller_public_ip" {
   sensitive   = true
 }
 
+output "controller_nic_id" {
+  value = azurerm_network_interface.azure_controller_nic.id
+  description = "The NIC ID for Aviatrix Controller"
+}
+
 output "controller_private_ip" {
   value       = azurerm_linux_virtual_machine.aviatrix_controller_vm.private_ip_address
   description = "The Private IP Address of the Aviatrix Controller"
