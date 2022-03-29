@@ -248,7 +248,7 @@ module "aviatrix_controller_initialize" {
   depends_on = [
     azurerm_linux_virtual_machine.aviatrix_controller_vm
   ]
-  source                                         = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=main"
+  source                                         = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=hotfix/updateAzureControllerDeployment"
   aviatrix_controller_public_ip                  = azurerm_public_ip.azure_controller_public_ip.ip_address
   aviatrix_controller_private_ip                 = azurerm_network_interface.azure_controller_nic.private_ip_address
   aviatrix_controller_password                   = var.aviatrix_controller_password == "" ? random_password.generate_aviatrix_controller_admin_secret[0].result : var.aviatrix_controller_password
