@@ -80,11 +80,11 @@ class PaloAlto():
                 return
             except socket.error as err:
                 print(f"Socket Error occurred: {str(err)}")
-                time.sleep(60)
                 if attempts == 0:
                     print(json.dumps(err, indent=4))
                     sys.exit(1)
                 else:
+                    time.sleep(60)
                     self.connect()
                     print(str(err))
                     continue
