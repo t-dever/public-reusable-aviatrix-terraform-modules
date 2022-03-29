@@ -39,6 +39,37 @@ variable "aws_gov" {
   default     = false
 }
 
+variable "aviatrix_azure_primary_account_name" {
+  description = "The Azure Primary Account name to be added to the Aviatrix Controller Access Accounts."
+  type        = string
+  default     = ""
+}
+
+variable "aviatrix_azure_primary_account_subscription_id" {
+  description = "The Azure Primary Account Subscription ID to be added to the Aviatrix Controller Access Accounts."
+  type        = string
+  default     = ""
+}
+
+variable "aviatrix_azure_primary_account_tenant_id" {
+  description = "The Azure Primary Account Tenant ID to be added to the Aviatrix Controller Access Accounts."
+  type        = string
+  default     = ""
+}
+
+variable "aviatrix_azure_primary_account_client_id" {
+  description = "The Azure Primary Account Client ID to be added to the Aviatrix Controller Access Accounts."
+  type        = string
+  default     = ""
+}
+
+variable "aviatrix_azure_primary_account_client_secret" {
+  description = "The Azure Primary Account Client Secret to be added to the Aviatrix Controller Access Accounts."
+  type        = string
+  default     = ""
+  sensitive = true
+}
+
 variable "aviatrix_aws_primary_account_name" {
   description = "The AWS Primary Account name to be added to the Aviatrix Controller Access Accounts."
   type        = string

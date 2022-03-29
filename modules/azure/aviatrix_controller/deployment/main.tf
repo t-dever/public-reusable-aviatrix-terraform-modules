@@ -1,3 +1,5 @@
+data "azurerm_client_config" "current" {}
+
 resource "azurerm_resource_group" "resource_group" {
   name     = var.resource_group_name
   location = var.location
@@ -246,13 +248,19 @@ module "aviatrix_controller_initialize" {
   depends_on = [
     azurerm_linux_virtual_machine.aviatrix_controller_vm
   ]
-  source                          = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=main"
-  aviatrix_controller_public_ip   = azurerm_public_ip.azure_controller_public_ip.ip_address
-  aviatrix_controller_private_ip  = azurerm_network_interface.azure_controller_nic.private_ip_address
-  aviatrix_controller_password    = var.aviatrix_controller_password == "" ? random_password.generate_aviatrix_controller_admin_secret[0].result : var.aviatrix_controller_password
-  aviatrix_controller_admin_email = var.aviatrix_controller_admin_email
-  aviatrix_controller_version     = var.aviatrix_controller_version
-  aviatrix_controller_customer_id = var.aviatrix_controller_customer_id
+  source                                         = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=main"
+  aviatrix_controller_public_ip                  = azurerm_public_ip.azure_controller_public_ip.ip_address
+  aviatrix_controller_private_ip                 = azurerm_network_interface.azure_controller_nic.private_ip_address
+  aviatrix_controller_password                   = var.aviatrix_controller_password == "" ? random_password.generate_aviatrix_controller_admin_secret[0].result : var.aviatrix_controller_password
+  aviatrix_controller_admin_email                = var.aviatrix_controller_admin_email
+  aviatrix_controller_version                    = var.aviatrix_controller_version
+  aviatrix_controller_customer_id                = var.aviatrix_controller_customer_id
+  aviatrix_azure_primary_account_name            = var.aviatrix_azure_primary_account_name
+  aviatrix_azure_primary_account_subscription_id = data.azurerm_client_config.current.subscription_id
+  aviatrix_azure_primary_account_tenant_id       = data.azurerm_client_config.current.tenant_id
+  aviatrix_azure_primary_account_client_id       = data.azurerm_client_config.current.client_id
+  aviatrix_azure_primary_account_client_secret   = var.aviatrix_azure_primary_account_client_secret
+  enable_security_group_management               = var.aviatrix_enable_security_group_management
 }
 
 # # Deploy CoPilot Resources

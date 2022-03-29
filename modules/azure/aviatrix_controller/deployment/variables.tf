@@ -104,6 +104,25 @@ variable "aviatrix_controller_admin_email" {
   sensitive   = true
 }
 
+variable "aviatrix_enable_security_group_management" {
+  description = "Enables Auto Security Group Management within the Aviatrix Controller. A primary access account is required for implementation."
+  type        = bool
+  default     = true
+}
+
+variable "aviatrix_azure_primary_account_name" {
+  description = "The Azure Primary Account name to be added to the Aviatrix Controller Access Accounts."
+  type        = string
+  default     = ""
+}
+
+variable "aviatrix_azure_primary_account_client_secret" {
+  description = "The Azure Primary Account Client Secret to be added to the Aviatrix Controller Access Accounts."
+  type        = string
+  default     = ""
+  sensitive = true
+}
+
 variable "aviatrix_deploy_copilot" {
   description = "Deploy Aviatrix CoPilot?"
   type        = bool
