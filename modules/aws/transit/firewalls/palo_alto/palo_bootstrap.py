@@ -79,14 +79,14 @@ class PaloAlto():
                 print(f"Socket Error occurred: {str(err)}")
                 time.sleep(60)
                 if attempts == 0:
-                    print(json.dumps(error, indent=4))
+                    print(json.dumps(err, indent=4))
                     sys.exit(1)
                 else:
                     self.connect()
                     print(str(err))
                     continue
-            except KeyError as e:
-                error = {"error": str(e)}
+            except KeyError as err:
+                error = {"error": str(err)}
                 json.dumps(error, indent=4)
                 sys.exit(1)
 
