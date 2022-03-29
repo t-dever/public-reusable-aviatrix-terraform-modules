@@ -26,9 +26,9 @@ output "controller_public_ip" {
   sensitive   = true
 }
 
-output "controller_subnet_id" {
-  value = azurerm_subnet.azure_controller_subnet.id
-  description = "The Subnet ID for Aviatrix Controller"
+output "controller_nic_id" {
+  value = azurerm_network_interface.azure_controller_nic.id
+  description = "The NIC ID for Aviatrix Controller"
 }
 
 output "controller_private_ip" {
