@@ -25,88 +25,97 @@ data "azurerm_network_security_group" "controller_security_group" {
   resource_group_name = var.resource_group_name
 }
 
-resource "azurerm_network_security_rule" "allow_inbound_public_ips_to_controller_nsg" {
+# resource "azurerm_network_security_rule" "allow_inbound_public_ips_to_controller_nsg" {
+#   depends_on = [
+#     data.azurerm_network_security_group.controller_security_group,
+#     aviatrix_account.azure_account,
+#     aviatrix_controller_security_group_management_config.security_group_management
+#   ]
+#   name                        = "AllowPublicIpsHttpsInboundToController"
+#   priority                    = 100
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "*"
+#   source_port_range           = "*"
+#   destination_port_range      = "*"
+#   source_address_prefixes     = var.allowed_public_ips
+#   destination_address_prefix  = "*"
+#   resource_group_name         = var.resource_group_name
+#   network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
+# }
+
+# resource "azurerm_network_security_rule" "allow_controller_inbound_to_copilot" {
+#   depends_on = [
+#     data.azurerm_network_security_group.controller_security_group
+#   ]
+#   count                       = var.copilot_private_ip != "" ? 1 : 0
+#   name                        = "AllowControllerInboundToCopilot"
+#   priority                    = 101
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "*"
+#   source_port_range           = "*"
+#   destination_port_range      = "*"
+#   source_address_prefix       = var.controller_public_ip
+#   destination_address_prefix  = var.copilot_private_ip
+#   resource_group_name         = var.resource_group_name
+#   network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
+# }
+
+# resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
+#   depends_on = [
+#     data.azurerm_network_security_group.controller_security_group
+#   ]
+#   count                       = var.copilot_public_ip != "" ? 1 : 0
+#   name                        = "AllowCoPilotInboundToController"
+#   priority                    = 102
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "*"
+#   source_port_range           = "*"
+#   destination_port_range      = "*"
+#   source_address_prefix       = var.copilot_public_ip
+#   destination_address_prefix  = var.controller_private_ip
+#   resource_group_name         = var.resource_group_name
+#   network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
+# }
+
+# resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
+#   #checkov:skip=CKV_AZURE_77:Allow all internet UDP to copilot. May restrict this further in later updates.
+#   depends_on = [
+#     data.azurerm_network_security_group.controller_security_group,
+#   ]
+#   count                       = var.copilot_private_ip != "" ? 1 : 0
+#   name                        = "AllowNetflowInboundToCoPilot"
+#   priority                    = 103
+#   direction                   = "Inbound"
+#   access                      = "Allow"
+#   protocol                    = "Udp"
+#   source_port_range           = "*"
+#   destination_port_ranges     = [var.netflow_port, var.rsyslog_port]
+#   source_address_prefix       = "*"
+#   destination_address_prefix  = var.copilot_private_ip
+#   resource_group_name         = var.resource_group_name
+#   network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
+# }
+
+resource "azurerm_subnet_network_security_group_association" "azure_controller_nsg_association" {
   depends_on = [
-    data.azurerm_network_security_group.controller_security_group,
     aviatrix_account.azure_account,
     aviatrix_controller_security_group_management_config.security_group_management
   ]
-  name                        = "AllowPublicIpsHttpsInboundToController"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefixes     = var.allowed_public_ips
-  destination_address_prefix  = "*"
-  resource_group_name         = var.resource_group_name
-  network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
-}
-
-resource "azurerm_network_security_rule" "allow_controller_inbound_to_copilot" {
-  depends_on = [
-    data.azurerm_network_security_group.controller_security_group
-  ]
-  count                       = var.copilot_private_ip != "" ? 1 : 0
-  name                        = "AllowControllerInboundToCopilot"
-  priority                    = 101
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = var.controller_public_ip
-  destination_address_prefix  = var.copilot_private_ip
-  resource_group_name         = var.resource_group_name
-  network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
-}
-
-resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
-  depends_on = [
-    data.azurerm_network_security_group.controller_security_group
-  ]
-  count                       = var.copilot_public_ip != "" ? 1 : 0
-  name                        = "AllowCoPilotInboundToController"
-  priority                    = 102
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = var.copilot_public_ip
-  destination_address_prefix  = var.controller_private_ip
-  resource_group_name         = var.resource_group_name
-  network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
-}
-
-resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
-  #checkov:skip=CKV_AZURE_77:Allow all internet UDP to copilot. May restrict this further in later updates.
-  depends_on = [
-    data.azurerm_network_security_group.controller_security_group,
-  ]
-  count                       = var.copilot_private_ip != "" ? 1 : 0
-  name                        = "AllowNetflowInboundToCoPilot"
-  priority                    = 103
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Udp"
-  source_port_range           = "*"
-  destination_port_ranges     = [var.netflow_port, var.rsyslog_port]
-  source_address_prefix       = "*"
-  destination_address_prefix  = var.copilot_private_ip
-  resource_group_name         = var.resource_group_name
-  network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
-}
-
-resource "azurerm_network_interface_security_group_association" "azure_controller_nsg_association" {
-  depends_on = [
-    aviatrix_account.azure_account,
-    aviatrix_controller_security_group_management_config.security_group_management
-  ]
-  network_interface_id      = var.controller_nic_id
+  subnet_id                 = var.controller_subnet_id
   network_security_group_id = data.azurerm_network_security_group.controller_security_group.id
 }
+
+# resource "azurerm_network_interface_security_group_association" "azure_controller_nsg_association" {
+#   depends_on = [
+#     aviatrix_account.azure_account,
+#     aviatrix_controller_security_group_management_config.security_group_management
+#   ]
+#   network_interface_id      = var.controller_nic_id
+#   network_security_group_id = data.azurerm_network_security_group.controller_security_group.id
+# }
 
 resource "aviatrix_copilot_association" "copilot_association" {
   copilot_address = var.copilot_public_ip

@@ -22,8 +22,8 @@ variable "controller_private_ip" {
   sensitive   = true
 }
 
-variable "controller_nic_id" {
-  description = "The controllers network interface id."
+variable "controller_subnet_id" {
+  description = "The controllers subnet id."
   type        = string
 }
 
