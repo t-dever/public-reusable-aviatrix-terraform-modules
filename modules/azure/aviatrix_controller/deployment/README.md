@@ -101,7 +101,7 @@ No modules.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aviatrix_controller_initialize"></a> [aviatrix\_controller\_initialize](#module\_aviatrix\_controller\_initialize) | git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize | main |
+| <a name="module_aviatrix_controller_initialize"></a> [aviatrix\_controller\_initialize](#module\_aviatrix\_controller\_initialize) | git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize | hotfix/updateAzureControllerDeployment |
 
 ## Resources
 
@@ -130,12 +130,15 @@ No modules.
 | [random_password.generate_aviatrix_controller_admin_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_password.generate_aviatrix_controller_virtual_machine_admin_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_password.generate_aviatrix_copilot_virtual_machine_admin_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_allowed_ips"></a> [allowed\_ips](#input\_allowed\_ips) | List of allowed ips to be added as ingress rule for security group. | `list(string)` | `[]` | no |
+| <a name="input_aviatrix_azure_primary_account_client_secret"></a> [aviatrix\_azure\_primary\_account\_client\_secret](#input\_aviatrix\_azure\_primary\_account\_client\_secret) | The Azure Primary Account Client Secret to be added to the Aviatrix Controller Access Accounts. | `string` | `""` | no |
+| <a name="input_aviatrix_azure_primary_account_name"></a> [aviatrix\_azure\_primary\_account\_name](#input\_aviatrix\_azure\_primary\_account\_name) | The Azure Primary Account name to be added to the Aviatrix Controller Access Accounts. | `string` | `""` | no |
 | <a name="input_aviatrix_controller_admin_email"></a> [aviatrix\_controller\_admin\_email](#input\_aviatrix\_controller\_admin\_email) | The email address used for the aviatrix controller registration. | `string` | n/a | yes |
 | <a name="input_aviatrix_controller_customer_id"></a> [aviatrix\_controller\_customer\_id](#input\_aviatrix\_controller\_customer\_id) | The customer id for the aviatrix controller | `string` | n/a | yes |
 | <a name="input_aviatrix_controller_instance_size"></a> [aviatrix\_controller\_instance\_size](#input\_aviatrix\_controller\_instance\_size) | Aviatrix Controller instance size. | `string` | `"Standard_D2as_v4"` | no |
@@ -153,6 +156,7 @@ No modules.
 | <a name="input_aviatrix_copilot_virtual_machine_admin_password"></a> [aviatrix\_copilot\_virtual\_machine\_admin\_password](#input\_aviatrix\_copilot\_virtual\_machine\_admin\_password) | Admin Password for the copilot virtual machine. | `string` | `""` | no |
 | <a name="input_aviatrix_copilot_virtual_machine_admin_username"></a> [aviatrix\_copilot\_virtual\_machine\_admin\_username](#input\_aviatrix\_copilot\_virtual\_machine\_admin\_username) | Admin Username for the copilot virtual machine. | `string` | `"aviatrix"` | no |
 | <a name="input_aviatrix_deploy_copilot"></a> [aviatrix\_deploy\_copilot](#input\_aviatrix\_deploy\_copilot) | Deploy Aviatrix CoPilot? | `bool` | `false` | no |
+| <a name="input_aviatrix_enable_security_group_management"></a> [aviatrix\_enable\_security\_group\_management](#input\_aviatrix\_enable\_security\_group\_management) | Enables Auto Security Group Management within the Aviatrix Controller. A primary access account is required for implementation. | `bool` | `true` | no |
 | <a name="input_controller_subnet_address_prefix"></a> [controller\_subnet\_address\_prefix](#input\_controller\_subnet\_address\_prefix) | The subnet address prefix that's used for the controller and copilot VMs. e.g. 10.0.0.0/24 | `string` | `"10.0.0.0/24"` | no |
 | <a name="input_enable_scheduled_shutdown"></a> [enable\_scheduled\_shutdown](#input\_enable\_scheduled\_shutdown) | Enable automatic shutdown on controller and copilot gateway. | `bool` | `true` | no |
 | <a name="input_enable_spot_instances"></a> [enable\_spot\_instances](#input\_enable\_spot\_instances) | Make the controller and copilot spot instances for best effort or development workloads. | `bool` | `true` | no |
