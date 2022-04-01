@@ -172,6 +172,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_aviatrix_primary_access_account"></a> [aviatrix\_primary\_access\_account](#output\_aviatrix\_primary\_access\_account) | The azure primary account to be added in the Aviatrix Controller. |
 | <a name="output_controller_admin_password"></a> [controller\_admin\_password](#output\_controller\_admin\_password) | The controller admin password |
 | <a name="output_controller_admin_username"></a> [controller\_admin\_username](#output\_controller\_admin\_username) | The controller admin username. |
 | <a name="output_controller_private_ip"></a> [controller\_private\_ip](#output\_controller\_private\_ip) | The Private IP Address of the Aviatrix Controller |
