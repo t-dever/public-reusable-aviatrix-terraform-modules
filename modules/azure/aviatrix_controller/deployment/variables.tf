@@ -120,7 +120,7 @@ variable "aviatrix_azure_primary_account_client_secret" {
   description = "The Azure Primary Account Client Secret to be added to the Aviatrix Controller Access Accounts."
   type        = string
   default     = ""
-  sensitive = true
+  sensitive   = true
 }
 
 variable "aviatrix_deploy_copilot" {
