@@ -26,12 +26,12 @@ resource "aviatrix_remote_syslog" "remote_syslog" {
 }
 
 resource "aviatrix_controller_config" "controller_backup" {
-  count                 = var.enable_backup ? 1 : 0
+  count                 = length(toset(var.enable_azure_backup)) > 0 ? 1 : 0
   backup_configuration  = true
   backup_cloud_type     = 8
-  backup_account_name   = var.aviatrix_access_account_name
-  backup_storage_name   = var.backup_storage_name
-  backup_container_name = var.backup_container_name
-  backup_region         = var.backup_region
+  backup_account_name   = var.enable_azure_backup.backup_account_name
+  backup_storage_name   = var.enable_azure_backup.backup_storage_name
+  backup_container_name = var.enable_azure_backup.backup_container_name
+  backup_region         = var.enable_azure_backup.backup_region
   multiple_backups      = true
 }

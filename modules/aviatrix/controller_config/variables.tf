@@ -5,13 +5,6 @@ variable "controller_public_ip" {
   sensitive   = true
 }
 
-variable "controller_private_ip" {
-  description = "The controllers private IP address."
-  default     = "1.2.3.4"
-  type        = string
-  sensitive   = true
-}
-
 variable "controller_username" {
   description = "The controllers username."
   default     = "admin"
@@ -85,9 +78,5 @@ variable "enable_azure_backup" {
     backup_container_name = string,
     backup_region         = string
   })
-}
-variable "enable_backup" {
-  description = "Enable backup for the aviatrix controller."
-  type        = bool
-  default     = false
+  default = {}
 }
