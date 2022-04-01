@@ -26,7 +26,7 @@ resource "aviatrix_remote_syslog" "remote_syslog" {
 }
 
 resource "aviatrix_controller_config" "controller_backup" {
-  count                 = length(toset(var.enable_azure_backup)) > 0 ? 1 : 0
+  count                 = length(var.enable_azure_backup.backup_account_name) > 0 ? 1 : 0
   backup_configuration  = true
   backup_cloud_type     = 8
   backup_account_name   = var.enable_azure_backup.backup_account_name
