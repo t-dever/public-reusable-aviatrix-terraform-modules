@@ -5,7 +5,7 @@ resource "aviatrix_controller_security_group_management_config" "security_group_
 }
 
 resource "aviatrix_copilot_association" "copilot_association" {
-  count = length(var.copilot_ip_address) < 0 ? 1 : 0
+  count           = length(var.copilot_ip_address) < 0 ? 1 : 0
   copilot_address = var.copilot_ip_address
 }
 

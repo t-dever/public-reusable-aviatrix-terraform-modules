@@ -55,6 +55,6 @@ output "resource_group_location" {
 }
 
 output "aviatrix_primary_access_account" {
-  value = var.aviatrix_azure_primary_account_name
+  value       = var.aviatrix_azure_primary_account_name
   description = "The azure primary account to be added in the Aviatrix Controller."
 }
