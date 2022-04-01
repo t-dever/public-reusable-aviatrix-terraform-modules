@@ -32,12 +32,10 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_aviatrix_access_account_name"></a> [aviatrix\_access\_account\_name](#input\_aviatrix\_access\_account\_name) | The account name used to enable all the configuration settings. | `string` | n/a | yes |
 | <a name="input_controller_password"></a> [controller\_password](#input\_controller\_password) | The controllers password. | `string` | n/a | yes |
-| <a name="input_controller_private_ip"></a> [controller\_private\_ip](#input\_controller\_private\_ip) | The controllers private IP address. | `string` | `"1.2.3.4"` | no |
 | <a name="input_controller_public_ip"></a> [controller\_public\_ip](#input\_controller\_public\_ip) | The controllers public IP address. | `string` | `"1.2.3.4"` | no |
 | <a name="input_controller_username"></a> [controller\_username](#input\_controller\_username) | The controllers username. | `string` | `"admin"` | no |
 | <a name="input_copilot_ip_address"></a> [copilot\_ip\_address](#input\_copilot\_ip\_address) | The CoPilot IP Address to be associated to the controller. | `string` | `""` | no |
-| <a name="input_enable_azure_backup"></a> [enable\_azure\_backup](#input\_enable\_azure\_backup) | Enables Backups to azure storage account. | <pre>object({<br>    backup_account_name   = string,<br>    backup_storage_name   = string,<br>    backup_container_name = string,<br>    backup_region         = string<br>  })</pre> | n/a | yes |
-| <a name="input_enable_backup"></a> [enable\_backup](#input\_enable\_backup) | Enable backup for the aviatrix controller. | `bool` | `false` | no |
+| <a name="input_enable_azure_backup"></a> [enable\_azure\_backup](#input\_enable\_azure\_backup) | Enables Backups to azure storage account. | <pre>object({<br>    backup_account_name   = string,<br>    backup_storage_name   = string,<br>    backup_container_name = string,<br>    backup_region         = string<br>  })</pre> | `{}` | no |
 | <a name="input_enable_netflow_to_copilot"></a> [enable\_netflow\_to\_copilot](#input\_enable\_netflow\_to\_copilot) | Enables netflow logging to CoPilot. | `bool` | `false` | no |
 | <a name="input_enable_rsyslog_to_copilot"></a> [enable\_rsyslog\_to\_copilot](#input\_enable\_rsyslog\_to\_copilot) | Enables rsyslog logging to CoPilot. | `bool` | `false` | no |
 | <a name="input_enable_security_group_management"></a> [enable\_security\_group\_management](#input\_enable\_security\_group\_management) | Enables security group management. | `bool` | `true` | no |
