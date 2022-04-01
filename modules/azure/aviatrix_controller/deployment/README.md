@@ -117,6 +117,7 @@ No modules.
 | [azurerm_linux_virtual_machine.aviatrix_copilot_vm](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine) | resource |
 | [azurerm_network_interface.azure_controller_nic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface) | resource |
 | [azurerm_network_interface.azure_copilot_nic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface) | resource |
+| [azurerm_network_interface_security_group_association.azure_controller_nic_nsg_association](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_security_group_association) | resource |
 | [azurerm_network_security_group.aviatrix_controller_security_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group) | resource |
 | [azurerm_network_security_rule.allow_controller_inbound_to_copilot](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
 | [azurerm_network_security_rule.allow_copilot_inbound_to_controller](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
@@ -125,7 +126,7 @@ No modules.
 | [azurerm_public_ip.azure_copilot_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
 | [azurerm_resource_group.resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_subnet.azure_controller_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
-| [azurerm_subnet_network_security_group_association.azure_controller_nsg_association](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_network_security_group_association) | resource |
+| [azurerm_subnet_network_security_group_association.azure_controller_subnet_nsg_association](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_network_security_group_association) | resource |
 | [azurerm_virtual_network.azure_controller_vnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
 | [random_password.generate_aviatrix_controller_admin_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_password.generate_aviatrix_controller_virtual_machine_admin_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
