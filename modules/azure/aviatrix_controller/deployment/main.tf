@@ -146,10 +146,12 @@ resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
 #   network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
 # }
 
-resource "azurerm_subnet_network_security_group_association" "azure_controller_nsg_association" {
-  subnet_id                 = azurerm_subnet.azure_controller_subnet.id
-  network_security_group_id = azurerm_network_security_group.aviatrix_controller_security_group.id
-}
+
+
+# resource "azurerm_subnet_network_security_group_association" "azure_controller_nsg_association" {
+#   subnet_id                 = azurerm_subnet.azure_controller_subnet.id
+#   network_security_group_id = azurerm_network_security_group.aviatrix_controller_security_group.id
+# }
 
 resource "azurerm_public_ip" "azure_controller_public_ip" {
   name                    = "${var.aviatrix_controller_name}-public-ip"
@@ -182,7 +184,17 @@ resource "azurerm_network_interface" "azure_controller_nic" {
   }
 }
 
+resource "azurerm_network_interface_security_group_association" "azure_controller_nic_nsg_association" {
+  network_interface_id      = azurerm_network_interface.azure_controller_nic.id
+  network_security_group_id = azurerm_network_security_group.aviatrix_controller_security_group.id
+}
+resource "azurerm_subnet_network_security_group_association" "azure_controller_subnet_nsg_association" {
+  subnet_id                 = azurerm_subnet.azure_controller_subnet.id
+  network_security_group_id = azurerm_network_security_group.aviatrix_controller_security_group.id
+}
+
 resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
+  #checkov:skip=CKV_AZURE_149: "Ensure that Virtual machine does not enable password authentication". REASON: Customers can have the option of choosing password or SSH.
   lifecycle {
     ignore_changes = [tags]
   }
