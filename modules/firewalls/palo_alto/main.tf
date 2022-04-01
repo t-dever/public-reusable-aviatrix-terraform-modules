@@ -54,7 +54,7 @@ resource "panos_security_policy" "allow_all" {
   #checkov:skip=CKV_PAN_7: "Ensure security rules do not have 'source_addresses' and 'destination_addresses' both containing values of 'any' ". REASON: Default setting required, security is controlled by security groups in CSP.
   #checkov:skip=CKV_PAN_9: "Ensure a Log Forwarding Profile is selected for each security policy rule". REASON: This is for bootstrapping and not meant to be final configuration.
   rule {
-    description = "Allow All"
+    description           = "Allow All"
     name                  = "allowAll"
     source_zones          = ["any"]
     source_addresses      = ["any"]
