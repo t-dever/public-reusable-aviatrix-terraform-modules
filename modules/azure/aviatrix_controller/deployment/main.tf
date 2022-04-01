@@ -127,32 +127,6 @@ resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
   network_security_group_name = azurerm_network_security_group.aviatrix_controller_security_group.name
 }
 
-# resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
-#   #checkov:skip=CKV_AZURE_77:Allow all internet UDP to copilot. May restrict this further in later updates.
-#   depends_on = [
-#     data.azurerm_network_security_group.controller_security_group,
-#   ]
-#   count                       = var.copilot_private_ip != "" ? 1 : 0
-#   name                        = "AllowNetflowInboundToCoPilot"
-#   priority                    = 103
-#   direction                   = "Inbound"
-#   access                      = "Allow"
-#   protocol                    = "Udp"
-#   source_port_range           = "*"
-#   destination_port_ranges     = [var.netflow_port, var.rsyslog_port]
-#   source_address_prefix       = "*"
-#   destination_address_prefix  = var.copilot_private_ip
-#   resource_group_name         = var.resource_group_name
-#   network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
-# }
-
-
-
-# resource "azurerm_subnet_network_security_group_association" "azure_controller_nsg_association" {
-#   subnet_id                 = azurerm_subnet.azure_controller_subnet.id
-#   network_security_group_id = azurerm_network_security_group.aviatrix_controller_security_group.id
-# }
-
 resource "azurerm_public_ip" "azure_controller_public_ip" {
   name                    = "${var.aviatrix_controller_name}-public-ip"
   location                = azurerm_resource_group.resource_group.location

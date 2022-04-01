@@ -53,3 +53,8 @@ output "resource_group_location" {
   value       = azurerm_resource_group.resource_group.location
   description = "The resource group location"
 }
+
+output "aviatrix_primary_access_account" {
+  value = var.aviatrix_azure_primary_account_name
+  description = "The azure primary account to be added in the Aviatrix Controller."
+}
