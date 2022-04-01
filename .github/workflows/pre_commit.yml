@@ -14,4 +14,4 @@ jobs:
 
       - name: Pre-Commit
         run: |
-          docker run -v $(pwd):/lint -w /lint ghcr.io/antonbabenko/pre-commit-terraform:latest run -a
+          docker run -v $(pwd):/lint -w /lint ghcr.io/antonbabenko/pre-commit-terraform:v1.64.1 run -a

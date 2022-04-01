@@ -263,7 +263,7 @@ module "aviatrix_controller_initialize" {
   enable_security_group_management               = var.aviatrix_enable_security_group_management
 }
 
-# # Deploy CoPilot Resources
+# Deploy CoPilot Resources
 
 resource "azurerm_public_ip" "azure_copilot_public_ip" {
   count                   = var.aviatrix_deploy_copilot ? 1 : 0
