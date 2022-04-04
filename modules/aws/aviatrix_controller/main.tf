@@ -281,7 +281,7 @@ resource "aws_security_group" "copilot_security_group" {
   name        = var.aws_copilot_security_group_name != "aviatrix-controller-security-group" ? var.aws_copilot_security_group_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-security-group" : var.aws_copilot_security_group_name
   description = "Aviatrix - Controller Security Group"
   vpc_id      = aws_vpc.vpc.id
-  tags        = { "Name" = var.aws_controller_security_group_name != "aviatrix-controller-security-group" ? var.aws_controller_security_group_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-security-group" : var.aws_controller_security_group_name }
+  tags        = { "Name" = var.aws_copilot_security_group_name != "aviatrix-controller-security-group" ? var.aws_copilot_security_group_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-security-group" : var.aws_copilot_security_group_name }
 }
 
 # Creates Egress Rule to allow internet traffic for the Aviatrix CoPilot
