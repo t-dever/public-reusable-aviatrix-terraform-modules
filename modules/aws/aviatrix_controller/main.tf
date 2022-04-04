@@ -63,7 +63,7 @@ resource "aws_ssm_parameter" "aviatrix_copilot_secret_parameter" {
 }
 
 resource "aws_vpc" "vpc" {
-  cidr_block = var.vpc_address_space
+  cidr_block = var.aws_vpc_address_space
   tags       = { "Name" = var.aws_vpc_name != "aviatrix-controller-vpc" ? var.aws_vpc_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-vpc" : var.aws_vpc_name }
 }
 
