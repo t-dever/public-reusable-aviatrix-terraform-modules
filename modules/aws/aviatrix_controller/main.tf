@@ -296,41 +296,29 @@ resource "aws_security_group_rule" "copilot_security_group_egress_rule" {
   security_group_id = aws_security_group.copilot_security_group[0].id
 }
 
-# # Creates Ingress Rule to allow user public IP addresses for the Aviatrix CoPilot
-# resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_rule" {
-#   count             = var.deploy_aviatrix_copilot ? 1 : 0
-#   description       = "Allow User Assigned IP addresses inbound to Aviatrix CoPilot."
-#   type              = "ingress"
-#   from_port         = 443
-#   to_port           = 443
-#   protocol          = "tcp"
-#   cidr_blocks       = var.allowed_ips
-#   security_group_id = aws_security_group.aviatrix_copilot_security_group[0].id
-# }
+# Creates Ingress Rule to allow user public IP addresses for the Aviatrix CoPilot
+resource "aws_security_group_rule" "copilot_security_group_ingress_rule_allow_custom" {
+  count             = var.aws_copilot_deploy ? length(var.aws_copilot_security_group_allowed_ips) : 0
+  description       = var.aws_copilot_security_group_allowed_ips[count.index].description
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = var.aws_copilot_security_group_allowed_ips[count.index].cidr_blocks
+  security_group_id = aws_security_group.copilot_security_group[0].id
+}
 
-# # Creates Ingress Rule to allow Aviatrix Gateways Syslog Access to CoPilot
-# resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gateways_syslog_rule" {
-#   count             = var.deploy_aviatrix_copilot && var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
-#   description       = "Allow Gateways access to send Rsyslog to Aviatrix CoPilot."
-#   type              = "ingress"
-#   from_port         = 5000
-#   to_port           = 5000
-#   protocol          = "udp"
-#   cidr_blocks       = local.copilot_security_group_ips
-#   security_group_id = aws_security_group.aviatrix_copilot_security_group[0].id
-# }
-
-# # Creates Ingress Rule to allow Aviatrix Gateways Flow Logs Access to CoPilot
-# resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gateways_flow_logs_rule" {
-#   count             = var.deploy_aviatrix_copilot && var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
-#   description       = "Allow Gateways access to send Flow Logs to Aviatrix CoPilot."
-#   type              = "ingress"
-#   from_port         = 31283
-#   to_port           = 31283
-#   protocol          = "udp"
-#   cidr_blocks       = local.copilot_security_group_ips
-#   security_group_id = aws_security_group.aviatrix_copilot_security_group[0].id
-# }
+# Creates Ingress Rule to allow Controller access to the Aviatrix Copilot
+resource "aws_security_group_rule" "copilot_security_group_ingress_rule_allow_controller" {
+  count             = var.aws_copilot_deploy ? 1 : 0
+  description       = "Allow Controller inbound to Aviatrix Copilot."
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["${local.controller_private_ip}/32"]
+  security_group_id = aws_security_group.copilot_security_group[0].id
+}
 
 # # Creates CoPilot Network Interface
 # resource "aws_network_interface" "aviatrix_copilot_network_interface" {
@@ -408,4 +396,28 @@ resource "aws_security_group_rule" "copilot_security_group_egress_rule" {
 #     region = "${var.region}"
 #     vpc_id = "${aws_vpc.vpc.id}"
 #   }
+# }
+
+# # Creates Ingress Rule to allow Aviatrix Gateways Syslog Access to CoPilot
+# resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gateways_syslog_rule" {
+#   count             = var.deploy_aviatrix_copilot && var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
+#   description       = "Allow Gateways access to send Rsyslog to Aviatrix CoPilot."
+#   type              = "ingress"
+#   from_port         = 5000
+#   to_port           = 5000
+#   protocol          = "udp"
+#   cidr_blocks       = local.copilot_security_group_ips
+#   security_group_id = aws_security_group.aviatrix_copilot_security_group[0].id
+# }
+
+# # Creates Ingress Rule to allow Aviatrix Gateways Flow Logs Access to CoPilot
+# resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_gateways_flow_logs_rule" {
+#   count             = var.deploy_aviatrix_copilot && var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
+#   description       = "Allow Gateways access to send Flow Logs to Aviatrix CoPilot."
+#   type              = "ingress"
+#   from_port         = 31283
+#   to_port           = 31283
+#   protocol          = "udp"
+#   cidr_blocks       = local.copilot_security_group_ips
+#   security_group_id = aws_security_group.aviatrix_copilot_security_group[0].id
 # }
