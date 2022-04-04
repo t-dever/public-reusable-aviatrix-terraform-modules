@@ -48,7 +48,7 @@ resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
   name        = "/aviatrix/controller/password"
   description = "The local password for Aviatrix Controller."
   type        = "SecureString"
-  value       = random_password.aviatrix_controller_password.result
+  value       = random_password.aviatrix_controller_password[0].result
   tags        = { "Name" = "${var.tag_prefix}-controller-password" }
 }
 
