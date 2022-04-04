@@ -1,16 +1,19 @@
 variable "location" {
   description = "Location of the resource group"
   type        = string
+  default     = "South Central US"
 }
 
 variable "resource_group_name" {
   description = "The resource group name to be created."
   type        = string
+  default     = "aviatrix-controller"
 }
 
 variable "vnet_name" {
   type        = string
   description = "The name for the Virtual Network"
+  default     = "aviatrix-controller-vnet"
 }
 
 variable "vnet_address_prefix" {

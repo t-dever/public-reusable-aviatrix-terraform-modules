@@ -2,7 +2,6 @@ version: 0.1
 
 projects:
   - path: modules/azure/aviatrix_controller
-    terraform_plan_flags: -var-file=default.tfvars
     env:
       ARM_CLIENT_ID: ${ARM_CLIENT_ID}
       ARM_CLIENT_SECRET: ${ARM_CLIENT_SECRET}
