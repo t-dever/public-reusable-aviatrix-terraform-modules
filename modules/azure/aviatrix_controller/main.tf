@@ -277,6 +277,7 @@ resource "azurerm_network_interface" "azure_copilot_nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
+  #checkov:skip=CKV_AZURE_149: "Ensure that Virtual machine does not enable password authentication". REASON: Customers can have the option of choosing password or SSH.
   count                           = var.aviatrix_deploy_copilot ? 1 : 0
   name                            = var.aviatrix_copilot_name
   location                        = azurerm_resource_group.resource_group.location
