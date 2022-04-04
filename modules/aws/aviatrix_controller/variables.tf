@@ -100,9 +100,6 @@ variable "aws_route_table_name" {
   type        = string
   default     = "aviatrix-route-table"
 }
-
-
-
 # STOP - AWS Resource Variables (variable starts with 'aws_<resource type>')
 
 # START - AWS Resource Variables for Aviatrix Controller (variable starts with 'aws_controller_<resource_type>')
