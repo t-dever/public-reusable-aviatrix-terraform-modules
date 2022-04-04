@@ -249,9 +249,9 @@ resource "aws_eip_association" "controller_eip_assoc" {
 # Python Script to Bootstrap the Aviatrix Controller by adding Admin Email, License, Reset Password, Upgrade Controller.
 module "aviatrix_controller_initialize" {
   depends_on = [
-    aws_instance.aviatrix_controller_instance
+    aws_instance.controller_instance
   ]
-  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=v2.3.3"
+  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=tags/v2.4.4"
   aviatrix_controller_public_ip       = aws_eip.controller_eip.public_ip
   aviatrix_controller_private_ip      = local.controller_private_ip
   aviatrix_controller_password        = length(var.aviatrix_controller_admin_password) == 0 ? random_password.aviatrix_controller_password[0].result : var.aviatrix_controller_admin_password
