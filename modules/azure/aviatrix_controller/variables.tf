@@ -131,7 +131,7 @@ variable "aviatrix_azure_primary_account_client_secret" {
 variable "aviatrix_deploy_copilot" {
   description = "Deploy Aviatrix CoPilot?"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "aviatrix_copilot_name" {
