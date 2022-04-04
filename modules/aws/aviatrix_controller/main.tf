@@ -377,13 +377,13 @@ resource "aws_ebs_volume" "copilot_ebs_volumes" {
   encrypted         = true
 }
 
-# # Attaches extra volumes to CoPilot Instance
-# resource "aws_volume_attachment" "aviatrix_copilot_ebs_attach" {
-#   count       = var.deploy_aviatrix_copilot ? length(var.aviatrix_copilot_additional_volumes) : 0
-#   device_name = "/dev/sd${substr(local.additonal_volumes_lettering, count.index, 1)}"
-#   volume_id   = aws_ebs_volume.aviatrix_copilot_ebs_volumes[count.index].id
-#   instance_id = aws_instance.aviatrix_copilot_instance[0].id
-# }
+# Attaches extra volumes to CoPilot Instance
+resource "aws_volume_attachment" "copilot_ebs_attach" {
+  count       = var.aws_copilot_deploy ? length(var.aws_copilot_additional_volumes) : 0
+  device_name = "/dev/sd${substr(local.additonal_volumes_lettering, count.index, 1)}"
+  volume_id   = aws_ebs_volume.copilot_ebs_volumes[count.index].id
+  instance_id = aws_instance.copilot_instance[0].id
+}
 
 # # Get's the Aviatrix Gateways IP addresses from the Aviatrix Controller Security Groups.
 # data "external" "get_aviatrix_gateway_cidrs" {
