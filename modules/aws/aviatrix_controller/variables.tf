@@ -297,6 +297,13 @@ variable "aviatrix_copilot_username" {
   default     = "copilot-read-only"
 }
 
+variable "aviatrix_copilot_password" {
+  description = "The password used for the Aviatrix Copilot Login."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 variable "aviatrix_copilot_name" {
   description = "Name of copilot that will be launched."
   type        = string

@@ -32,7 +32,7 @@ resource "random_password" "aviatrix_controller_password" {
 
 # Generates random password Aviatrix Copilot credentials
 resource "random_password" "aviatrix_copilot_password" {
-  count            = var.aws_copilot_deploy ? 1 : 0
+  count            = var.aws_copilot_deploy && length(var.aviatrix_copilot_password) == 0 ? 1 : 0
   length           = 24
   special          = true
   min_lower        = 2
@@ -58,7 +58,7 @@ resource "aws_ssm_parameter" "aviatrix_copilot_secret_parameter" {
   name        = "/aviatrix/copilot/password"
   description = "The copilot password used to authenticate with the controller using read-only."
   type        = "SecureString"
-  value       = random_password.aviatrix_copilot_password[0].result
+  value       = length(var.aviatrix_copilot_password) == 0 ? random_password.aviatrix_copilot_password[0].result : var.aviatrix_copilot_password
   tags        = { "Name" = "${var.tag_prefix}-copilot-password" }
 }
 
@@ -265,7 +265,7 @@ module "aviatrix_controller_initialize" {
   enable_security_group_management    = var.aviatrix_controller_enable_auto_security_group_mgmt
   aws_gov                             = local.is_aws_gov
   copilot_username                    = var.aws_copilot_deploy ? var.aviatrix_copilot_username : ""
-  copilot_password                    = var.aws_copilot_deploy ? random_password.aviatrix_copilot_password[0].result : ""
+  copilot_password                    = var.aws_copilot_deploy ? length(var.aviatrix_copilot_password) == 0 ? random_password.aviatrix_copilot_password[0].result : var.aviatrix_copilot_password : ""
 }
 
 # Creates CoPilot Public IP Address
@@ -320,17 +320,17 @@ resource "aws_security_group_rule" "copilot_security_group_ingress_rule_allow_co
   security_group_id = aws_security_group.copilot_security_group[0].id
 }
 
-# # Creates CoPilot Network Interface
-# resource "aws_network_interface" "aviatrix_copilot_network_interface" {
-#   count           = var.deploy_aviatrix_copilot ? 1 : 0
-#   subnet_id       = aws_subnet.aviatrix_copilot_subnet[0].id
-#   security_groups = [aws_security_group.aviatrix_copilot_security_group[0].id]
-#   private_ips     = [local.copilot_private_ip]
-#   tags            = { "Name" = "${var.tag_prefix}-copilot-eni" }
-#   lifecycle {
-#     ignore_changes = [tags, security_groups, subnet_id]
-#   }
-# }
+# Creates CoPilot Network Interface
+resource "aws_network_interface" "aviatrix_copilot_network_interface" {
+  count           = var.aws_copilot_deploy ? 1 : 0
+  subnet_id       = aws_subnet.aviatrix_copilot_subnet[0].id
+  security_groups = [aws_security_group.aviatrix_copilot_security_group[0].id]
+  private_ips     = [local.copilot_private_ip]
+  tags            = { "Name" = "${var.tag_prefix}-copilot-eni" }
+  lifecycle {
+    ignore_changes = [tags, security_groups, subnet_id]
+  }
+}
 
 # # Creates CoPilot Instance
 # resource "aws_instance" "aviatrix_copilot_instance" {
