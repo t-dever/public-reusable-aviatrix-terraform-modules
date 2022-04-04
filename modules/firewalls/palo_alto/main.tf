@@ -32,6 +32,7 @@ resource "panos_virtual_router" "default_virtual_router" {
 }
 
 resource "panos_zone" "wan_zone" {
+  #checkov:skip=CKV_PAN_14: "Ensure a Zone Protection Profile is defined within Security Zones". REASON: This is for bootstrapping and not meant to be final configuration.
   name = "WAN"
   mode = "layer3"
   interfaces = [
@@ -40,6 +41,7 @@ resource "panos_zone" "wan_zone" {
 }
 
 resource "panos_zone" "lan_zone" {
+  #checkov:skip=CKV_PAN_14: "Ensure a Zone Protection Profile is defined within Security Zones". REASON: This is for bootstrapping and not meant to be final configuration.
   name = "LAN"
   mode = "layer3"
   interfaces = [
@@ -48,7 +50,11 @@ resource "panos_zone" "lan_zone" {
 }
 
 resource "panos_security_policy" "allow_all" {
+  #checkov:skip=CKV_PAN_5:"Ensure security rules do not have 'applications' set to 'any' ". REASON: Default setting required, security is controlled by security groups in CSP.
+  #checkov:skip=CKV_PAN_7: "Ensure security rules do not have 'source_addresses' and 'destination_addresses' both containing values of 'any' ". REASON: Default setting required, security is controlled by security groups in CSP.
+  #checkov:skip=CKV_PAN_9: "Ensure a Log Forwarding Profile is selected for each security policy rule". REASON: This is for bootstrapping and not meant to be final configuration.
   rule {
+    description           = "Allow All"
     name                  = "allowAll"
     source_zones          = ["any"]
     source_addresses      = ["any"]
