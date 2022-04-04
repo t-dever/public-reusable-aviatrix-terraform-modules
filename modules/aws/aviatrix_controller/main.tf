@@ -85,7 +85,7 @@ resource "aws_subnet" "copilot_subnet" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = var.aws_copilot_subnet.cidr_block
   availability_zone = var.aws_copilot_subnet.availability_zone
-tags              = { "Name" = var.aws_copilot_subnet.name != "aviatrix-copilot" ? var.aws_copilot_subnet.name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-subnet" : var.aws_copilot_subnet.name }
+  tags              = { "Name" = var.aws_copilot_subnet.name != "aviatrix-copilot" ? var.aws_copilot_subnet.name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-subnet" : var.aws_copilot_subnet.name }
 }
 
 # Create Additional Subnets in the VPC
@@ -97,16 +97,17 @@ resource "aws_subnet" "additional_subnets" {
   tags              = { "Name" = var.aws_additional_subnets[count.index].name }
 }
 
-# # Create Internet Gateway (IGW)
-# resource "aws_internet_gateway" "internet_gateway" {
-#   vpc_id = aws_vpc.vpc.id
-#   tags   = { "Name" = "${var.aws_internet_gateway_name}" }
-# }
-# # Create AWS Route Table for VPC
-# resource "aws_route_table" "vpc_route_table" {
-#   vpc_id = aws_vpc.vpc.id
-#   tags   = { "Name" = "${var.aws_route_table_name}" }
-# }
+# Create Internet Gateway (IGW)
+resource "aws_internet_gateway" "internet_gateway" {
+  vpc_id = aws_vpc.vpc.id
+  tags = { "Name" = var.aws_internet_gateway_name != "aviatrix-internet-gateway" ? var.aws_internet_gateway_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-internet-gateway" : var.aws_internet_gateway_name }
+}
+
+# Create AWS Route Table for VPC
+resource "aws_route_table" "vpc_route_table" {
+  vpc_id = aws_vpc.vpc.id
+  tags = { "Name" = var.aws_route_table_name != "aviatrix-route-table" ? var.aws_route_table_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-route-table" : var.aws_route_table_name }
+}
 
 # # Creates Default Route to Internet for route table.
 # resource "aws_route" "internet_route" {
