@@ -210,7 +210,7 @@ resource "aws_network_interface" "controller_network_interface" {
 resource "aws_instance" "controller_instance" {
   ami                     = local.controller_ami_id
   instance_type           = var.aws_controller_instance_size
-  key_name                = length(var.aws_key_pair_public_key) > 0 ? aws_key_pair.key_pair.name : data.aws_key_pair.key_pair.key_name
+  key_name                = length(var.aws_key_pair_public_key) > 0 ? aws_key_pair.key_pair[0].name : data.aws_key_pair.key_pair[0].key_name
   iam_instance_profile    = aws_iam_instance_profile.aviatrix_role_ec2_profile.name
   disable_api_termination = false
   monitoring              = true
