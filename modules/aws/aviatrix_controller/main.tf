@@ -72,8 +72,8 @@ resource "aws_key_pair" "key_pair" {
 
 # Grabs the attributes for the key pair if ssh public key is not provided
 data "aws_key_pair" "key_pair" {
-  count      = length(var.aws_key_pair_public_key) > 0 ? 0 : 1
-  key_name   = var.aws_key_pair_name
+  count    = length(var.aws_key_pair_public_key) > 0 ? 0 : 1
+  key_name = var.aws_key_pair_name
 }
 
 # Creates AWS VPC
@@ -145,13 +145,13 @@ resource "aws_route_table_association" "copilot_subnet_route_table_assoc" {
   route_table_id = aws_route_table.vpc_route_table.id
 }
 
-# # Creates Aviatrix Controller Security Group
-# resource "aws_security_group" "controller_security_group" {
-#   name        = var.aws_controller_security_group_name
-#   description = "Aviatrix - Controller Security Group"
-#   vpc_id      = aws_vpc.vpc.id
-#   tags        = { "Name" = var.aws_controller_security_group_name }
-# }
+# Creates Aviatrix Controller Security Group
+resource "aws_security_group" "controller_security_group" {
+  name        = var.aws_controller_security_group_name != "aviatrix-controller-security-group" ? var.aws_controller_security_group_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-security-group" : var.aws_controller_security_group_name
+  description = "Aviatrix - Controller Security Group"
+  vpc_id      = aws_vpc.vpc.id
+  tags        = { "Name" = var.aws_controller_security_group_name != "aviatrix-controller-security-group" ? var.aws_controller_security_group_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-security-group" : var.aws_controller_security_group_name }
+}
 
 # # Creates Ingress Rule to allow user public IP addresses for the Aviatrix Controller
 # resource "aws_security_group_rule" "controller_security_group_ingress_rule_allow_custom" {
