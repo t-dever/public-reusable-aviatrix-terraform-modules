@@ -326,7 +326,7 @@ resource "aws_network_interface" "aviatrix_copilot_network_interface" {
   subnet_id       = aws_subnet.copilot_subnet[0].id
   security_groups = [aws_security_group.copilot_security_group[0].id]
   private_ips     = [local.copilot_private_ip]
-  tags            = { "Name" = "${var.tag_prefix}-copilot-eni" }
+  tags        = { "Name" = var.aws_copilot_eni_name != "aviatrix-copilot-eni" ? var.aws_copilot_eni_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-eni" : var.aws_copilot_eni_name }
   lifecycle {
     ignore_changes = [tags, security_groups, subnet_id]
   }
