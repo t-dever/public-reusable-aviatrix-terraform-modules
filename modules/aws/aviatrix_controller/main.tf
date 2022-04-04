@@ -79,23 +79,23 @@ resource "aws_subnet" "controller_subnet" {
   tags              = { "Name" = var.aws_controller_subnet.name != "aviatrix-controller" ? var.aws_controller_subnet.name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-subnet" : var.aws_controller_subnet.name }
 }
 
-# # Create Aviatrix CoPilot Subnet
-# resource "aws_subnet" "copilot_subnet" {
-#   count             = var.aws_copilot_deploy ? 1 : 0
-#   vpc_id            = aws_vpc.vpc.id
-#   cidr_block        = var.aws_copilot_subnet.cidr_block
-#   availability_zone = var.aws_copilot_subnet.availability_zone
-#   tags              = { "Name" = "${var.aws_copilot_subnet.name}" }
-# }
+# Create Aviatrix CoPilot Subnet
+resource "aws_subnet" "copilot_subnet" {
+  count             = var.aws_copilot_deploy ? 1 : 0
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = var.aws_copilot_subnet.cidr_block
+  availability_zone = var.aws_copilot_subnet.availability_zone
+tags              = { "Name" = var.aws_copilot_subnet.name != "aviatrix-copilot" ? var.aws_copilot_subnet.name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-subnet" : var.aws_copilot_subnet.name }
+}
 
-# # Create Additional Subnets in the VPC
-# resource "aws_subnet" "additional_subnets" {
-#   count             = length(var.aws_additional_subnets)
-#   vpc_id            = aws_vpc.vpc.id
-#   cidr_block        = var.aws_additional_subnets[count.index].cidr_block
-#   availability_zone = var.aws_additional_subnets[count.index].availability_zone
-#   tags              = { "Name" = var.aws_additional_subnets[count.index].name }
-# }
+# Create Additional Subnets in the VPC
+resource "aws_subnet" "additional_subnets" {
+  count             = length(var.aws_additional_subnets)
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = var.aws_additional_subnets[count.index].cidr_block
+  availability_zone = var.aws_additional_subnets[count.index].availability_zone
+  tags              = { "Name" = var.aws_additional_subnets[count.index].name }
+}
 
 # # Create Internet Gateway (IGW)
 # resource "aws_internet_gateway" "internet_gateway" {
