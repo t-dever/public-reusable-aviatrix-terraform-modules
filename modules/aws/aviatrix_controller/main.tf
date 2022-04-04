@@ -72,7 +72,7 @@ resource "aws_key_pair" "key_pair" {
 
 # Grabs the attributes for the key pair if ssh public key is not provided
 data "aws_key_pair" "key_pair" {
-  count      = length(var.aws_key_pair_public_key) > 0 ? 1 : 0
+  count      = length(var.aws_key_pair_public_key) > 0 ? 0 : 1
   key_name   = var.aws_key_pair_name
 }
 
