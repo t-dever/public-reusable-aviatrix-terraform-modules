@@ -269,7 +269,7 @@ module "aviatrix_controller_initialize" {
 }
 
 # Creates CoPilot Public IP Address
-resource "aws_eip" "aviatrix_copilot_eip" {
+resource "aws_eip" "copilot_eip" {
   count = var.aws_copilot_deploy ? 1 : 0
   vpc   = true
   tags  = { "Name" = var.aws_copilot_eip_name != "aviatrix-copilot-eip" ? var.aws_copilot_eip_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-eip" : var.aws_copilot_eip_name }
@@ -277,7 +277,7 @@ resource "aws_eip" "aviatrix_copilot_eip" {
 
 # Creates Aviatrix Copilot Security Group
 resource "aws_security_group" "copilot_security_group" {
-  count = var.aws_copilot_deploy ? 1 : 0
+  count       = var.aws_copilot_deploy ? 1 : 0
   name        = var.aws_copilot_security_group_name != "aviatrix-controller-security-group" ? var.aws_copilot_security_group_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-security-group" : var.aws_copilot_security_group_name
   description = "Aviatrix - Controller Security Group"
   vpc_id      = aws_vpc.vpc.id
@@ -321,51 +321,51 @@ resource "aws_security_group_rule" "copilot_security_group_ingress_rule_allow_co
 }
 
 # Creates CoPilot Network Interface
-resource "aws_network_interface" "aviatrix_copilot_network_interface" {
+resource "aws_network_interface" "copilot_network_interface" {
   count           = var.aws_copilot_deploy ? 1 : 0
   subnet_id       = aws_subnet.copilot_subnet[0].id
   security_groups = [aws_security_group.copilot_security_group[0].id]
   private_ips     = [local.copilot_private_ip]
-  tags        = { "Name" = var.aws_copilot_eni_name != "aviatrix-copilot-eni" ? var.aws_copilot_eni_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-eni" : var.aws_copilot_eni_name }
+  tags            = { "Name" = var.aws_copilot_eni_name != "aviatrix-copilot-eni" ? var.aws_copilot_eni_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-eni" : var.aws_copilot_eni_name }
   lifecycle {
     ignore_changes = [tags, security_groups, subnet_id]
   }
 }
 
-# # Creates CoPilot Instance
-# resource "aws_instance" "aviatrix_copilot_instance" {
-#   count         = var.deploy_aviatrix_copilot ? 1 : 0
-#   ami           = local.copilot_ami_id
-#   instance_type = var.aviatrix_copilot_instance_size
-#   key_name      = aws_key_pair.key_pair.key_name
-#   monitoring    = true
-#   ebs_optimized = true
+# Creates CoPilot Instance
+resource "aws_instance" "copilot_instance" {
+  count         = var.aws_copilot_deploy ? 1 : 0
+  ami           = local.copilot_ami_id
+  instance_type = var.aviatrix_copilot_instance_size
+  key_name      = length(var.aws_key_pair_public_key) > 0 ? aws_key_pair.key_pair[0].key_name : data.aws_key_pair.key_pair[0].key_name
+  monitoring    = true
+  ebs_optimized = true
 
-#   metadata_options {
-#     http_endpoint = "enabled"
-#     http_tokens   = "required"
-#   }
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
 
-#   network_interface {
-#     network_interface_id = aws_network_interface.aviatrix_copilot_network_interface[0].id
-#     device_index         = 0
-#   }
+  network_interface {
+    network_interface_id = aws_network_interface.copilot_network_interface[0].id
+    device_index         = 0
+  }
 
-#   root_block_device {
-#     encrypted   = true
-#     volume_size = var.aviatrix_copilot_root_volume_size
-#     volume_type = var.aviatrix_copilot_root_volume_type
-#   }
+  root_block_device {
+    encrypted   = true
+    volume_size = var.aviatrix_copilot_root_volume_size
+    volume_type = var.aviatrix_copilot_root_volume_type
+  }
 
-#   tags = { "Name" = var.aviatrix_copilot_name }
-# }
+  tags = { "Name" = var.aws_copilot_name != "aviatrix-copilot" ? var.aws_copilot_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-instance" : var.aws_copilot_name }
+}
 
-# # Associates Public IP Address to Aviatrix CoPilot Instance.
-# resource "aws_eip_association" "aviatrix_copilot_eip_assoc" {
-#   count         = var.deploy_aviatrix_copilot ? 1 : 0
-#   instance_id   = aws_instance.aviatrix_copilot_instance[0].id
-#   allocation_id = aws_eip.aviatrix_copilot_eip[0].id
-# }
+# Associates Public IP Address to Aviatrix CoPilot Instance.
+resource "aws_eip_association" "copilot_eip_assoc" {
+  count         = var.aws_copilot_deploy ? 1 : 0
+  instance_id   = aws_instance.copilot_instance[0].id
+  allocation_id = aws_eip.copilot_eip[0].id
+}
 
 # # Creates EBS volumes
 # resource "aws_ebs_volume" "aviatrix_copilot_ebs_volumes" {
