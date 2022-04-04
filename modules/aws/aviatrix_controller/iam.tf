@@ -88,7 +88,7 @@ EOF
 
 # Create IAM Policy for Aviatrix App to deploy resources.
 resource "aws_iam_policy" "aviatrix_app_policy" {
-  name        = var.aws_iam_app_policy_name != "aviatrix-role-app-policy" ? var.aws_iam_app_policy_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-role-ec2-assume-role-policy" : var.aws_iam_app_policy_name
+  name        = var.aws_iam_app_policy_name != "aviatrix-role-app-policy" ? var.aws_iam_app_policy_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-role-app-policy" : var.aws_iam_app_policy_name
   path        = "/"
   description = "Policy to deploy resources - Created by Terraform"
   policy      = <<EOF
