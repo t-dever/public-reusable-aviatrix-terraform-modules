@@ -165,33 +165,34 @@ resource "aws_security_group_rule" "controller_security_group_ingress_rule_allow
   security_group_id = aws_security_group.controller_security_group.id
 }
 
-# # Creates Egress Rule to allow internet traffic for the Aviatrix Controller
-# resource "aws_security_group_rule" "controller_security_group_egress_rule_allow_internet" {
-#   description       = "Allow default route outbound to internet."
-#   type              = "egress"
-#   from_port         = 0
-#   to_port           = 0
-#   protocol          = "-1"
-#   cidr_blocks       = ["0.0.0.0/0"]
-#   security_group_id = aws_security_group.controller_security_group.id
-# }
+# Creates Egress Rule to allow internet traffic for the Aviatrix Controller
+resource "aws_security_group_rule" "controller_security_group_egress_rule_allow_internet" {
+  description       = "Allow default route outbound to internet."
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.controller_security_group.id
+}
 
-# # Creates Ingress Rule to allow CoPilot access to the Aviatrix Controller
-# resource "aws_security_group_rule" "controller_security_group_ingress_rule_allow_copilot" {
-#   description       = "Allow CoPilot inbound to Aviatrix Controller."
-#   type              = "ingress"
-#   from_port         = 443
-#   to_port           = 443
-#   protocol          = "tcp"
-#   cidr_blocks       = ["${local.copilot_private_ip}/32"]
-#   security_group_id = aws_security_group.controller_security_group.id
-# }
+# Creates Ingress Rule to allow CoPilot access to the Aviatrix Controller
+resource "aws_security_group_rule" "controller_security_group_ingress_rule_allow_copilot" {
+  count             = var.aws_copilot_deploy ? 1 : 0
+  description       = "Allow CoPilot inbound to Aviatrix Controller."
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["${local.copilot_private_ip}/32"]
+  security_group_id = aws_security_group.controller_security_group.id
+}
 
-# # Creates Public IP Address for Aviatrix Controller
-# resource "aws_eip" "controller_eip" {
-#   vpc  = true
-#   tags = { "Name" = "${var.aws_controller_eip_name}" }
-# }
+# Creates Public IP Address for Aviatrix Controller
+resource "aws_eip" "controller_eip" {
+  vpc  = true
+  tags        = { "Name" = var.aws_controller_eip_name != "aviatrix-controller-eip" ? var.aws_controller_eip_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-eip" : var.aws_controller_eip_name }
+}
 
 # # Creates Network Interface for Aviatrix Controller
 # resource "aws_network_interface" "controller_network_interface" {
