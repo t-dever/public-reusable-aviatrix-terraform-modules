@@ -44,7 +44,7 @@ resource "random_password" "aviatrix_copilot_password" {
 
 # Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
 resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
-  count       = var.store_credentials_in_ssm ? 1 : 0
+  count       = var.aws_store_credentials_in_ssm ? 1 : 0
   name        = "/aviatrix/controller/password"
   description = "The local password for Aviatrix Controller."
   type        = "SecureString"
@@ -54,7 +54,7 @@ resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
 
 # Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
 resource "aws_ssm_parameter" "aviatrix_copilot_secret_parameter" {
-  count       = var.aws_copilot_deploy && var.store_credentials_in_ssm ? 1 : 0
+  count       = var.aws_copilot_deploy && var.aws_store_credentials_in_ssm ? 1 : 0
   name        = "/aviatrix/copilot/password"
   description = "The copilot password used to authenticate with the controller using read-only."
   type        = "SecureString"

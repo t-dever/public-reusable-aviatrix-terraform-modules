@@ -4,12 +4,6 @@ variable "tag_prefix" {
   default     = ""
 }
 
-variable "store_credentials_in_ssm" {
-  description = "If enabled it will store credentials in AWS Systems Manager Parameter Store."
-  type        = bool
-  default     = false
-}
-
 # START - IAM Variables (variable starts with 'aws_iam_<resource type>')
 variable "aws_iam_role_ec2_name" {
   description = "The name of the Aviatrix Role for EC2."
@@ -47,6 +41,12 @@ variable "aws_tags" {
   description = "The tags used for resources."
   type        = map(any)
   default     = {}
+}
+
+variable "aws_store_credentials_in_ssm" {
+  description = "If enabled it will store credentials in AWS Systems Manager Parameter Store."
+  type        = bool
+  default     = false
 }
 
 variable "aws_key_pair_public_key" {
