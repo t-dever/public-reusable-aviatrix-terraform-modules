@@ -346,5 +346,8 @@ resource "aws_iam_role_policy_attachment" "aviatrix_role_app_attach" {
 resource "aws_iam_instance_profile" "aviatrix_role_ec2_profile" {
   name = aws_iam_role.aviatrix_role_ec2.name
   role = aws_iam_role.aviatrix_role_ec2.name
+  lifecycle {
+    ignore_changes = [tags_all]
+  }
 }
 
