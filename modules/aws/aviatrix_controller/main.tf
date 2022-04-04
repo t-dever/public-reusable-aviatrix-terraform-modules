@@ -125,26 +125,25 @@ resource "aws_route_table" "vpc_route_table" {
   tags   = { "Name" = var.aws_route_table_name != "aviatrix-route-table" ? var.aws_route_table_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-route-table" : var.aws_route_table_name }
 }
 
+# Creates Default Route to Internet for route table.
+resource "aws_route" "internet_route" {
+  route_table_id         = aws_route_table.vpc_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.internet_gateway.id
+}
 
+# Associate Route Table to Aviatrix Controller Instance
+resource "aws_route_table_association" "controller_subnet_route_table_assoc" {
+  subnet_id      = aws_subnet.controller_subnet.id
+  route_table_id = aws_route_table.vpc_route_table.id
+}
 
-# # Creates Default Route to Internet for route table.
-# resource "aws_route" "internet_route" {
-#   route_table_id         = aws_route_table.vpc_route_table.id
-#   destination_cidr_block = "0.0.0.0/0"
-#   gateway_id             = aws_internet_gateway.internet_gateway.id
-# }
-
-# # Associate Route Table to Aviatrix Controller Instance
-# resource "aws_route_table_association" "controller_subnet_route_table_assoc" {
-#   subnet_id      = aws_subnet.controller_subnet.id
-#   route_table_id = aws_route_table.vpc_route_table.id
-# }
-# # Associate Route Table to Aviatrix CoPilot Instance
-# resource "aws_route_table_association" "copilot_subnet_route_table_assoc" {
-#   count          = var.aws_copilot_deploy ? 1 : 0
-#   subnet_id      = aws_subnet.copilot_subnet[0].id
-#   route_table_id = aws_route_table.vpc_route_table.id
-# }
+# Associate Route Table to Aviatrix CoPilot Instance
+resource "aws_route_table_association" "copilot_subnet_route_table_assoc" {
+  count          = var.aws_copilot_deploy ? 1 : 0
+  subnet_id      = aws_subnet.copilot_subnet[0].id
+  route_table_id = aws_route_table.vpc_route_table.id
+}
 
 # # Creates Aviatrix Controller Security Group
 # resource "aws_security_group" "controller_security_group" {
