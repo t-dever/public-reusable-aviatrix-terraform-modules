@@ -79,7 +79,7 @@ variable "enable_azure_backup" {
     backup_region         = string
   })
   default = {
-    backup_account_name = "",
+    backup_account_name   = "",
     backup_storage_name   = "",
     backup_container_name = "",
     backup_region         = ""
