@@ -191,20 +191,20 @@ resource "aws_security_group_rule" "controller_security_group_ingress_rule_allow
 # Creates Public IP Address for Aviatrix Controller
 resource "aws_eip" "controller_eip" {
   vpc  = true
-  tags        = { "Name" = var.aws_controller_eip_name != "aviatrix-controller-eip" ? var.aws_controller_eip_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-eip" : var.aws_controller_eip_name }
+  tags = { "Name" = var.aws_controller_eip_name != "aviatrix-controller-eip" ? var.aws_controller_eip_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-eip" : var.aws_controller_eip_name }
 }
 
-# # Creates Network Interface for Aviatrix Controller
-# resource "aws_network_interface" "controller_network_interface" {
-#   subnet_id       = aws_subnet.controller_subnet.id
-#   security_groups = [aws_security_group.controller_security_group.id]
-#   private_ips     = [local.controller_private_ip]
-#   tags            = { "Name" = "${var.aws_controller_eni_name}" }
+# Creates Network Interface for Aviatrix Controller
+resource "aws_network_interface" "controller_network_interface" {
+  subnet_id       = aws_subnet.controller_subnet.id
+  security_groups = [aws_security_group.controller_security_group.id]
+  private_ips     = [local.controller_private_ip]
+  tags            = { "Name" = var.aws_controller_eni_name != "aviatrix-controller-eni" ? var.aws_controller_eni_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-eni" : var.aws_controller_eni_name }
 
-#   lifecycle {
-#     ignore_changes = [tags, security_groups, subnet_id]
-#   }
-# }
+  lifecycle {
+    ignore_changes = [tags, security_groups, subnet_id]
+  }
+}
 
 
 
