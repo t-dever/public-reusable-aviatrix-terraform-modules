@@ -21,6 +21,9 @@ resource "aws_iam_role" "aviatrix_role_ec2" {
     ]
 }
 EOF
+  lifecycle {
+    ignore_changes = [tags_all]
+  }
 }
 
 # Create IAM Role for Aviatrix App Controller
@@ -46,6 +49,9 @@ resource "aws_iam_role" "aviatrix_role_app" {
     ]
 }
 EOF
+  lifecycle {
+    ignore_changes = [tags_all]
+  }
 }
 
 # Create IAM Policy for assuming role and accepting marketplace AMI.
@@ -75,6 +81,9 @@ resource "aws_iam_policy" "aviatrix_assume_role_policy" {
     ]
 }
 EOF
+  lifecycle {
+    ignore_changes = [tags_all]
+  }
 }
 
 # Create IAM Policy for Aviatrix App to deploy resources.
@@ -316,6 +325,9 @@ resource "aws_iam_policy" "aviatrix_app_policy" {
     ]
 }
 EOF
+  lifecycle {
+    ignore_changes = [tags_all]
+  }
 }
 
 
