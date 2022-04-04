@@ -18,6 +18,50 @@ JSON
   tags = { "Name" = length(var.tag_prefix) > 0 ? "${var.tag_prefix}-rg" : var.aws_resource_group_name }
 }
 
+# Generates random password Aviatrix Controller admin credentials
+resource "random_password" "aviatrix_controller_password" {
+  count            = length(var.aviatrix_controller_admin_password) == 0 ? 1 : 0
+  length           = 24
+  special          = true
+  min_lower        = 2
+  min_numeric      = 2
+  min_special      = 2
+  min_upper        = 2
+  override_special = "_@$*()!"
+}
+
+# Generates random password Aviatrix Copilot credentials
+resource "random_password" "aviatrix_copilot_password" {
+  count            = var.deploy_aviatrix_copilot ? 1 : 0
+  length           = 24
+  special          = true
+  min_lower        = 2
+  min_numeric      = 2
+  min_special      = 2
+  min_upper        = 2
+  override_special = "_@$*()!"
+}
+
+# Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
+resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
+  count = var.store_credentials_in_ssm ? 1 : 0
+  name        = "/aviatrix/controller/password"
+  description = "The local password for Aviatrix Controller."
+  type        = "SecureString"
+  value       = random_password.aviatrix_controller_password.result
+  tags        = { "Name" = "${var.tag_prefix}-controller-password" }
+}
+
+# Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
+resource "aws_ssm_parameter" "aviatrix_copilot_secret_parameter" {
+  count       = var.deploy_aviatrix_copilot && var.store_credentials_in_ssm  ? 1 : 0
+  name        = "/aviatrix/copilot/password"
+  description = "The copilot password used to authenticate with the controller using read-only."
+  type        = "SecureString"
+  value       = random_password.aviatrix_copilot_password[0].result
+  tags        = { "Name" = "${var.tag_prefix}-copilot-password" }
+}
+
 # resource "aws_vpc" "vpc" {
 #   cidr_block = var.vpc_address_space
 #   tags       = { "Name" = var.vpc_name }
@@ -219,47 +263,7 @@ JSON
 #   tags       = { "Name" = "${var.tag_prefix}-key-pair" }
 # }
 
-# # Generates random password Aviatrix Controller admin credentials
-# resource "random_password" "aviatrix_controller_password" {
-#   length           = 24
-#   special          = true
-#   min_lower        = 2
-#   min_numeric      = 2
-#   min_special      = 2
-#   min_upper        = 2
-#   override_special = "_@$*()!"
-# }
 
-# # Generates random password Aviatrix Copilot credentials
-# resource "random_password" "aviatrix_copilot_password" {
-#   count            = var.deploy_aviatrix_copilot ? 1 : 0
-#   length           = 24
-#   special          = true
-#   min_lower        = 2
-#   min_numeric      = 2
-#   min_special      = 2
-#   min_upper        = 2
-#   override_special = "_@$*()!"
-# }
-
-# # Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
-# resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
-#   name        = "/aviatrix/controller/password"
-#   description = "The local password for Aviatrix Controller."
-#   type        = "SecureString"
-#   value       = random_password.aviatrix_controller_password.result
-#   tags        = { "Name" = "${var.tag_prefix}-controller-password" }
-# }
-
-# # Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
-# resource "aws_ssm_parameter" "aviatrix_copilot_secret_parameter" {
-#   count       = var.deploy_aviatrix_copilot ? 1 : 0
-#   name        = "/aviatrix/copilot/password"
-#   description = "The copilot password used to authenticate with the controller using read-only."
-#   type        = "SecureString"
-#   value       = random_password.aviatrix_copilot_password[0].result
-#   tags        = { "Name" = "${var.tag_prefix}-copilot-password" }
-# }
 
 
 # # Creates Aviatrix Controller Security Group
