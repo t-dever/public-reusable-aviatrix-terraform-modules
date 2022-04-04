@@ -28,7 +28,8 @@ class ControllerSetup():
         self.azure_primary_account_client_secret = os.getenv('AZURE_PRIMARY_ACCOUNT_CLIENT_SECRET')
         self.aws_primary_account_name = os.getenv('AWS_PRIMARY_ACCOUNT_NAME')
         self.aws_primary_account_number = os.getenv('AWS_PRIMARY_ACCOUNT_NUMBER')
-        self.is_aws_gov = strtobool(os.getenv('AWS_GOV'))
+        if os.getenv('AWS_GOV'):
+            self.is_aws_gov = strtobool(os.getenv('AWS_GOV'))
         self.aws_role_app_arn = os.getenv('AWS_ROLE_APP_ARN')
         self.aws_role_ec2_arn = os.getenv('AWS_ROLE_EC2_ARN')
         self.security_group_management = strtobool(os.getenv('ENABLE_SECURITY_GROUP_MANAGEMENT'))
@@ -215,7 +216,9 @@ class ControllerSetup():
                     print
                     (f"Successfully updated software to: {self.controller_version}")
                     return True
-            return False
+                else:
+                    print(f"Failed to update software due to: '{r.get('reason')}'")
+                    sys.exit(1)
         except requests.exceptions.Timeout:
             attempts = 10
             while attempts != 0:
