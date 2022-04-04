@@ -258,7 +258,7 @@ module "aviatrix_controller_initialize" {
   aviatrix_controller_admin_email     = var.aviatrix_controller_admin_email
   aviatrix_controller_version         = var.aviatrix_controller_version
   aviatrix_controller_customer_id     = var.aviatrix_controller_customer_id
-  aviatrix_aws_primary_account_name   = var.aviatrix_aws_primary_account_name
+  aviatrix_aws_primary_account_name   = var.aviatrix_controller_aws_primary_account_name
   aviatrix_aws_primary_account_number = data.aws_caller_identity.current.account_id
   aviatrix_aws_role_app_arn           = aws_iam_role.aviatrix_role_app.arn
   aviatrix_aws_role_ec2_arn           = aws_iam_role.aviatrix_role_ec2.arn
