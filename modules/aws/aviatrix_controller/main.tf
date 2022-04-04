@@ -153,17 +153,17 @@ resource "aws_security_group" "controller_security_group" {
   tags        = { "Name" = var.aws_controller_security_group_name != "aviatrix-controller-security-group" ? var.aws_controller_security_group_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-security-group" : var.aws_controller_security_group_name }
 }
 
-# # Creates Ingress Rule to allow user public IP addresses for the Aviatrix Controller
-# resource "aws_security_group_rule" "controller_security_group_ingress_rule_allow_custom" {
-#   count             = length(var.aws_controller_security_group_allowed_ips)
-#   description       = var.aws_controller_security_group_allowed_ips[count.index].description
-#   type              = "ingress"
-#   from_port         = 443
-#   to_port           = 443
-#   protocol          = "tcp"
-#   cidr_blocks       = var.aws_controller_security_group_allowed_ips[count.index].cidr_blocks
-#   security_group_id = aws_security_group.controller_security_group.id
-# }
+# Creates Ingress Rule to allow user public IP addresses for the Aviatrix Controller
+resource "aws_security_group_rule" "controller_security_group_ingress_rule_allow_custom" {
+  count             = length(var.aws_controller_security_group_allowed_ips)
+  description       = var.aws_controller_security_group_allowed_ips[count.index].description
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = var.aws_controller_security_group_allowed_ips[count.index].cidr_blocks
+  security_group_id = aws_security_group.controller_security_group.id
+}
 
 # # Creates Egress Rule to allow internet traffic for the Aviatrix Controller
 # resource "aws_security_group_rule" "controller_security_group_egress_rule_allow_internet" {
