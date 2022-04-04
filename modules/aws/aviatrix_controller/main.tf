@@ -48,7 +48,7 @@ resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
   name        = "/aviatrix/controller/password"
   description = "The local password for Aviatrix Controller."
   type        = "SecureString"
-  value       = random_password.aviatrix_controller_password[0].result
+  value       = length(var.aviatrix_controller_admin_password) == 0 ? random_password.aviatrix_controller_password[0].result : var.aviatrix_controller_admin_password
   tags        = { "Name" = "${var.tag_prefix}-controller-password" }
 }
 
@@ -240,161 +240,33 @@ resource "aws_instance" "controller_instance" {
   }
 }
 
-# # Associates Public IP Address to Aviatrix Controller Instance.
-# resource "aws_eip_association" "controller_eip_assoc" {
-#   instance_id   = aws_instance.controller_instance.id
-#   allocation_id = aws_eip.controller_eip.id
-# }
+# Associates Public IP Address to Aviatrix Controller Instance.
+resource "aws_eip_association" "controller_eip_assoc" {
+  instance_id   = aws_instance.controller_instance.id
+  allocation_id = aws_eip.controller_eip.id
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # Creates Aviatrix Controller Security Group
-# resource "aws_security_group" "aviatrix_controller_security_group" {
-#   name        = var.aviatrix_controller_security_group_name
-#   description = "Aviatrix - Controller Security Group"
-#   vpc_id      = aws_vpc.vpc.id
-#   tags        = { "Name" = var.aviatrix_controller_security_group_name }
-# }
-
-# # Creates Ingress Rule to allow user public IP addresses for the Aviatrix Controller
-# resource "aws_security_group_rule" "aviatrix_controller_security_group_ingress_rule" {
-#   description       = "Allow User Assigned IP addresses inbound to Aviatrix Controller."
-#   type              = "ingress"
-#   from_port         = 443
-#   to_port           = 443
-#   protocol          = "tcp"
-#   cidr_blocks       = var.allowed_ips
-#   security_group_id = aws_security_group.aviatrix_controller_security_group.id
-# }
-
-# # Creates Egress Rule to allow internet traffic for the Aviatrix Controller
-# resource "aws_security_group_rule" "aviatrix_controller_security_group_egress_rule" {
-#   description       = "Allow default route outbound to internet."
-#   type              = "egress"
-#   from_port         = 0
-#   to_port           = 0
-#   protocol          = "-1"
-#   cidr_blocks       = ["0.0.0.0/0"]
-#   security_group_id = aws_security_group.aviatrix_controller_security_group.id
-# }
-
-# # Creates Ingress Rule to allow CoPilot access to the Aviatrix Controller
-# resource "aws_security_group_rule" "aviatrix_controller_security_group_ingress_allow_copilot" {
-#   description       = "Allow CoPilot inbound to Aviatrix Controller."
-#   type              = "ingress"
-#   from_port         = 443
-#   to_port           = 443
-#   protocol          = "tcp"
-#   cidr_blocks       = ["${local.copilot_private_ip}/32"]
-#   security_group_id = aws_security_group.aviatrix_controller_security_group.id
-# }
-
-# # Creates Public IP Address for Aviatrix Controller
-# resource "aws_eip" "aviatrix_controller_eip" {
-#   vpc  = true
-#   tags = { "Name" = "${var.tag_prefix}-controller-eip" }
-# }
-
-# # Creates Network Interface for Aviatrix Controller
-# resource "aws_network_interface" "aviatrix_controller_network_interface" {
-#   subnet_id       = aws_subnet.aviatrix_controller_subnet.id
-#   security_groups = [aws_security_group.aviatrix_controller_security_group.id]
-#   private_ips     = [local.controller_private_ip]
-#   tags            = { "Name" = "${var.tag_prefix}-controller-eni" }
-
-#   lifecycle {
-#     ignore_changes = [tags, security_groups, subnet_id]
-#   }
-# }
-
-# # Creates Aviatrix Controller Instance
-# resource "aws_instance" "aviatrix_controller_instance" {
-#   ami                     = local.controller_ami_id
-#   instance_type           = var.aviatrix_controller_instance_size
-#   key_name                = aws_key_pair.key_pair.key_name
-#   iam_instance_profile    = aws_iam_instance_profile.aviatrix_role_ec2_profile.name
-#   disable_api_termination = false
-#   monitoring              = true
-#   ebs_optimized           = true
-#   metadata_options {
-#     http_endpoint = "enabled"
-#     http_tokens   = "required"
-#   }
-
-#   network_interface {
-#     network_interface_id = aws_network_interface.aviatrix_controller_network_interface.id
-#     device_index         = 0
-#   }
-
-#   root_block_device {
-#     encrypted   = true
-#     volume_size = var.aviatrix_controller_root_volume_size
-#     volume_type = var.aviatrix_controller_root_volume_type
-#   }
-
-#   tags = { "Name" = var.aviatrix_controller_name }
-
-#   lifecycle {
-#     ignore_changes = [
-#       ami, key_name, user_data, network_interface
-#     ]
-#   }
-# }
-
-# # Associates Public IP Address to Aviatrix Controller Instance.
-# resource "aws_eip_association" "aviatrix_controller_eip_assoc" {
-#   instance_id   = aws_instance.aviatrix_controller_instance.id
-#   allocation_id = aws_eip.aviatrix_controller_eip.id
-# }
-
-# # Python Script to Bootstrap the Aviatrix Controller by adding Admin Email, License, Reset Password, Upgrade Controller.
-# module "aviatrix_controller_initialize" {
-#   depends_on = [
-#     aws_instance.aviatrix_controller_instance
-#   ]
-#   source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=v2.3.3"
-#   aviatrix_controller_public_ip       = aws_eip.aviatrix_controller_eip.public_ip
-#   aviatrix_controller_private_ip      = local.controller_private_ip
-#   aviatrix_controller_password        = random_password.aviatrix_controller_password.result
-#   aviatrix_controller_admin_email     = var.aviatrix_controller_admin_email
-#   aviatrix_controller_version         = var.aviatrix_controller_version
-#   aviatrix_controller_customer_id     = var.aviatrix_controller_customer_id
-#   aviatrix_aws_primary_account_name   = var.aviatrix_aws_primary_account_name
-#   aviatrix_aws_primary_account_number = data.aws_caller_identity.current.account_id
-#   aviatrix_aws_role_app_arn           = aws_iam_role.aviatrix_role_app.arn
-#   aviatrix_aws_role_ec2_arn           = aws_iam_role.aviatrix_role_ec2.arn
-#   enable_security_group_management    = var.enable_auto_aviatrix_controller_security_group_mgmt
-#   aws_gov                             = local.is_aws_gov
-#   copilot_username                    = var.deploy_aviatrix_copilot ? var.aviatrix_copilot_username : ""
-#   copilot_password                    = var.deploy_aviatrix_copilot ? random_password.aviatrix_copilot_password[0].result : ""
-# }
+# Python Script to Bootstrap the Aviatrix Controller by adding Admin Email, License, Reset Password, Upgrade Controller.
+module "aviatrix_controller_initialize" {
+  depends_on = [
+    aws_instance.aviatrix_controller_instance
+  ]
+  source                              = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=v2.3.3"
+  aviatrix_controller_public_ip       = aws_eip.controller_eip.public_ip
+  aviatrix_controller_private_ip      = local.controller_private_ip
+  aviatrix_controller_password        = length(var.aviatrix_controller_admin_password) == 0 ? random_password.aviatrix_controller_password[0].result : var.aviatrix_controller_admin_password
+  aviatrix_controller_admin_email     = var.aviatrix_controller_admin_email
+  aviatrix_controller_version         = var.aviatrix_controller_version
+  aviatrix_controller_customer_id     = var.aviatrix_controller_customer_id
+  aviatrix_aws_primary_account_name   = var.aviatrix_aws_primary_account_name
+  aviatrix_aws_primary_account_number = data.aws_caller_identity.current.account_id
+  aviatrix_aws_role_app_arn           = aws_iam_role.aviatrix_role_app.arn
+  aviatrix_aws_role_ec2_arn           = aws_iam_role.aviatrix_role_ec2.arn
+  enable_security_group_management    = var.enable_auto_aviatrix_controller_security_group_mgmt
+  aws_gov                             = local.is_aws_gov
+  copilot_username                    = var.deploy_aviatrix_copilot ? var.aviatrix_copilot_username : ""
+  copilot_password                    = var.deploy_aviatrix_copilot ? random_password.aviatrix_copilot_password[0].result : ""
+}
 
 # # Creates CoPilot Public IP Address
 # resource "aws_eip" "aviatrix_copilot_eip" {
