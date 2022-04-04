@@ -65,9 +65,9 @@ resource "aws_ssm_parameter" "aviatrix_copilot_secret_parameter" {
 # Creates AWS Key Pair based on SSH Public Key Provided
 resource "aws_key_pair" "key_pair" {
   count      = length(var.aws_key_pair_public_key) > 0 ? 1 : 0
-  key_name   = var.aws_key_pair_public_key != "aviatrix-controller-key" ? var.aws_key_pair_public_key : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-key" : var.aws_key_pair_public_key
+  key_name   = var.aws_key_pair_name != "aviatrix-controller-key" ? var.aws_key_pair_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-key" : var.aws_key_pair_name
   public_key = var.aws_key_pair_public_key
-  tags       = { "Name" = var.aws_key_pair_public_key != "aviatrix-controller-key" ? var.aws_key_pair_public_key : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-key" : var.aws_key_pair_public_key }
+  tags       = { "Name" = var.aws_key_pair_name != "aviatrix-controller-key" ? var.aws_key_pair_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-key" : var.aws_key_pair_name }
 }
 
 # Grabs the attributes for the key pair if ssh public key is not provided
