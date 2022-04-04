@@ -294,11 +294,26 @@ variable "aviatrix_controller_copilot_account_password" {
   sensitive   = true
 }
 
+variable "aviatrix_copilot_username" {
+  description = "Username of Copilot Account; Adds a account for CoPilot with ReadOnly Credentials. Must Provide variables 'copilot_username' and 'copilot_password'"
+  type        = string
+  default     = "copilot-read-only"
+}
+
+variable "aviatrix_copilot_name" {
+  description = "Name of copilot that will be launched."
+  type        = string
+  default     = "aviatrix-copilot"
+}
+
 variable "aviatrix_controller_enable_auto_security_group_mgmt" {
   description = "Enables auto security group management for the Aviatrix controller via the Controller Initialize script."
   type        = bool
   default     = false
 }
+
+
+
 # STOP - Aviatrix Variables for Aviatrix Controller Bootstrap (variable starts with 'aviatrix_controller_<resource_type>')
 
 data "aws_region" "current" {}
@@ -506,17 +521,7 @@ locals {
 #   default     = true
 # }
 
-# variable "aviatrix_copilot_username" {
-#   description = "Username of Copilot Account; Adds a account for CoPilot with ReadOnly Credentials. Must Provide variables 'copilot_username' and 'copilot_password'"
-#   type        = string
-#   default     = "copilot-read-only"
-# }
 
-# variable "aviatrix_copilot_name" {
-#   description = "Name of copilot that will be launched."
-#   type        = string
-#   default     = "aviatrix-copilot"
-# }
 
 # variable "aviatrix_copilot_instance_size" {
 #   description = "Aviatrix CoPilot instance size."
