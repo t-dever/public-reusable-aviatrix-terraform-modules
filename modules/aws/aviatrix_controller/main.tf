@@ -336,7 +336,7 @@ resource "aws_network_interface" "copilot_network_interface" {
 resource "aws_instance" "copilot_instance" {
   count         = var.aws_copilot_deploy ? 1 : 0
   ami           = local.copilot_ami_id
-  instance_type = var.aviatrix_copilot_instance_size
+  instance_type = var.aws_copilot_instance_size
   key_name      = length(var.aws_key_pair_public_key) > 0 ? aws_key_pair.key_pair[0].key_name : data.aws_key_pair.key_pair[0].key_name
   monitoring    = true
   ebs_optimized = true
@@ -353,8 +353,8 @@ resource "aws_instance" "copilot_instance" {
 
   root_block_device {
     encrypted   = true
-    volume_size = var.aviatrix_copilot_root_volume_size
-    volume_type = var.aviatrix_copilot_root_volume_type
+    volume_size = var.aws_copilot_root_volume_size
+    volume_type = "gp2"
   }
 
   tags = { "Name" = var.aws_copilot_name != "aviatrix-copilot" ? var.aws_copilot_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-instance" : var.aws_copilot_name }
