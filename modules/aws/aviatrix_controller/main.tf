@@ -367,15 +367,15 @@ resource "aws_eip_association" "copilot_eip_assoc" {
   allocation_id = aws_eip.copilot_eip[0].id
 }
 
-# # Creates EBS volumes
-# resource "aws_ebs_volume" "aviatrix_copilot_ebs_volumes" {
-#   #checkov:skip=CKV_AWS_189:Ensure EBS Volume is encrypted by KMS using a customer managed Key (CMK)
-#   #checkov:skip=CKV2_AWS_9:Ensure that EBS are added in the backup plans of AWS Backup
-#   count             = var.deploy_aviatrix_copilot ? length(var.aviatrix_copilot_additional_volumes) : 0
-#   availability_zone = var.aviatrix_copilot_subnet.availability_zone
-#   size              = var.aviatrix_copilot_additional_volumes[count.index].size
-#   encrypted         = true
-# }
+# Creates EBS volumes
+resource "aws_ebs_volume" "copilot_ebs_volumes" {
+  #checkov:skip=CKV_AWS_189:Ensure EBS Volume is encrypted by KMS using a customer managed Key (CMK)
+  #checkov:skip=CKV2_AWS_9:Ensure that EBS are added in the backup plans of AWS Backup
+  count             = var.aws_copilot_deploy ? length(var.aws_copilot_additional_volumes) : 0
+  availability_zone = var.aws_copilot_subnet.availability_zone
+  size              = var.aws_copilot_additional_volumes[count.index].size
+  encrypted         = true
+}
 
 # # Attaches extra volumes to CoPilot Instance
 # resource "aws_volume_attachment" "aviatrix_copilot_ebs_attach" {
