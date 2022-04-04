@@ -231,7 +231,7 @@ resource "aws_instance" "controller_instance" {
     volume_type = "gp2"
   }
 
-  tags            = { "Name" = var.aws_controller_name != "aviatrix-controller" ? var.aws_controller_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-instance" : var.aws_controller_name }
+  tags = { "Name" = var.aws_controller_name != "aviatrix-controller" ? var.aws_controller_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-instance" : var.aws_controller_name }
 
   lifecycle {
     ignore_changes = [
@@ -268,46 +268,33 @@ module "aviatrix_controller_initialize" {
   copilot_password                    = var.aws_copilot_deploy ? 1 : 0 ? random_password.aviatrix_copilot_password[0].result : ""
 }
 
-# # Creates CoPilot Public IP Address
-# resource "aws_eip" "aviatrix_copilot_eip" {
-#   count = var.deploy_aviatrix_copilot ? 1 : 0
-#   vpc   = true
-#   tags  = { "Name" = "${var.tag_prefix}-copilot-eip" }
-# }
+# Creates CoPilot Public IP Address
+resource "aws_eip" "aviatrix_copilot_eip" {
+  count = var.aws_copilot_deploy ? 1 : 0
+  vpc   = true
+  tags  = { "Name" = var.aws_copilot_eip_name != "aviatrix-copilot-eip" ? var.aws_copilot_eip_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-eip" : var.aws_copilot_eip_name }
+}
 
-# # Get's the Aviatrix Gateways IP addresses from the Aviatrix Controller Security Groups.
-# data "external" "get_aviatrix_gateway_cidrs" {
-#   count = var.deploy_aviatrix_copilot && var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
-#   depends_on = [
-#     module.aviatrix_controller_initialize
-#   ]
-#   program = ["python3", "${path.module}/get_security_group_rules.py"]
-#   query = {
-#     region = "${var.region}"
-#     vpc_id = "${aws_vpc.vpc.id}"
-#   }
-# }
+# Creates Aviatrix Copilot Security Group
+resource "aws_security_group" "copilot_security_group" {
+  count = var.aws_copilot_deploy ? 1 : 0
+  name        = var.aws_copilot_security_group_name != "aviatrix-controller-security-group" ? var.aws_copilot_security_group_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-copilot-security-group" : var.aws_copilot_security_group_name
+  description = "Aviatrix - Controller Security Group"
+  vpc_id      = aws_vpc.vpc.id
+  tags        = { "Name" = var.aws_controller_security_group_name != "aviatrix-controller-security-group" ? var.aws_controller_security_group_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-security-group" : var.aws_controller_security_group_name }
+}
 
-# # Creates Aviatrix Copilot Security Group
-# resource "aws_security_group" "aviatrix_copilot_security_group" {
-#   count       = var.deploy_aviatrix_copilot ? 1 : 0
-#   name        = var.aviatrix_copilot_security_group_name
-#   description = "Aviatrix - CoPilot Security Group"
-#   vpc_id      = aws_vpc.vpc.id
-#   tags        = { "Name" = var.aviatrix_copilot_security_group_name }
-# }
-
-# # Creates Egress Rule to allow internet traffic for the Aviatrix CoPilot
-# resource "aws_security_group_rule" "aviatrix_copilot_security_group_egress_rule" {
-#   count             = var.deploy_aviatrix_copilot ? 1 : 0
-#   description       = "Allow default route outbound to internet."
-#   type              = "egress"
-#   from_port         = 0
-#   to_port           = 0
-#   protocol          = "-1"
-#   cidr_blocks       = ["0.0.0.0/0"]
-#   security_group_id = aws_security_group.aviatrix_copilot_security_group[0].id
-# }
+# Creates Egress Rule to allow internet traffic for the Aviatrix CoPilot
+resource "aws_security_group_rule" "copilot_security_group_egress_rule" {
+  count             = var.aws_copilot_deploy ? 1 : 0
+  description       = "Allow default route outbound to internet."
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.copilot_security_group[0].id
+}
 
 # # Creates Ingress Rule to allow user public IP addresses for the Aviatrix CoPilot
 # resource "aws_security_group_rule" "aviatrix_copilot_security_group_ingress_rule" {
@@ -410,3 +397,15 @@ module "aviatrix_controller_initialize" {
 #   instance_id = aws_instance.aviatrix_copilot_instance[0].id
 # }
 
+# # Get's the Aviatrix Gateways IP addresses from the Aviatrix Controller Security Groups.
+# data "external" "get_aviatrix_gateway_cidrs" {
+#   count = var.deploy_aviatrix_copilot && var.enable_auto_aviatrix_copilot_security_group ? 1 : 0
+#   depends_on = [
+#     module.aviatrix_controller_initialize
+#   ]
+#   program = ["python3", "${path.module}/get_security_group_rules.py"]
+#   query = {
+#     region = "${var.region}"
+#     vpc_id = "${aws_vpc.vpc.id}"
+#   }
+# }
