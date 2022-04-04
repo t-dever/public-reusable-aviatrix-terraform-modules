@@ -1,3 +1,5 @@
+data "azurerm_client_config" "current" {}
+
 resource "azurerm_resource_group" "resource_group" {
   name     = var.resource_group_name
   location = var.location
@@ -125,26 +127,6 @@ resource "azurerm_network_security_rule" "allow_copilot_inbound_to_controller" {
   network_security_group_name = azurerm_network_security_group.aviatrix_controller_security_group.name
 }
 
-# resource "azurerm_network_security_rule" "allow_netflow_inbound_to_copilot" {
-#   #checkov:skip=CKV_AZURE_77:Allow all internet UDP to copilot. May restrict this further in later updates.
-#   depends_on = [
-#     data.azurerm_network_security_group.controller_security_group,
-#   ]
-#   count                       = var.copilot_private_ip != "" ? 1 : 0
-#   name                        = "AllowNetflowInboundToCoPilot"
-#   priority                    = 103
-#   direction                   = "Inbound"
-#   access                      = "Allow"
-#   protocol                    = "Udp"
-#   source_port_range           = "*"
-#   destination_port_ranges     = [var.netflow_port, var.rsyslog_port]
-#   source_address_prefix       = "*"
-#   destination_address_prefix  = var.copilot_private_ip
-#   resource_group_name         = var.resource_group_name
-#   network_security_group_name = data.azurerm_network_security_group.controller_security_group.name
-# }
-
-
 resource "azurerm_public_ip" "azure_controller_public_ip" {
   name                    = "${var.aviatrix_controller_name}-public-ip"
   location                = azurerm_resource_group.resource_group.location
@@ -176,13 +158,17 @@ resource "azurerm_network_interface" "azure_controller_nic" {
   }
 }
 
-resource "azurerm_network_interface_security_group_association" "azure_controller_nsg_association" {
+resource "azurerm_network_interface_security_group_association" "azure_controller_nic_nsg_association" {
   network_interface_id      = azurerm_network_interface.azure_controller_nic.id
   network_security_group_id = azurerm_network_security_group.aviatrix_controller_security_group.id
 }
-
+resource "azurerm_subnet_network_security_group_association" "azure_controller_subnet_nsg_association" {
+  subnet_id                 = azurerm_subnet.azure_controller_subnet.id
+  network_security_group_id = azurerm_network_security_group.aviatrix_controller_security_group.id
+}
 
 resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
+  #checkov:skip=CKV_AZURE_149: "Ensure that Virtual machine does not enable password authentication". REASON: Customers can have the option of choosing password or SSH.
   lifecycle {
     ignore_changes = [tags]
   }
@@ -248,16 +234,22 @@ module "aviatrix_controller_initialize" {
   depends_on = [
     azurerm_linux_virtual_machine.aviatrix_controller_vm
   ]
-  source                          = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=main"
-  aviatrix_controller_public_ip   = azurerm_public_ip.azure_controller_public_ip.ip_address
-  aviatrix_controller_private_ip  = azurerm_network_interface.azure_controller_nic.private_ip_address
-  aviatrix_controller_password    = var.aviatrix_controller_password == "" ? random_password.generate_aviatrix_controller_admin_secret[0].result : var.aviatrix_controller_password
-  aviatrix_controller_admin_email = var.aviatrix_controller_admin_email
-  aviatrix_controller_version     = var.aviatrix_controller_version
-  aviatrix_controller_customer_id = var.aviatrix_controller_customer_id
+  source                                         = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=hotfix/updateAzureControllerDeployment"
+  aviatrix_controller_public_ip                  = azurerm_public_ip.azure_controller_public_ip.ip_address
+  aviatrix_controller_private_ip                 = azurerm_network_interface.azure_controller_nic.private_ip_address
+  aviatrix_controller_password                   = var.aviatrix_controller_password == "" ? random_password.generate_aviatrix_controller_admin_secret[0].result : var.aviatrix_controller_password
+  aviatrix_controller_admin_email                = var.aviatrix_controller_admin_email
+  aviatrix_controller_version                    = var.aviatrix_controller_version
+  aviatrix_controller_customer_id                = var.aviatrix_controller_customer_id
+  aviatrix_azure_primary_account_name            = var.aviatrix_azure_primary_account_name
+  aviatrix_azure_primary_account_subscription_id = data.azurerm_client_config.current.subscription_id
+  aviatrix_azure_primary_account_tenant_id       = data.azurerm_client_config.current.tenant_id
+  aviatrix_azure_primary_account_client_id       = data.azurerm_client_config.current.client_id
+  aviatrix_azure_primary_account_client_secret   = var.aviatrix_azure_primary_account_client_secret
+  enable_security_group_management               = var.aviatrix_enable_security_group_management
 }
 
-# # Deploy CoPilot Resources
+# Deploy CoPilot Resources
 
 resource "azurerm_public_ip" "azure_copilot_public_ip" {
   count                   = var.aviatrix_deploy_copilot ? 1 : 0
@@ -284,12 +276,8 @@ resource "azurerm_network_interface" "azure_copilot_nic" {
   }
 }
 
-resource "azurerm_network_interface_security_group_association" "azure_copilot_nsg_association" {
-  network_interface_id      = azurerm_network_interface.azure_copilot_nic[0].id
-  network_security_group_id = azurerm_network_security_group.aviatrix_controller_security_group.id
-}
-
 resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
+  #checkov:skip=CKV_AZURE_149: "Ensure that Virtual machine does not enable password authentication". REASON: Customers can have the option of choosing password or SSH.
   count                           = var.aviatrix_deploy_copilot ? 1 : 0
   name                            = var.aviatrix_copilot_name
   location                        = azurerm_resource_group.resource_group.location

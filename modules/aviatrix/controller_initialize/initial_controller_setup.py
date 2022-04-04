@@ -21,9 +21,15 @@ class ControllerSetup():
         self.controller_new_password = os.getenv(
             'AVIATRIX_CONTROLLER_PASSWORD')
         self.primary_access_account = ""
+        self.azure_primary_account_name = os.getenv('AZURE_PRIMARY_ACCOUNT_NAME')
+        self.azure_primary_account_subscription_id = os.getenv('AZURE_PRIMARY_ACCOUNT_SUBSCRIPTION_ID')
+        self.azure_primary_account_tenant_id = os.getenv('AZURE_PRIMARY_ACCOUNT_TENANT_ID')
+        self.azure_primary_account_client_id = os.getenv('AZURE_PRIMARY_ACCOUNT_CLIENT_ID')
+        self.azure_primary_account_client_secret = os.getenv('AZURE_PRIMARY_ACCOUNT_CLIENT_SECRET')
         self.aws_primary_account_name = os.getenv('AWS_PRIMARY_ACCOUNT_NAME')
         self.aws_primary_account_number = os.getenv('AWS_PRIMARY_ACCOUNT_NUMBER')
-        self.is_aws_gov = strtobool(os.getenv('AWS_GOV'))
+        if os.getenv('AWS_GOV'):
+            self.is_aws_gov = strtobool(os.getenv('AWS_GOV'))
         self.aws_role_app_arn = os.getenv('AWS_ROLE_APP_ARN')
         self.aws_role_ec2_arn = os.getenv('AWS_ROLE_EC2_ARN')
         self.security_group_management = strtobool(os.getenv('ENABLE_SECURITY_GROUP_MANAGEMENT'))
@@ -210,7 +216,9 @@ class ControllerSetup():
                     print
                     (f"Successfully updated software to: {self.controller_version}")
                     return True
-            return False
+                else:
+                    print(f"Failed to update software due to: '{r.get('reason')}'")
+                    sys.exit(1)
         except requests.exceptions.Timeout:
             attempts = 10
             while attempts != 0:
@@ -255,6 +263,45 @@ class ControllerSetup():
                 payload['aws_iam'] = 'true'
                 payload['aws_role_arn'] = self.aws_role_app_arn
                 payload['aws_role_ec2'] = self.aws_role_ec2_arn
+            response = self._format_response(
+                requests.post(self.url, data=payload, verify=False))
+            if response.get('return') == False:
+                if response.get('reason'):
+                    print(f"Failed to add account: '{self.aws_primary_account_name}'"
+                          f" due to Error: '{response.get('reason')}'")
+                raise Exception(response)
+            print(f"Successfully added {self.aws_primary_account_name}.")
+
+    def primary_azure_account(self):
+        if not self.azure_primary_account_subscription_id:
+            raise Exception("Environment variable "
+                            "'AZURE_PRIMARY_ACCOUNT_SUBSCRIPTION_ID' must be defined")
+        elif not self.azure_primary_account_tenant_id:
+            raise Exception("Environment variable "
+                            "'AZURE_PRIMARY_ACCOUNT_TENANT_ID' must be defined")
+        elif not self.azure_primary_account_client_id:
+            raise Exception("Environment variable "
+                            "'AZURE_PRIMARY_ACCOUNT_CLIENT_ID' must be defined")
+        elif not self.azure_primary_account_client_secret:
+            raise Exception("Environment variable "
+                            "'AZURE_PRIMARY_ACCOUNT_CLIENT_SECRET' must be defined")
+        self.primary_access_account = self.azure_primary_account_name
+        print("Checking if account already exists.")
+        if self._does_account_exist(self.primary_access_account) is True:
+            return
+        else:
+            print("Attempting to add Azure Primary Account.")
+            payload = {
+                'action': 'setup_account_profile',
+                'CID': self._get_cid(),
+                'account_name': self.primary_access_account,
+                'account_email': self.admin_email,
+                'cloud_type': 8,
+                'arm_subscription_id': self.azure_primary_account_subscription_id,
+                'arm_application_endpoint': self.azure_primary_account_tenant_id,
+                'arm_application_client_id': self.azure_primary_account_client_id,
+                'arm_application_client_secret': self.azure_primary_account_client_secret
+            }
             response = self._format_response(
                 requests.post(self.url, data=payload, verify=False))
             if response.get('return') == False:
@@ -310,6 +357,8 @@ def main():
 
     if controller.aws_primary_account_name:
         controller.primary_aws_account()
+    if controller.azure_primary_account_name:
+        controller.primary_azure_account()
     if controller.security_group_management:
         controller.enable_security_group_management()
     if controller.copilot_username and controller.copilot_password:

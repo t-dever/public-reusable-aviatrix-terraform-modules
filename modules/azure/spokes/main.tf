@@ -202,6 +202,7 @@ resource "azurerm_network_interface" "virtual_machine1_nic1" {
 }
 
 resource "azurerm_linux_virtual_machine" "virtual_machine1" {
+  #checkov:skip=CKV_AZURE_149: "Ensure that Virtual machine does not enable password authentication". REASON: This resource is only meant for testing.
   name                            = var.test_vm_name
   resource_group_name             = azurerm_resource_group.azure_spoke_resource_group.name
   location                        = azurerm_resource_group.azure_spoke_resource_group.location
