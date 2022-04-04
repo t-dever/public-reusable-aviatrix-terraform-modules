@@ -44,7 +44,7 @@ resource "random_password" "aviatrix_copilot_password" {
 
 # Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
 resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
-  count = var.store_credentials_in_ssm ? 1 : 0
+  count       = var.store_credentials_in_ssm ? 1 : 0
   name        = "/aviatrix/controller/password"
   description = "The local password for Aviatrix Controller."
   type        = "SecureString"
@@ -54,7 +54,7 @@ resource "aws_ssm_parameter" "aviatrix_controller_secret_parameter" {
 
 # Stores the generated credential as an AWS Systems Management (SSM) Secret Parameter
 resource "aws_ssm_parameter" "aviatrix_copilot_secret_parameter" {
-  count       = var.aws_copilot_deploy && var.store_credentials_in_ssm  ? 1 : 0
+  count       = var.aws_copilot_deploy && var.store_credentials_in_ssm ? 1 : 0
   name        = "/aviatrix/copilot/password"
   description = "The copilot password used to authenticate with the controller using read-only."
   type        = "SecureString"
@@ -62,22 +62,22 @@ resource "aws_ssm_parameter" "aviatrix_copilot_secret_parameter" {
   tags        = { "Name" = "${var.tag_prefix}-copilot-password" }
 }
 
-# resource "aws_vpc" "vpc" {
-#   cidr_block = var.vpc_address_space
-#   tags       = { "Name" = var.vpc_name }
-# }
+resource "aws_vpc" "vpc" {
+  cidr_block = var.vpc_address_space
+  tags       = { "Name" = var.aws_vpc_name != "aviatrix-controller-vpc" ? var.aws_vpc_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-vpc" : var.aws_vpc_name }
+}
 
-# resource "aws_default_security_group" "default_security_group" {
-#   vpc_id = aws_vpc.vpc.id
-# }
+resource "aws_default_security_group" "default_security_group" {
+  vpc_id = aws_vpc.vpc.id
+}
 
-# # Create Aviatrix Controller Subnet
-# resource "aws_subnet" "controller_subnet" {
-#   vpc_id            = aws_vpc.vpc.id
-#   cidr_block        = var.aws_controller_subnet.cidr_block
-#   availability_zone = var.aws_controller_subnet.availability_zone
-#   tags              = { "Name" = "${var.aws_controller_subnet.name}" }
-# }
+# Create Aviatrix Controller Subnet
+resource "aws_subnet" "controller_subnet" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = var.aws_controller_subnet.cidr_block
+  availability_zone = var.aws_controller_subnet.availability_zone
+  tags              = { "Name" = var.aws_controller_subnet.name != "aviatrix-controller" ? var.aws_controller_subnet.name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-subnet" : var.aws_controller_subnet.name }
+}
 
 # # Create Aviatrix CoPilot Subnet
 # resource "aws_subnet" "copilot_subnet" {
