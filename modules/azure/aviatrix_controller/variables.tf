@@ -80,7 +80,7 @@ variable "aviatrix_controller_customer_id" {
   description = "The customer id for the aviatrix controller"
   type        = string
   sensitive   = true
-  default = ""
+  default     = ""
 }
 
 variable "aviatrix_controller_public_ssh_key" {
@@ -106,7 +106,7 @@ variable "aviatrix_controller_admin_email" {
   description = "The email address used for the aviatrix controller registration."
   type        = string
   sensitive   = true
-  default = ""
+  default     = ""
 }
 
 variable "aviatrix_enable_security_group_management" {
