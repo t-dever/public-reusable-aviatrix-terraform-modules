@@ -80,11 +80,13 @@ variable "aws_additional_subnets" {
 variable "aws_internet_gateway_name" {
   description = "The name of the AWS Internet Gateway Tag."
   type        = string
+  default = "aviatrix-internet-gateway"
 }
 
 variable "aws_route_table_name" {
   description = "The name of the Route Table Tag."
   type        = string
+  default = "aviatrix-route-table"
 }
 
 variable "aws_key_pair_name" {
