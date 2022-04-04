@@ -206,41 +206,39 @@ resource "aws_network_interface" "controller_network_interface" {
   }
 }
 
+# Creates Aviatrix Controller Instance
+resource "aws_instance" "controller_instance" {
+  ami                     = local.controller_ami_id
+  instance_type           = var.aws_controller_instance_size
+  key_name                = length(var.aws_key_pair_public_key) > 0 ? aws_key_pair.key_pair.name : data.aws_key_pair.key_pair.key_name
+  iam_instance_profile    = aws_iam_instance_profile.aviatrix_role_ec2_profile.name
+  disable_api_termination = false
+  monitoring              = true
+  ebs_optimized           = true
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
 
+  network_interface {
+    network_interface_id = aws_network_interface.controller_network_interface.id
+    device_index         = 0
+  }
 
-# # Creates Aviatrix Controller Instance
-# resource "aws_instance" "controller_instance" {
-#   ami                     = local.controller_ami_id
-#   instance_type           = var.aws_controller_instance_size
-#   key_name                = data.aws_key_pair.key_pair.key_name
-#   iam_instance_profile    = aws_iam_instance_profile.iam_role_ec2_profile.name
-#   disable_api_termination = false
-#   monitoring              = true
-#   ebs_optimized           = true
-#   metadata_options {
-#     http_endpoint = "enabled"
-#     http_tokens   = "required"
-#   }
+  root_block_device {
+    encrypted   = true
+    volume_size = var.aws_controller_root_volume_size
+    volume_type = "gp2"
+  }
 
-#   network_interface {
-#     network_interface_id = aws_network_interface.controller_network_interface.id
-#     device_index         = 0
-#   }
+  tags            = { "Name" = var.aws_controller_name != "aviatrix-controller" ? var.aws_controller_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-instance" : var.aws_controller_name }
 
-#   root_block_device {
-#     encrypted   = true
-#     volume_size = var.aws_controller_root_volume_size
-#     volume_type = "gp2"
-#   }
-
-#   tags = { "Name" = var.aws_controller_name }
-
-#   lifecycle {
-#     ignore_changes = [
-#       ami, key_name, user_data, network_interface
-#     ]
-#   }
-# }
+  lifecycle {
+    ignore_changes = [
+      ami, key_name, user_data, network_interface
+    ]
+  }
+}
 
 # # Associates Public IP Address to Aviatrix Controller Instance.
 # resource "aws_eip_association" "controller_eip_assoc" {
