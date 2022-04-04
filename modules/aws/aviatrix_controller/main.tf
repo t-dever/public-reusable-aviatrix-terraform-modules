@@ -323,8 +323,8 @@ resource "aws_security_group_rule" "copilot_security_group_ingress_rule_allow_co
 # Creates CoPilot Network Interface
 resource "aws_network_interface" "aviatrix_copilot_network_interface" {
   count           = var.aws_copilot_deploy ? 1 : 0
-  subnet_id       = aws_subnet.aviatrix_copilot_subnet[0].id
-  security_groups = [aws_security_group.aviatrix_copilot_security_group[0].id]
+  subnet_id       = aws_subnet.copilot_subnet[0].id
+  security_groups = [aws_security_group.copilot_security_group[0].id]
   private_ips     = [local.copilot_private_ip]
   tags            = { "Name" = "${var.tag_prefix}-copilot-eni" }
   lifecycle {
