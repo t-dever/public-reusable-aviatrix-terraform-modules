@@ -264,8 +264,8 @@ module "aviatrix_controller_initialize" {
   aviatrix_aws_role_ec2_arn           = aws_iam_role.aviatrix_role_ec2.arn
   enable_security_group_management    = var.enable_auto_aviatrix_controller_security_group_mgmt
   aws_gov                             = local.is_aws_gov
-  copilot_username                    = var.deploy_aviatrix_copilot ? var.aviatrix_copilot_username : ""
-  copilot_password                    = var.deploy_aviatrix_copilot ? random_password.aviatrix_copilot_password[0].result : ""
+  copilot_username                    = var.aws_copilot_deploy ? 1 : 0 ? var.aviatrix_copilot_username : ""
+  copilot_password                    = var.aws_copilot_deploy ? 1 : 0 ? random_password.aviatrix_copilot_password[0].result : ""
 }
 
 # # Creates CoPilot Public IP Address
