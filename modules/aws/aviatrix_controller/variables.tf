@@ -49,10 +49,22 @@ variable "aws_tags" {
   default     = {}
 }
 
+variable "aws_key_pair_public_key" {
+  description = "The key pair public ssh key to be used for EC2 Instance Deployments."
+  type        = string
+  default     = ""
+}
+
+variable "aws_key_pair_name" {
+  description = "The key pair name to be used for EC2 Instance Deployments."
+  type        = string
+  default     = "aviatrix-controller-key"
+}
+
 variable "aws_resource_group_name" {
   description = "The name of the resource group by key 'ownedBy'."
   type        = string
-  default = "aviatrix-resource-group"
+  default     = "aviatrix-resource-group"
 }
 
 variable "aws_vpc_name" {
@@ -80,20 +92,16 @@ variable "aws_additional_subnets" {
 variable "aws_internet_gateway_name" {
   description = "The name of the AWS Internet Gateway Tag."
   type        = string
-  default = "aviatrix-internet-gateway"
+  default     = "aviatrix-internet-gateway"
 }
 
 variable "aws_route_table_name" {
   description = "The name of the Route Table Tag."
   type        = string
-  default = "aviatrix-route-table"
+  default     = "aviatrix-route-table"
 }
 
-variable "aws_key_pair_name" {
-  description = "The key pair name to be used for EC2 Instance Deployments."
-  type        = string
-  default     = "aviatrix-controller-key"
-}
+
 
 # STOP - AWS Resource Variables (variable starts with 'aws_<resource type>')
 
@@ -120,11 +128,11 @@ variable "aws_controller_security_group_name" {
 
 variable "aws_controller_security_group_allowed_ips" {
   description = "List of allowed ips to be added as ingress rule for Aviatrix Controller Security Group."
-  type        = list(object({
+  type = list(object({
     description = string,
     cidr_blocks = list(string)
   }))
-  default     = []
+  default = []
 }
 
 variable "aws_controller_eip_name" {
@@ -187,11 +195,11 @@ variable "aws_copilot_security_group_name" {
 
 variable "aws_copilot_security_group_allowed_ips" {
   description = "List of allowed ips to be added as ingress rule for Aviatrix CoPilot Security Group."
-  type        = list(object({
+  type = list(object({
     description = string,
     cidr_blocks = list(string)
   }))
-  default     = []
+  default = []
 }
 
 variable "aws_copilot_eip_name" {
@@ -283,7 +291,7 @@ variable "aviatrix_controller_copilot_account_password" {
   description = "Password for the Copilot Account; Adds a account for CoPilot with ReadOnly Credentials. Must Provide variables 'aviatrix_controller_copilot_account_username' and 'aviatrix_controller_copilot_account_password'"
   type        = string
   default     = ""
-  sensitive = true
+  sensitive   = true
 }
 
 variable "aviatrix_controller_enable_auto_security_group_mgmt" {
@@ -360,10 +368,7 @@ locals {
 #   default     = "aviatrix-controller-key"
 # }
 
-# variable "aws_key_pair_public_key" {
-#   description = "The key pair public ssh key to be used for EC2 Instance Deployments."
-#   type        = string
-# }
+
 
 # variable "vpc_address_space" {
 #   description = "The address space used for the VPC."

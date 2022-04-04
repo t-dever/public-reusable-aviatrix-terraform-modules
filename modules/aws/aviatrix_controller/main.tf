@@ -62,11 +62,27 @@ resource "aws_ssm_parameter" "aviatrix_copilot_secret_parameter" {
   tags        = { "Name" = "${var.tag_prefix}-copilot-password" }
 }
 
+# Creates AWS Key Pair based on SSH Public Key Provided
+resource "aws_key_pair" "key_pair" {
+  count      = length(var.aws_key_pair_public_key) > 0 ? 1 : 0
+  key_name   = var.aws_key_pair_public_key != "aviatrix-controller-key" ? var.aws_key_pair_public_key : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-key" : var.aws_key_pair_public_key
+  public_key = var.aws_key_pair_public_key
+  tags       = { "Name" = var.aws_key_pair_public_key != "aviatrix-controller-key" ? var.aws_key_pair_public_key : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-key" : var.aws_key_pair_public_key }
+}
+
+# Grabs the attributes for the key pair if ssh public key is not provided
+data "aws_key_pair" "key_pair" {
+  count      = length(var.aws_key_pair_public_key) > 0 ? 1 : 0
+  key_name   = var.aws_key_pair_name
+}
+
+# Creates AWS VPC
 resource "aws_vpc" "vpc" {
   cidr_block = var.aws_vpc_address_space
   tags       = { "Name" = var.aws_vpc_name != "aviatrix-controller-vpc" ? var.aws_vpc_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-controller-vpc" : var.aws_vpc_name }
 }
 
+# Creates AWS VPC Default Security Group
 resource "aws_default_security_group" "default_security_group" {
   vpc_id = aws_vpc.vpc.id
 }
@@ -100,14 +116,16 @@ resource "aws_subnet" "additional_subnets" {
 # Create Internet Gateway (IGW)
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.vpc.id
-  tags = { "Name" = var.aws_internet_gateway_name != "aviatrix-internet-gateway" ? var.aws_internet_gateway_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-internet-gateway" : var.aws_internet_gateway_name }
+  tags   = { "Name" = var.aws_internet_gateway_name != "aviatrix-internet-gateway" ? var.aws_internet_gateway_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-internet-gateway" : var.aws_internet_gateway_name }
 }
 
 # Create AWS Route Table for VPC
 resource "aws_route_table" "vpc_route_table" {
   vpc_id = aws_vpc.vpc.id
-  tags = { "Name" = var.aws_route_table_name != "aviatrix-route-table" ? var.aws_route_table_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-route-table" : var.aws_route_table_name }
+  tags   = { "Name" = var.aws_route_table_name != "aviatrix-route-table" ? var.aws_route_table_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-route-table" : var.aws_route_table_name }
 }
+
+
 
 # # Creates Default Route to Internet for route table.
 # resource "aws_route" "internet_route" {
@@ -188,10 +206,7 @@ resource "aws_route_table" "vpc_route_table" {
 #   }
 # }
 
-# # Grabs the attributes for the key pair
-# data "aws_key_pair" "key_pair" {
-#   key_name = var.aws_key_pair_name
-# }
+
 
 # # Creates Aviatrix Controller Instance
 # resource "aws_instance" "controller_instance" {
@@ -257,12 +272,7 @@ resource "aws_route_table" "vpc_route_table" {
 
 
 
-# # Creates AWS Key Pair based on SSH Public Key Provided
-# resource "aws_key_pair" "key_pair" {
-#   key_name   = var.aws_key_pair_name
-#   public_key = var.aws_key_pair_public_key
-#   tags       = { "Name" = "${var.tag_prefix}-key-pair" }
-# }
+
 
 
 
