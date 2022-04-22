@@ -230,7 +230,7 @@ resource "null_resource" "initial_config" {
   ]
   count = length(var.firewalls)
   provisioner "local-exec" {
-    command = "python3 ./palo_bootstrap.py"
+    command = "python3 ${path.module}/palo_bootstrap.py"
     environment = {
       PALO_IP_ADDRESS           = aviatrix_firewall_instance.firewall_instance[count.index].public_ip
       PALO_USERNAME             = "admin"
