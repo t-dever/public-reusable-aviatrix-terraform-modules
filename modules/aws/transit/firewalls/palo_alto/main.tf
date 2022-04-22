@@ -177,3 +177,73 @@ resource "aws_iam_instance_profile" "aviatrix_bootstrap_profile" {
   name = var.s3_iam_role_name
   role = aws_iam_role.aviatrix_s3_bootstrap_role.name
 }
+
+# Creates AWS Key Pair based on SSH Public Key Provided
+resource "aws_key_pair" "key_pair" {
+  key_name   = var.aws_firewall_key_pair_name
+  public_key = var.aws_key_pair_public_key
+  tags       = { "Name" = var.aws_firewall_key_pair_name }
+}
+
+# Creates Firewall Instance
+resource "aviatrix_firewall_instance" "firewall_instance" {
+  count                  = length(var.firewalls)
+  vpc_id                 = var.aws_vpc_id
+  firenet_gw_name        = count.index % 2 == 0 ? var.aviatrix_transit_primary_gateway_name : var.aviatrix_transit_ha_gateway_name
+  firewall_name          = var.firewalls[count.index].name
+  firewall_image         = var.firewall_image
+  firewall_image_version = var.firewall_image_version
+  firewall_size          = var.firewalls[count.index].size
+  management_subnet      = count.index % 2 == 0 ? var.firewall_mgmt_primary_subnet : var.firewall_mgmt_ha_subnet
+  egress_subnet          = count.index % 2 == 0 ? var.firewall_egress_primary_subnet : var.firewall_egress_ha_subnet
+  key_name               = aws_key_pair.key_pair.key_name
+  iam_role               = aws_iam_role.aviatrix_s3_bootstrap_role.id
+  bootstrap_bucket_name  = local.s3_bucket_name
+}
+
+# Associate Firewall Instance to Firenet
+resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
+  count                = length(var.firewalls)
+  vpc_id               = var.aws_vpc_id
+  firenet_gw_name      = count.index % 2 == 0 ? var.aviatrix_transit_primary_gateway_name : var.aviatrix_transit_ha_gateway_name
+  instance_id          = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
+  firewall_name        = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
+  lan_interface        = aviatrix_firewall_instance.firewall_instance[count.index].lan_interface
+  management_interface = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
+  egress_interface     = aviatrix_firewall_instance.firewall_instance[count.index].egress_interface
+  attached             = true
+}
+
+# SSH into Firewalls and change Admin Password
+resource "null_resource" "initial_config" {
+  depends_on = [
+    aviatrix_firewall_instance.firewall_instance
+  ]
+  count = length(var.firewalls)
+  provisioner "local-exec" {
+    command = "python3 palo_bootstrap.py"
+    environment = {
+      PALO_IP_ADDRESS           = aviatrix_firewall_instance.firewall_instance[count.index].public_ip
+      PALO_USERNAME             = "admin"
+      PALO_NEW_PASSWORD         = length(var.firewall_password) > 0 ? var.firewall_password : random_password.aviatrix_firewall_admin_password[0].result
+      PALO_PRIVATE_KEY_LOCATION = var.firewall_private_key_location
+    }
+  }
+}
+
+# Performs vendor integration to automatically add routes
+# tflint-ignore: terraform_unused_declarations
+data "aviatrix_firenet_vendor_integration" "vendor_integration" {
+  depends_on = [
+    null_resource.initial_config
+  ]
+  count         = length(var.firewalls)
+  vpc_id        = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
+  instance_id   = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
+  vendor_type   = "Palo Alto Networks VM-Series"
+  public_ip     = aviatrix_firewall_instance.firewall_instance[count.index].public_ip
+  firewall_name = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
+  username      = "admin"
+  password      = length(var.firewall_password) > 0 ? var.firewall_password : random_password.aviatrix_firewall_admin_password[0].result
+  save          = true
+}

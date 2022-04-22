@@ -179,51 +179,6 @@ resource "aviatrix_firenet" "firenet" {
   egress_static_cidrs                  = []
 }
 
-# Creates AWS Key Pair based on SSH Public Key Provided
-resource "aws_key_pair" "key_pair" {
-  key_name   = var.firewall_aws_key_pair_name
-  public_key = var.firewall_public_key
-  tags       = { "Name" = var.firewall_aws_key_pair_name }
-}
-
-# Creates S3 Bucket, IAM, bucket objects required for bootstrapping
-module "palo_alto_bootstrap" {
-  count                   = local.is_palo && length(var.firewalls) > 0 ? 1 : 0
-  source                  = "./firewalls/palo_alto"
-  s3_bucket_name          = var.s3_bucket_name
-  s3_iam_role_name        = var.s3_iam_role_name
-  aws_key_pair_public_key = var.firewall_public_key
-}
-
-# Creates Firewall Instance
-resource "aviatrix_firewall_instance" "firewall_instance" {
-  count                  = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
-  vpc_id                 = aws_vpc.vpc.id
-  firenet_gw_name        = count.index % 2 == 0 ? aviatrix_transit_gateway.aviatrix_transit_gateway.gw_name : aviatrix_transit_gateway.aviatrix_transit_gateway.ha_gw_name
-  firewall_name          = var.firewalls[count.index].name
-  firewall_image         = var.firewall_image
-  firewall_image_version = var.firewall_image_version
-  firewall_size          = var.firewalls[count.index].size
-  management_subnet      = local.is_palo ? count.index % 2 == 0 ? local.firewall_mgmt_primary_subnet : local.firewall_mgmt_ha_subnet : null
-  egress_subnet          = count.index % 2 == 0 ? local.firewall_egress_primary_subnet : local.firewall_egress_ha_subnet
-  key_name               = aws_key_pair.key_pair.key_name
-  iam_role               = module.palo_alto_bootstrap[0].palo_alto_iam_id
-  bootstrap_bucket_name  = module.palo_alto_bootstrap[0].bootstrap_bucket_name
-}
-
-# Associate Firewall Instance to Firenet
-resource "aviatrix_firewall_instance_association" "firewall_instance_association" {
-  count                = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
-  vpc_id               = aws_vpc.vpc.id
-  firenet_gw_name      = count.index % 2 == 0 ? aviatrix_transit_gateway.aviatrix_transit_gateway.gw_name : aviatrix_transit_gateway.aviatrix_transit_gateway.ha_gw_name
-  instance_id          = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
-  firewall_name        = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
-  lan_interface        = aviatrix_firewall_instance.firewall_instance[count.index].lan_interface
-  management_interface = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
-  egress_interface     = aviatrix_firewall_instance.firewall_instance[count.index].egress_interface
-  attached             = true
-}
-
 # Creates Firewall Management Security Group
 resource "aws_security_group" "aviatrix_firewall_mgmt_security_group" {
   #checkov:skip=CKV2_AWS_5: "Ensure that Security Groups are attached to another resource" REASON: This Security Group is attached to firewall management network interface. Using 'aws_network_interface_sg_attachment'
@@ -246,44 +201,36 @@ resource "aws_security_group_rule" "aviatrix_firewall_mgmt_ingress_https_user_pu
   security_group_id = aws_security_group.aviatrix_firewall_mgmt_security_group[0].id
 }
 
+# Creates S3 Bucket, IAM, bucket objects required for bootstrapping
+module "palo_alto_bootstrap" {
+  count                                 = var.deploy_palo_alto_firewalls != null ? 1 : 0
+  source                                = "./firewalls/palo_alto"
+  s3_bucket_name                        = var.deploy_palo_alto_firewalls.s3_bucket_name
+  s3_iam_role_name                      = var.deploy_palo_alto_firewalls.s3_iam_role_name
+  aws_key_pair_public_key               = var.deploy_palo_alto_firewalls.aws_key_pair_public_key
+  aws_firewall_key_pair_name            = var.deploy_palo_alto_firewalls.aws_firewall_key_pair_name
+  firewall_private_key_location         = var.deploy_palo_alto_firewalls.firewall_private_key_location
+  firewall_password                     = var.deploy_palo_alto_firewalls.firewall_password
+  store_firewall_password_in_ssm        = var.deploy_palo_alto_firewalls.store_firewall_password_in_ssm
+  aws_vpc_id                            = aws_vpc.vpc.id
+  aviatrix_transit_primary_gateway_name = aviatrix_transit_gateway.aviatrix_transit_gateway.gw_name
+  aviatrix_transit_ha_gateway_name      = aviatrix_transit_gateway.aviatrix_transit_gateway.ha_gw_name
+  firewall_mgmt_primary_subnet          = aws_subnet.aviatrix_firewall_mgmt_primary_subnet.cidr_block
+  firewall_mgmt_ha_subnet               = aws_subnet.aviatrix_firewall_mgmt_ha_subnet.cidr_block
+  firewall_egress_primary_subnet        = aws_subnet.aviatrix_firewall_egress_primary_subnet.cidr_block
+  firewall_egress_ha_subnet             = aws_subnet.aviatrix_firewall_egress_ha_subnet.cidr_block
+  firewalls                             = var.deploy_palo_alto_firewalls.firewalls
+  firewall_image                        = var.deploy_palo_alto_firewalls.firewall_image
+  firewall_image_version                = var.deploy_palo_alto_firewalls.firewall_image_version
+  firewall_size                         = var.deploy_palo_alto_firewalls.firewall_size
+}
+
 # Attach Security Group to Firewall Mgmt Interface
-resource "aws_network_interface_sg_attachment" "attach_firewall_mgmt_security_group" {
-  count                = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
-  security_group_id    = aws_security_group.aviatrix_firewall_mgmt_security_group[0].id
-  network_interface_id = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
-}
-
-# SSH into Firewalls and change Admin Password
-resource "null_resource" "initial_config" {
-  depends_on = [
-    module.palo_alto_bootstrap,
-    aviatrix_firewall_instance.firewall_instance
-  ]
-  count = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 && local.is_palo ? length(var.firewalls) : 0
-  provisioner "local-exec" {
-    command = "python3 ${path.module}/firewalls/palo_alto/palo_bootstrap.py"
-    environment = {
-      PALO_IP_ADDRESS           = aviatrix_firewall_instance.firewall_instance[count.index].public_ip
-      PALO_USERNAME             = "admin"
-      PALO_NEW_PASSWORD         = module.palo_alto_bootstrap[0].firewall_password
-      PALO_PRIVATE_KEY_LOCATION = var.firewall_private_key_location
-    }
-  }
-}
-
-# Performs vendor integration to automatically add routes
-# tflint-ignore: terraform_unused_declarations
-data "aviatrix_firenet_vendor_integration" "vendor_integration" {
-  depends_on = [
-    null_resource.initial_config
-  ]
-  count         = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
-  vpc_id        = aviatrix_firewall_instance.firewall_instance[count.index].vpc_id
-  instance_id   = aviatrix_firewall_instance.firewall_instance[count.index].instance_id
-  vendor_type   = local.is_palo ? "Palo Alto Networks VM-Series" : "Generic"
-  public_ip     = aviatrix_firewall_instance.firewall_instance[count.index].public_ip
-  firewall_name = aviatrix_firewall_instance.firewall_instance[count.index].firewall_name
-  username      = "admin"
-  password      = local.is_palo ? module.palo_alto_bootstrap[0].firewall_password : null
-  save          = true
-}
+# resource "aws_network_interface_sg_attachment" "attach_firewall_mgmt_security_group" {
+#   depends_on = [
+#     module.palo_alto_bootstrap
+#   ]
+#   count                = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
+#   security_group_id    = aws_security_group.aviatrix_firewall_mgmt_security_group[0].id
+#   network_interface_id = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
+# }
