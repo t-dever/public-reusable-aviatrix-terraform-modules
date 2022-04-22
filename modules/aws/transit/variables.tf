@@ -149,61 +149,6 @@ variable "firewall_allowed_ips" {
   default     = []
 }
 
-# variable "firewall_image" {
-#   type        = string
-#   description = "The firewall image to be used to deploy the NGFW's"
-#   default     = "Palo Alto Networks VM-Series Next-Generation Firewall Bundle 1"
-#   validation {
-#     condition     = contains(["Palo Alto Networks VM-Series Next-Generation Firewall Bundle 1", ""], var.firewall_image)
-#     error_message = "The firewall_image must be one of values in the condition statement."
-#   }
-# }
-
-# variable "firewall_image_version" {
-#   description = "The firewall image version specific to the NGFW vendor image"
-#   type        = string
-#   default     = "10.1.4"
-# }
-
-# variable "firewall_aws_key_pair_name" {
-#   description = "The key pair name to be used for Firewall EC2 Instance Deployments."
-#   type        = string
-#   default     = "aviatrix-firenet-key"
-# }
-
-# variable "firewall_public_key" {
-#   description = "The key pair public ssh key to be used for Firewall Instance Deployments."
-#   type        = string
-#   default     = ""
-# }
-
-# variable "firewall_private_key_location" {
-#   description = "The location of the private key on the local machine to authenticate to palo firewall to change admin credentials."
-#   type        = string
-#   default     = ""
-# }
-
-# variable "firewalls" {
-#   description = "The firewall instance information required for creating firewalls"
-#   type = list(object({
-#     name = string,
-#     size = string
-#   }))
-#   default = []
-# }
-
-# variable "s3_bucket_name" {
-#   description = "The name of the S3 Bucket to store Firewall Bootstrap."
-#   type        = string
-#   default     = ""
-# }
-
-# variable "s3_iam_role_name" {
-#   description = "The name of the iam role used to access S3 Bucket."
-#   type        = string
-#   default     = "aviatrix-s3-bootstrap-role"
-# }
-
 variable "deploy_palo_alto_firewalls" {
   description = "All of the attributes to deploy Palo Alto Firewalls"
   type = object({
