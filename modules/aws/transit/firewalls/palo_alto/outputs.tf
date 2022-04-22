@@ -21,5 +21,5 @@ output "firewall_password" {
 
 output "firewall_management_interface_ids" {
   description = "List of the firewall management network interface IDs"
-  value = toset(aviatrix_firewall_instance.firewall_instance[*].management_interface)
+  value = tolist(aviatrix_firewall_instance.firewall_instance[*].management_interface)
 }
