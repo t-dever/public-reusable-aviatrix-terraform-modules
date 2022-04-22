@@ -218,7 +218,7 @@ variable "deploy_palo_alto_firewalls" {
       name = string
     }))
     firewall_image = string,
-    firewall_image_version = string
+    firewall_image_version = string,
     firewall_size = string
   })
   default = null
