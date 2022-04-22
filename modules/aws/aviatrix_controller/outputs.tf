@@ -41,5 +41,5 @@ output "controller_admin_password" {
 
 output "aviatrix_primary_account_name" {
   description = "The name of the aviatrix primary account to be provisioned in the controller."
-  value = var.aviatrix_controller_aws_primary_account_name
+  value       = var.aviatrix_controller_aws_primary_account_name
 }
