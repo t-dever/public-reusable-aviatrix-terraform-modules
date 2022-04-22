@@ -18,3 +18,8 @@ output "firewall_password" {
   value       = length(var.firewall_password) > 0 ? var.firewall_password : random_password.aviatrix_firewall_admin_password[0].result
   sensitive   = true
 }
+
+output "firewall_management_interface_ids" {
+  description = "List of the firewall management network interface IDs"
+  value = aviatrix_firewall_instance.firewall_instance[*].management_interface
+}

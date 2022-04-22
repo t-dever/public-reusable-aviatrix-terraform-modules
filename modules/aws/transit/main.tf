@@ -226,11 +226,8 @@ module "palo_alto_bootstrap" {
 }
 
 # Attach Security Group to Firewall Mgmt Interface
-# resource "aws_network_interface_sg_attachment" "attach_firewall_mgmt_security_group" {
-#   depends_on = [
-#     module.palo_alto_bootstrap
-#   ]
-#   count                = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? length(var.firewalls) : 0
-#   security_group_id    = aws_security_group.aviatrix_firewall_mgmt_security_group[0].id
-#   network_interface_id = aviatrix_firewall_instance.firewall_instance[count.index].management_interface
-# }
+resource "aws_network_interface_sg_attachment" "attach_firewall_mgmt_security_group" {
+  count                = module.palo_alto_bootstrap.firewall_management_interface_ids
+  security_group_id    = aws_security_group.aviatrix_firewall_mgmt_security_group[0].id
+  network_interface_id = module.palo_alto_bootstrap.firewall_management_interface_ids[count.index]
+}
