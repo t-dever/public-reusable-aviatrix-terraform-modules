@@ -67,6 +67,9 @@
 | <a name="input_aviatrix_transit_gateway_size"></a> [aviatrix\_transit\_gateway\_size](#input\_aviatrix\_transit\_gateway\_size) | The size of the transit gateways | `string` | `"t2.large"` | no |
 | <a name="input_aviatrix_transit_ha_subnet_name"></a> [aviatrix\_transit\_ha\_subnet\_name](#input\_aviatrix\_transit\_ha\_subnet\_name) | The name of the HA Aviatrix Transit Gateway Subnet. | `string` | `"aviatrix-transit-ha"` | no |
 | <a name="input_aviatrix_transit_primary_subnet_name"></a> [aviatrix\_transit\_primary\_subnet\_name](#input\_aviatrix\_transit\_primary\_subnet\_name) | The name of the Primary Aviatrix Transit Gateway Subnet. | `string` | `"aviatrix-transit-primary"` | no |
+| <a name="input_controller_password"></a> [controller\_password](#input\_controller\_password) | The controllers password. | `string` | n/a | yes |
+| <a name="input_controller_public_ip"></a> [controller\_public\_ip](#input\_controller\_public\_ip) | The controllers public IP address. | `string` | `"1.2.3.4"` | no |
+| <a name="input_controller_username"></a> [controller\_username](#input\_controller\_username) | The controllers username. | `string` | `"admin"` | no |
 | <a name="input_enable_aviatrix_transit_firenet"></a> [enable\_aviatrix\_transit\_firenet](#input\_enable\_aviatrix\_transit\_firenet) | Enables firenet on the aviatrix transit gateway | `bool` | `false` | no |
 | <a name="input_enable_aviatrix_transit_gateway_ha"></a> [enable\_aviatrix\_transit\_gateway\_ha](#input\_enable\_aviatrix\_transit\_gateway\_ha) | Enable High Availability (HA) for transit gateways | `bool` | `false` | no |
 | <a name="input_enable_firenet_egress"></a> [enable\_firenet\_egress](#input\_enable\_firenet\_egress) | Allow traffic to the internet through firewall. | `bool` | `false` | no |
