@@ -9,28 +9,31 @@ from paramiko import AutoAddPolicy, SSHClient, ssh_exception
 sleepyTime = 5
 receiveTime = 100000
 
+
 class PaloAlto():
 
     def __init__(self):
         self.host_ip = os.getenv('PALO_IP_ADDRESS')
         self.username = os.getenv('PALO_USERNAME')
         self.new_password = os.getenv('PALO_NEW_PASSWORD')
-        self.private_key_file_location = os.getenv('PALO_PRIVATE_KEY_LOCATION')
+        self.private_key_file_path = os.getenv('PALO_PRIVATE_KEY_LOCATION')
         self.connection = self.connect()
 
     def connect(self):
-        print(f"Starting Connection Attempt.")
+        print("Starting Connection Attempt.")
         attempts = 10
         while attempts != 0:
             print(f"Remaining Attempts: {attempts}")
             attempts -= 1
             try:
-                remote_init_conn = SSHClient()
-                remote_init_conn.load_system_host_keys()
-                remote_init_conn.set_missing_host_key_policy(AutoAddPolicy())
-                # This will attempt to look on the local machine for the private ssh key
-                remote_init_conn.connect(self.host_ip, username=self.username, key_filename=self.private_key_file_location)
-                remote_con = remote_init_conn.invoke_shell()
+                remote_init = SSHClient()
+                remote_init.load_system_host_keys()
+                remote_init.set_missing_host_key_policy(AutoAddPolicy())
+                # This will attempt to look on the local machine for the
+                # private ssh key.
+                remote_init.connect(self.host_ip, username=self.username,
+                                    key_filename=self.private_key_file_path)
+                remote_con = remote_init.invoke_shell()
                 print(f"Successfully Connected to: {self.host_ip}")
                 return remote_con
             except ssh_exception.AuthenticationException as err:
@@ -40,7 +43,7 @@ class PaloAlto():
                 print(f"Socket Error occurred: {str(err)}")
                 time.sleep(60)
                 if attempts == 0:
-                    print(json.dumps(error, indent=4))
+                    print(json.dumps(err, indent=4))
                 else:
                     print(str(err))
                     continue
@@ -62,7 +65,7 @@ class PaloAlto():
             attempts -= 1
             try:
                 commands_list = [
-                    "configure" ,
+                    "configure",
                     f"set mgt-config users {self.username} password",
                     self.new_password,
                     self.new_password,
@@ -77,16 +80,16 @@ class PaloAlto():
                 return
             except socket.error as err:
                 print(f"Socket Error occurred: {str(err)}")
-                time.sleep(60)
                 if attempts == 0:
-                    print(json.dumps(error, indent=4))
+                    print(json.dumps(err, indent=4))
                     sys.exit(1)
                 else:
+                    time.sleep(60)
                     self.connect()
                     print(str(err))
                     continue
-            except KeyError as e:
-                error = {"error": str(e)}
+            except KeyError as err:
+                error = {"error": str(err)}
                 json.dumps(error, indent=4)
                 sys.exit(1)
 
@@ -102,6 +105,7 @@ def main():
     connection = PaloAlto()
     connection.set_admin_password()
     connection.disconnect()
+
 
 main()
 sys.exit(0)

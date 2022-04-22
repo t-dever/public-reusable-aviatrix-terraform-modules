@@ -17,3 +17,9 @@ provider "aws" {
     tags = var.tags
   }
 }
+
+provider "aviatrix" {
+  controller_ip = var.controller_public_ip
+  username      = var.controller_username
+  password      = var.controller_password
+}

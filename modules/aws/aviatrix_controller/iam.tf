@@ -1,6 +1,6 @@
 # Create IAM Role for Managing EC2 Instances
 resource "aws_iam_role" "aviatrix_role_ec2" {
-  name               = var.aviatrix_role_ec2_name
+  name               = var.aws_iam_role_ec2_name != "aviatrix-role-ec2" ? var.aws_iam_role_ec2_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-role-ec2" : var.aws_iam_role_ec2_name
   description        = "Aviatrix EC2 Role - Created by Terraform"
   path               = "/"
   assume_role_policy = <<EOF
@@ -21,11 +21,14 @@ resource "aws_iam_role" "aviatrix_role_ec2" {
     ]
 }
 EOF
+  lifecycle {
+    ignore_changes = [tags_all]
+  }
 }
 
 # Create IAM Role for Aviatrix App Controller
 resource "aws_iam_role" "aviatrix_role_app" {
-  name               = var.aviatrix_role_app_name
+  name               = var.aws_iam_role_app_name != "aviatrix-role-app" ? var.aws_iam_role_app_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-role-app" : var.aws_iam_role_app_name
   description        = "Aviatrix APP Role - Created by Terraform"
   path               = "/"
   assume_role_policy = <<EOF
@@ -46,11 +49,14 @@ resource "aws_iam_role" "aviatrix_role_app" {
     ]
 }
 EOF
+  lifecycle {
+    ignore_changes = [tags_all]
+  }
 }
 
 # Create IAM Policy for assuming role and accepting marketplace AMI.
 resource "aws_iam_policy" "aviatrix_assume_role_policy" {
-  name        = var.aviatrix_assume_policy_role_policy_name
+  name        = var.aws_iam_assume_policy_role_policy_name != "aviatrix-role-ec2-assume-role-policy" ? var.aws_iam_assume_policy_role_policy_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-role-ec2-assume-role-policy" : var.aws_iam_assume_policy_role_policy_name
   path        = "/"
   description = "Policy to Assume App Role - Created by Terraform"
   policy      = <<EOF
@@ -75,11 +81,14 @@ resource "aws_iam_policy" "aviatrix_assume_role_policy" {
     ]
 }
 EOF
+  lifecycle {
+    ignore_changes = [tags_all]
+  }
 }
 
 # Create IAM Policy for Aviatrix App to deploy resources.
 resource "aws_iam_policy" "aviatrix_app_policy" {
-  name        = var.aviatrix_app_policy_name
+  name        = var.aws_iam_app_policy_name != "aviatrix-role-app-policy" ? var.aws_iam_app_policy_name : length(var.tag_prefix) > 0 ? "${var.tag_prefix}-role-app-policy" : var.aws_iam_app_policy_name
   path        = "/"
   description = "Policy to deploy resources - Created by Terraform"
   policy      = <<EOF
@@ -316,6 +325,9 @@ resource "aws_iam_policy" "aviatrix_app_policy" {
     ]
 }
 EOF
+  lifecycle {
+    ignore_changes = [tags_all]
+  }
 }
 
 
@@ -334,5 +346,8 @@ resource "aws_iam_role_policy_attachment" "aviatrix_role_app_attach" {
 resource "aws_iam_instance_profile" "aviatrix_role_ec2_profile" {
   name = aws_iam_role.aviatrix_role_ec2.name
   role = aws_iam_role.aviatrix_role_ec2.name
+  lifecycle {
+    ignore_changes = [tags_all]
+  }
 }
 
