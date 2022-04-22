@@ -134,6 +134,9 @@ resource "aws_iam_role" "aviatrix_s3_bootstrap_role" {
   ]
 }
 EOF
+  lifecycle {
+    ignore_changes = [ tags, tags_all ]
+  }
 }
 
 # Creates IAM Policy to Access S3 Bootstrap Bucket
@@ -164,6 +167,9 @@ resource "aws_iam_policy" "aviatrix_s3_bootstrap_policy" {
     ]
 }
 EOF
+  lifecycle {
+    ignore_changes = [ tags, tags_all ]
+  }
 }
 
 # Attaches IAM Role to IAM Policy
@@ -176,6 +182,9 @@ resource "aws_iam_role_policy_attachment" "aviatrix_bootstrap_role_attach" {
 resource "aws_iam_instance_profile" "aviatrix_bootstrap_profile" {
   name = var.s3_iam_role_name
   role = aws_iam_role.aviatrix_s3_bootstrap_role.name
+  lifecycle {
+    ignore_changes = [ tags, tags_all ]
+  }
 }
 
 # Creates AWS Key Pair based on SSH Public Key Provided
