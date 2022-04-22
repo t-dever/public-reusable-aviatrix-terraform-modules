@@ -193,7 +193,7 @@ resource "aviatrix_firewall_instance" "firewall_instance" {
   firewall_name          = var.firewalls[count.index].name
   firewall_image         = var.firewall_image
   firewall_image_version = var.firewall_image_version
-  firewall_size          = var.firewalls[count.index].size
+  firewall_size          = var.firewall_size
   management_subnet      = count.index % 2 == 0 ? var.firewall_mgmt_primary_subnet : var.firewall_mgmt_ha_subnet
   egress_subnet          = count.index % 2 == 0 ? var.firewall_egress_primary_subnet : var.firewall_egress_ha_subnet
   key_name               = aws_key_pair.key_pair.key_name
