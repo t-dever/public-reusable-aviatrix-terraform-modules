@@ -182,7 +182,7 @@ resource "aviatrix_firenet" "firenet" {
 # Creates Firewall Management Security Group
 resource "aws_security_group" "aviatrix_firewall_mgmt_security_group" {
   #checkov:skip=CKV2_AWS_5: "Ensure that Security Groups are attached to another resource" REASON: This Security Group is attached to firewall management network interface. Using 'aws_network_interface_sg_attachment'
-  count       = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? 1 : 0
+  count       = var.enable_aviatrix_transit_firenet ? 1 : 0
   name        = var.firewall_mgmt_security_group_name
   description = "Aviatrix - Firewall Management Security Group"
   vpc_id      = aws_vpc.vpc.id
@@ -191,7 +191,7 @@ resource "aws_security_group" "aviatrix_firewall_mgmt_security_group" {
 
 # Creates Ingress Rule to allow user public IP addresses to Firewall Management
 resource "aws_security_group_rule" "aviatrix_firewall_mgmt_ingress_https_user_public_ips" {
-  count             = var.enable_aviatrix_transit_firenet && length(var.firewalls) > 0 ? 1 : 0
+  count             = var.enable_aviatrix_transit_firenet ? 1 : 0
   description       = "Allow User Assigned IP addresses inbound to Firewall Management Subnets."
   type              = "ingress"
   from_port         = 443
@@ -215,10 +215,10 @@ module "palo_alto_bootstrap" {
   aws_vpc_id                            = aws_vpc.vpc.id
   aviatrix_transit_primary_gateway_name = aviatrix_transit_gateway.aviatrix_transit_gateway.gw_name
   aviatrix_transit_ha_gateway_name      = aviatrix_transit_gateway.aviatrix_transit_gateway.ha_gw_name
-  firewall_mgmt_primary_subnet          = aws_subnet.aviatrix_firewall_mgmt_primary_subnet.cidr_block
-  firewall_mgmt_ha_subnet               = aws_subnet.aviatrix_firewall_mgmt_ha_subnet.cidr_block
-  firewall_egress_primary_subnet        = aws_subnet.aviatrix_firewall_egress_primary_subnet.cidr_block
-  firewall_egress_ha_subnet             = aws_subnet.aviatrix_firewall_egress_ha_subnet.cidr_block
+  firewall_mgmt_primary_subnet          = aws_subnet.aviatrix_firewall_mgmt_primary_subnet[0].cidr_block
+  firewall_mgmt_ha_subnet               = aws_subnet.aviatrix_firewall_mgmt_ha_subnet[0].cidr_block
+  firewall_egress_primary_subnet        = aws_subnet.aviatrix_firewall_egress_primary_subnet[0].cidr_block
+  firewall_egress_ha_subnet             = aws_subnet.aviatrix_firewall_egress_ha_subnet[0].cidr_block
   firewalls                             = var.deploy_palo_alto_firewalls.firewalls
   firewall_image                        = var.deploy_palo_alto_firewalls.firewall_image
   firewall_image_version                = var.deploy_palo_alto_firewalls.firewall_image_version
