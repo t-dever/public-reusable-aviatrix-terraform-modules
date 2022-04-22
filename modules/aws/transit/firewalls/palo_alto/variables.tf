@@ -56,22 +56,22 @@ variable "aviatrix_transit_ha_gateway_name" {
 
 variable "firewall_mgmt_primary_subnet" {
   description = "The primary subnet for firewall management."
-  type = string
+  type        = string
 }
 
 variable "firewall_mgmt_ha_subnet" {
   description = "The ha subnet for firewall management."
-  type = string
+  type        = string
 }
 
 variable "firewall_egress_primary_subnet" {
   description = "The primary subnet for firewall egress."
-  type = string
+  type        = string
 }
 
 variable "firewall_egress_ha_subnet" {
   description = "The ha subnet for firewall egress."
-  type = string
+  type        = string
 }
 
 variable "firewalls" {
@@ -108,8 +108,8 @@ variable "firewall_image_version" {
 
 variable "firewall_size" {
   description = "The firewall ec2 instance size."
-  type = string
-  default = "m5.xlarge"
+  type        = string
+  default     = "m5.xlarge"
 }
 
 locals {

@@ -152,19 +152,19 @@ variable "firewall_allowed_ips" {
 variable "deploy_palo_alto_firewalls" {
   description = "All of the attributes to deploy Palo Alto Firewalls"
   type = object({
-    s3_bucket_name = string,
-    s3_iam_role_name = string,
-    aws_key_pair_public_key = string,
-    aws_firewall_key_pair_name = string,
-    firewall_private_key_location = string,
-    firewall_password = string,
+    s3_bucket_name                 = string,
+    s3_iam_role_name               = string,
+    aws_key_pair_public_key        = string,
+    aws_firewall_key_pair_name     = string,
+    firewall_private_key_location  = string,
+    firewall_password              = string,
     store_firewall_password_in_ssm = bool,
     firewalls = list(object({
       name = string
     }))
-    firewall_image = string,
+    firewall_image         = string,
     firewall_image_version = string,
-    firewall_size = string
+    firewall_size          = string
   })
   default = null
 }

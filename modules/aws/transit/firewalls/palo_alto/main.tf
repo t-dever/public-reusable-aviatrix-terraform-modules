@@ -135,7 +135,7 @@ resource "aws_iam_role" "aviatrix_s3_bootstrap_role" {
 }
 EOF
   lifecycle {
-    ignore_changes = [ tags, tags_all ]
+    ignore_changes = [tags, tags_all]
   }
 }
 
@@ -168,7 +168,7 @@ resource "aws_iam_policy" "aviatrix_s3_bootstrap_policy" {
 }
 EOF
   lifecycle {
-    ignore_changes = [ tags, tags_all ]
+    ignore_changes = [tags, tags_all]
   }
 }
 
@@ -183,7 +183,7 @@ resource "aws_iam_instance_profile" "aviatrix_bootstrap_profile" {
   name = var.s3_iam_role_name
   role = aws_iam_role.aviatrix_s3_bootstrap_role.name
   lifecycle {
-    ignore_changes = [ tags, tags_all ]
+    ignore_changes = [tags, tags_all]
   }
 }
 
