@@ -30,14 +30,14 @@ data "azurerm_storage_account" "storage_account" {
 # }
 
 resource "azurerm_storage_account" "backup_storage_account" {
-  name                      = replace("${var.resource_prefix}backupsa", "-", "")
-  resource_group_name       = data.azurerm_resource_group.resource_group.name
-  location                  = data.azurerm_resource_group.resource_group.location
-  account_tier              = "Standard"
-  account_replication_type  = "LRS"
-  min_tls_version           = "TLS1_2"
-  allow_blob_public_access  = false
-  enable_https_traffic_only = true
+  name                            = replace("${var.resource_prefix}backupsa", "-", "")
+  resource_group_name             = data.azurerm_resource_group.resource_group.name
+  location                        = data.azurerm_resource_group.resource_group.location
+  account_tier                    = "Standard"
+  account_replication_type        = "LRS"
+  min_tls_version                 = "TLS1_2"
+  allow_nested_items_to_be_public = false
+  enable_https_traffic_only       = true
 }
 
 resource "azurerm_storage_container" "controller_backup_container" {
