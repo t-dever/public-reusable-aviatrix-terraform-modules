@@ -112,3 +112,8 @@ variable "copilot_password" {
   default     = ""
   sensitive   = true
 }
+variable "azure_gov" {
+  description = "If using Azure Gov set to true."
+  type        = bool
+  default     = false
+}

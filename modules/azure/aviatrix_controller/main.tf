@@ -247,6 +247,7 @@ module "aviatrix_controller_initialize" {
   aviatrix_azure_primary_account_client_id       = data.azurerm_client_config.current.client_id
   aviatrix_azure_primary_account_client_secret   = var.aviatrix_azure_primary_account_client_secret
   enable_security_group_management               = var.aviatrix_enable_security_group_management
+  azure_gov                                      = local.is_azure_gov
 }
 
 # Deploy CoPilot Resources

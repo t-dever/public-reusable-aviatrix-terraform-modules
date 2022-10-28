@@ -32,6 +32,8 @@ class ControllerSetup():
             self.is_aws_gov = strtobool(os.getenv('AWS_GOV'))
         self.aws_role_app_arn = os.getenv('AWS_ROLE_APP_ARN')
         self.aws_role_ec2_arn = os.getenv('AWS_ROLE_EC2_ARN')
+        if os.getenv('AZURE_GOV'):
+            self.is_azure_gov = strtobool(os.getenv('AWS_GOV'))
         self.security_group_management = strtobool(os.getenv('ENABLE_SECURITY_GROUP_MANAGEMENT'))
         self.copilot_username = os.getenv('COPILOT_USERNAME')
         self.copilot_password = os.getenv('COPILOT_PASSWORD')
@@ -296,12 +298,15 @@ class ControllerSetup():
                 'CID': self._get_cid(),
                 'account_name': self.primary_access_account,
                 'account_email': self.admin_email,
-                'cloud_type': 8,
                 'arm_subscription_id': self.azure_primary_account_subscription_id,
                 'arm_application_endpoint': self.azure_primary_account_tenant_id,
                 'arm_application_client_id': self.azure_primary_account_client_id,
                 'arm_application_client_secret': self.azure_primary_account_client_secret
             }
+            if self.is_azure_gov:
+                payload['cloud_type'] = 32
+            else:
+                payload['cloud_type'] = 8
             response = self._format_response(
                 requests.post(self.url, data=payload, verify=False))
             if response.get('return') == False:

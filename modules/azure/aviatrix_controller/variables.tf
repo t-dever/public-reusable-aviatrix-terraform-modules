@@ -193,4 +193,5 @@ variable "key_vault_id" {
 locals {
   controller_private_ip = cidrhost(var.controller_subnet_address_prefix, 4)
   copilot_private_ip    = cidrhost(var.controller_subnet_address_prefix, 5)
+  is_azure_gov          = length(regexall("gov", lower(var.location))) > 0 ? true : false
 }
