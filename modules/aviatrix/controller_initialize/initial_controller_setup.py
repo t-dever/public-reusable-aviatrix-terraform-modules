@@ -298,23 +298,27 @@ class ControllerSetup():
                 'CID': self._get_cid(),
                 'account_name': self.primary_access_account,
                 'account_email': self.admin_email,
-                'arm_subscription_id': self.azure_primary_account_subscription_id,
-                'arm_application_endpoint': self.azure_primary_account_tenant_id,
-                'arm_application_client_id': self.azure_primary_account_client_id,
-                'arm_application_client_secret': self.azure_primary_account_client_secret
             }
             if self.is_azure_gov:
                 payload['cloud_type'] = 32
+                payload['azure_gov_subscription_id'] = self.azure_primary_account_subscription_id
+                payload['azure_gov_application_endpoint'] = self.azure_primary_account_tenant_id
+                payload['azure_gov_application_client_id'] = self.azure_primary_account_client_id
+                payload['azure_gov_application_client_secret'] = self.azure_primary_account_client_secret
             else:
                 payload['cloud_type'] = 8
+                payload['arm_subscription_id'] = self.azure_primary_account_subscription_id
+                payload['arm_application_endpoint'] = self.azure_primary_account_tenant_id
+                payload['arm_application_client_id'] = self.azure_primary_account_client_id
+                payload['arm_application_client_secret'] = self.azure_primary_account_client_secret
             response = self._format_response(
                 requests.post(self.url, data=payload, verify=False))
-            if response.get('return') == False:
+            if response.get('return') is False:
                 if response.get('reason'):
-                    print(f"Failed to add account: '{self.aws_primary_account_name}'"
+                    print(f"Failed to add account: '{self.primary_access_account}'"
                           f" due to Error: '{response.get('reason')}'")
                 raise Exception(response)
-            print(f"Successfully added {self.aws_primary_account_name}.")
+            print(f"Successfully added {self.primary_access_account}.")
 
     def enable_security_group_management(self):
         print("Enabling auto security group management")
