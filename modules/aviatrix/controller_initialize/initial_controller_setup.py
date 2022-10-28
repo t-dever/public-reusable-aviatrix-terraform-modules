@@ -33,7 +33,7 @@ class ControllerSetup():
         self.aws_role_app_arn = os.getenv('AWS_ROLE_APP_ARN')
         self.aws_role_ec2_arn = os.getenv('AWS_ROLE_EC2_ARN')
         if os.getenv('AZURE_GOV'):
-            self.is_azure_gov = strtobool(os.getenv('AWS_GOV'))
+            self.is_azure_gov = strtobool(os.getenv('AZURE_GOV'))
         self.security_group_management = strtobool(os.getenv('ENABLE_SECURITY_GROUP_MANAGEMENT'))
         self.copilot_username = os.getenv('COPILOT_USERNAME')
         self.copilot_password = os.getenv('COPILOT_PASSWORD')
@@ -299,6 +299,7 @@ class ControllerSetup():
                 'account_name': self.primary_access_account,
                 'account_email': self.admin_email,
             }
+            print(f"PRINT IS AZURE GOV: {self.is_azure_gov}")
             if self.is_azure_gov:
                 payload['cloud_type'] = 32
                 payload['azure_gov_subscription_id'] = self.azure_primary_account_subscription_id
