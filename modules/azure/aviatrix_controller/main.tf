@@ -199,15 +199,15 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
 
   source_image_reference {
     publisher = "aviatrix-systems"
-    offer     = "aviatrix-bundle-payg"
-    sku       = "aviatrix-enterprise-bundle-byol"
+    offer     = "aviatrix-controller"
+    sku       = "aviatrix-controller-g3"
     version   = "latest"
   }
 
   plan {
-    name      = "aviatrix-enterprise-bundle-byol"
+    name      = "aviatrix-controller-g3"
     publisher = "aviatrix-systems"
-    product   = "aviatrix-bundle-payg"
+    product   = "aviatrix-controller"
   }
 
   os_disk {
