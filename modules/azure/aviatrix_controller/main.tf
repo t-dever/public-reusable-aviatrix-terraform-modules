@@ -198,16 +198,16 @@ resource "azurerm_linux_virtual_machine" "aviatrix_controller_vm" {
   }
 
   source_image_reference {
-    publisher = "aviatrix-systems"
-    offer     = "aviatrix-controller"
-    sku       = "aviatrix-controller-g3"
-    version   = "latest"
+    publisher = var.aviatrix_controller_marketplace_image.publisher
+    offer     = var.aviatrix_controller_marketplace_image.offer
+    sku       = var.aviatrix_controller_marketplace_image.sku
+    version   = var.aviatrix_controller_marketplace_image.version
   }
 
   plan {
-    name      = "aviatrix-controller-g3"
-    publisher = "aviatrix-systems"
-    product   = "aviatrix-controller"
+    name      = var.aviatrix_controller_marketplace_image.sku
+    publisher = var.aviatrix_controller_marketplace_image.publisher
+    product   = var.aviatrix_controller_marketplace_image.offer
   }
 
   os_disk {
@@ -234,7 +234,7 @@ module "aviatrix_controller_initialize" {
   depends_on = [
     azurerm_linux_virtual_machine.aviatrix_controller_vm
   ]
-  source                                         = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize?ref=tags/v2.4.3"
+  source                                         = "git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize"
   aviatrix_controller_public_ip                  = azurerm_public_ip.azure_controller_public_ip.ip_address
   aviatrix_controller_private_ip                 = azurerm_network_interface.azure_controller_nic.private_ip_address
   aviatrix_controller_password                   = var.aviatrix_controller_password == "" ? random_password.generate_aviatrix_controller_admin_secret[0].result : var.aviatrix_controller_password
@@ -302,16 +302,16 @@ resource "azurerm_linux_virtual_machine" "aviatrix_copilot_vm" {
   }
 
   source_image_reference {
-    publisher = "aviatrix-systems"
-    offer     = "aviatrix-copilot"
-    sku       = "avx-cplt-byol-01"
-    version   = "latest"
+    publisher = var.aviatrix_copilot_marketplace_image.publisher
+    offer     = var.aviatrix_copilot_marketplace_image.offer
+    sku       = var.aviatrix_copilot_marketplace_image.sku
+    version   = var.aviatrix_copilot_marketplace_image.version
   }
 
   plan {
-    name      = "avx-cplt-byol-01"
-    publisher = "aviatrix-systems"
-    product   = "aviatrix-copilot"
+    name      = var.aviatrix_copilot_marketplace_image.sku
+    publisher = var.aviatrix_copilot_marketplace_image.publisher
+    product   = var.aviatrix_copilot_marketplace_image.offer
   }
 
   os_disk {
