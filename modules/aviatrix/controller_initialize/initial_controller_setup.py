@@ -11,7 +11,7 @@ urllib3.disable_warnings()
 class ControllerSetup():
     def __init__(self) -> None:
         self.url = (
-            f"https://{os.getenv('AVIATRIX_CONTROLLER_PUBLIC_IP')}/v1/api")
+            f"https://{os.getenv('AVIATRIX_CONTROLLER_PUBLIC_IP')}/v2/api")
         self.admin_email = os.getenv('ADMIN_EMAIL')
         self.customer_id = os.getenv('CUSTOMER_ID')
         self.controller_version = os.getenv('CONTROLLER_VERSION')
@@ -71,7 +71,7 @@ class ControllerSetup():
             try:
                 print("Attempting login with initial password")
                 payload['password'] = self.controller_initial_password
-                response = requests.post(self.url, data=payload, verify=False)
+                response = self._api_call(payload)
                 if response.json()['return'] is True:
                     print("Successfully logged into Controller with default"
                           " credentials")
@@ -80,8 +80,7 @@ class ControllerSetup():
                 else:
                     print("Attempting login with new password")
                     payload['password'] = self.controller_new_password
-                    response = requests.post(self.url, data=payload,
-                                             verify=False)
+                    response = self._api_call(payload)
                     if response.json()['return'] is True:
                         print("Successfully logged into Controller with new"
                               " credentials")
@@ -96,13 +95,26 @@ class ControllerSetup():
                 continue
         raise Exception
 
+    def _api_call(self, api_payload):
+        attempts = 10
+        while attempts != 0:
+            attempts -= 1
+            response = requests.post(self.url, data=api_payload, verify=False)
+            if response.status_code == 200:
+                if not "maintenance" in response.json().get('reason'):                    
+                    return response
+            print(f"API Call Failed attempts remaining: "
+                  f" {attempts}")
+            time.sleep(30)
+            continue
+        sys.exit(1)
+
     def _format_response(self, response):
         print("Formatting response...")
         if response.status_code == 200:
             results = response.json()
             print(f"JSON BODY: {results}")
             return results
-
         print("Failed to return status code 200")
         print(response.status_code)
         print(response.text)
@@ -115,7 +127,7 @@ class ControllerSetup():
             'CID': self._get_cid()
         }
         response = self._format_response(
-            requests.post(self.url, data=payload, verify=False))
+            self._api_call(payload))
         results = response.get('results')
         current_version_short = (
             results.get('current_version').split('-')[1][0:3])
@@ -134,7 +146,7 @@ class ControllerSetup():
             'CID': self._get_cid()
         }
         response = self._format_response(
-            requests.post(self.url, data=check_payload, verify=False))
+            self._api_call(check_payload))
         account_list = response['results']['account_list']
         for account in account_list:
             if account['account_name'] == account_name:
@@ -152,7 +164,7 @@ class ControllerSetup():
             'admin_email': self.admin_email
         }
         self._format_response(
-            requests.post(self.url, data=payload, verify=False))
+            self._api_call(payload))
         print("Successfully set admin email.")
 
     def reset_admin_password(self):
@@ -162,8 +174,7 @@ class ControllerSetup():
             'username': self.controller_username,
             'password': self.controller_initial_password
         }
-        initial_response = self._format_response(requests.post(
-            self.url, data=initial_login, verify=False))
+        initial_response = self._format_response(self._api_call(initial_login))
         print("Checking if credential is using initial password.")
         if initial_response.get('return') is True:
             payload = {
@@ -178,7 +189,7 @@ class ControllerSetup():
                 'new_password': self.controller_new_password
             }
             response = self._format_response(
-                requests.post(self.url, data=payload, verify=False))
+                self._api_call(payload))
             if response.get('return') is True:
                 print("Successfully reset admin password.")
                 return
@@ -195,42 +206,28 @@ class ControllerSetup():
             'customer_id': self.customer_id
         }
         self._format_response(
-            requests.post(self.url, data=payload, verify=False))
+            self._api_call(payload))
         print("Successfully set customer id")
 
     def software_update(self):
         try:
-            if self._is_software_up_to_date(self.controller_version):
-                return
             print(
                 f"Attempting to upgrade software to {self.controller_version}")
             payload = {
-                'action': 'upgrade',
+                'action': 'initial_setup',
                 'CID': self._get_cid(),
-                'version': self.controller_version
+                'subaction': "run",
+                'target_version': self.controller_version             
             }
-            response = requests.post(self.url, data=payload, verify=False)
+            response = self._api_call(payload)
             r = self._format_response(response)
             if r:
                 if r.get('return') is True:
-                    print
-                    (f"Successfully updated software to: {self.controller_version}")
-                    return True
+                    print(f"Successfully updated software to: {self.controller_version}")
                 else:
                     print(f"Failed to update software due to: '{r.get('reason')}'")
                     sys.exit(1)
-        except requests.exceptions.Timeout:
-            attempts = 10
-            while attempts != 0:
-                print(f"Attempts remaining to check software version: "
-                      f" {attempts}")
-                attempts -= 1
-                if self._is_software_up_to_date(self.controller_version):
-                    return True
-                time.sleep(30)
-                continue
-            print("Timeout Exception has occurred.")
-            sys.exit(1)
+
         except Exception as err:
             print(str(err))
             sys.exit(1)
@@ -264,7 +261,7 @@ class ControllerSetup():
                 payload['aws_role_arn'] = self.aws_role_app_arn
                 payload['aws_role_ec2'] = self.aws_role_ec2_arn
             response = self._format_response(
-                requests.post(self.url, data=payload, verify=False))
+                self._api_call(payload))
             if response.get('return') == False:
                 if response.get('reason'):
                     print(f"Failed to add account: '{self.aws_primary_account_name}'"
@@ -303,7 +300,7 @@ class ControllerSetup():
                 'arm_application_client_secret': self.azure_primary_account_client_secret
             }
             response = self._format_response(
-                requests.post(self.url, data=payload, verify=False))
+                self._api_call(payload))
             if response.get('return') == False:
                 if response.get('reason'):
                     print(f"Failed to add account: '{self.aws_primary_account_name}'"
@@ -319,7 +316,7 @@ class ControllerSetup():
             'access_account_name': self.primary_access_account
         }
         self._format_response(
-            requests.post(self.url, data=payload, verify=False))
+            self._api_call(payload))
         print("Successfully enabled auto security group management.")
 
     def add_copilot_user_account(self):
@@ -337,7 +334,7 @@ class ControllerSetup():
                 'groups': "read_only"
             }
             response = self._format_response(
-                requests.post(self.url, data=payload, verify=False))
+                self._api_call(payload))
             if response.get('return') == False:
                 if response.get('reason'):
                     print(f"Failed to add account: '{self.copilot_username}'"
@@ -354,7 +351,7 @@ def main():
     controller.reset_admin_password()
     controller.set_customer_id()
     controller.software_update()
-
+    
     if controller.aws_primary_account_name:
         controller.primary_aws_account()
     if controller.azure_primary_account_name:

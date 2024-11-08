@@ -66,6 +66,22 @@ variable "aviatrix_controller_instance_size" {
   default     = "Standard_D2as_v4"
 }
 
+variable "aviatrix_controller_marketplace_image" {
+  description = "The values for the aviatrix controller marketplace image."
+  type = object({
+    publisher = string
+    offer     = string
+    sku       = string
+    version   = string
+  })
+  default = {
+    publisher = "aviatrix-systems"
+    offer     = "aviatrix-controller"
+    sku       = "aviatrix-controller-g3"
+    version   = "latest"
+  }
+}
+
 variable "aviatrix_controller_version" {
   description = "The version used for the controller"
   type        = string
@@ -132,6 +148,22 @@ variable "aviatrix_deploy_copilot" {
   description = "Deploy Aviatrix CoPilot?"
   type        = bool
   default     = true
+}
+
+variable "aviatrix_copilot_marketplace_image" {
+  description = "The values for the aviatrix copilot marketplace image."
+  type = object({
+    publisher = string
+    offer     = string
+    sku       = string
+    version   = string
+  })
+  default = {
+    publisher = "aviatrix-systems"
+    offer     = "aviatrix-copilot"
+    sku       = "avx-cplt-byol-01"
+    version   = "latest"
+  }
 }
 
 variable "aviatrix_copilot_name" {
