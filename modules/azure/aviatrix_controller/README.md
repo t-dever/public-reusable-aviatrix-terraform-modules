@@ -101,7 +101,7 @@ No modules.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aviatrix_controller_initialize"></a> [aviatrix\_controller\_initialize](#module\_aviatrix\_controller\_initialize) | git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize | tags/v2.4.3 |
+| <a name="module_aviatrix_controller_initialize"></a> [aviatrix\_controller\_initialize](#module\_aviatrix\_controller\_initialize) | git::https://github.com/t-dever/public-reusable-aviatrix-terraform-modules//modules/aviatrix/controller_initialize | n/a |
 
 ## Resources
 
@@ -143,6 +143,7 @@ No modules.
 | <a name="input_aviatrix_controller_admin_email"></a> [aviatrix\_controller\_admin\_email](#input\_aviatrix\_controller\_admin\_email) | The email address used for the aviatrix controller registration. | `string` | `""` | no |
 | <a name="input_aviatrix_controller_customer_id"></a> [aviatrix\_controller\_customer\_id](#input\_aviatrix\_controller\_customer\_id) | The customer id for the aviatrix controller | `string` | `""` | no |
 | <a name="input_aviatrix_controller_instance_size"></a> [aviatrix\_controller\_instance\_size](#input\_aviatrix\_controller\_instance\_size) | Aviatrix Controller instance size. | `string` | `"Standard_D2as_v4"` | no |
+| <a name="input_aviatrix_controller_marketplace_image"></a> [aviatrix\_controller\_marketplace\_image](#input\_aviatrix\_controller\_marketplace\_image) | The values for the aviatrix controller marketplace image. | <pre>object({<br/>    publisher = string<br/>    offer     = string<br/>    sku       = string<br/>    version   = string<br/>  })</pre> | <pre>{<br/>  "offer": "aviatrix-controller",<br/>  "publisher": "aviatrix-systems",<br/>  "sku": "aviatrix-controller-g3",<br/>  "version": "latest"<br/>}</pre> | no |
 | <a name="input_aviatrix_controller_name"></a> [aviatrix\_controller\_name](#input\_aviatrix\_controller\_name) | The name of the azure virtual machine resource. | `string` | `"aviatrix-controller-vm"` | no |
 | <a name="input_aviatrix_controller_password"></a> [aviatrix\_controller\_password](#input\_aviatrix\_controller\_password) | The password to be applied to the aviatrix controller admin account. | `string` | `""` | no |
 | <a name="input_aviatrix_controller_public_ssh_key"></a> [aviatrix\_controller\_public\_ssh\_key](#input\_aviatrix\_controller\_public\_ssh\_key) | Use a public SSH key for authentication to Aviatrix Controller | `string` | `""` | no |
@@ -152,6 +153,7 @@ No modules.
 | <a name="input_aviatrix_controller_virtual_machine_admin_password"></a> [aviatrix\_controller\_virtual\_machine\_admin\_password](#input\_aviatrix\_controller\_virtual\_machine\_admin\_password) | Admin Password for the controller virtual machine. | `string` | `""` | no |
 | <a name="input_aviatrix_controller_virtual_machine_admin_username"></a> [aviatrix\_controller\_virtual\_machine\_admin\_username](#input\_aviatrix\_controller\_virtual\_machine\_admin\_username) | Admin Username for the controller virtual machine. | `string` | `"aviatrix"` | no |
 | <a name="input_aviatrix_copilot_instance_size"></a> [aviatrix\_copilot\_instance\_size](#input\_aviatrix\_copilot\_instance\_size) | The size for the CoPilot VM. | `string` | `"Standard_D8as_v4"` | no |
+| <a name="input_aviatrix_copilot_marketplace_image"></a> [aviatrix\_copilot\_marketplace\_image](#input\_aviatrix\_copilot\_marketplace\_image) | The values for the aviatrix copilot marketplace image. | <pre>object({<br/>    publisher = string<br/>    offer     = string<br/>    sku       = string<br/>    version   = string<br/>  })</pre> | <pre>{<br/>  "offer": "aviatrix-copilot",<br/>  "publisher": "aviatrix-systems",<br/>  "sku": "avx-cplt-byol-01",<br/>  "version": "latest"<br/>}</pre> | no |
 | <a name="input_aviatrix_copilot_name"></a> [aviatrix\_copilot\_name](#input\_aviatrix\_copilot\_name) | The name of the CoPilot VM. | `string` | `"aviatrix-copilot-vm"` | no |
 | <a name="input_aviatrix_copilot_public_ssh_key"></a> [aviatrix\_copilot\_public\_ssh\_key](#input\_aviatrix\_copilot\_public\_ssh\_key) | Use a public SSH key for local. authentication to Aviatrix Copilot. | `string` | `""` | no |
 | <a name="input_aviatrix_copilot_virtual_machine_admin_password"></a> [aviatrix\_copilot\_virtual\_machine\_admin\_password](#input\_aviatrix\_copilot\_virtual\_machine\_admin\_password) | Admin Password for the copilot virtual machine. | `string` | `""` | no |
